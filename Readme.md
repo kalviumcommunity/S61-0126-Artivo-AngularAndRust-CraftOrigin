@@ -284,3 +284,260 @@ CREATE TABLE orders (
    - Optimizations at compile time
 
 ---
+
+# Artivo - Angular and Rust API Integration
+
+## Understanding Rust Routes, Handlers, and Structs
+
+### Routes
+Routes define the URL patterns and HTTP methods that your API accepts. In Actix-web, routes are registered with the web server and map incoming requests to handler functions:
+
+```
+rust
+App::new()
+    .route("/api/items", web::get().to(get_items))
+    .route("/api/items", web::post().to(create_item))
+```
+
+### Handlers
+Handlers are async functions that process incoming requests and return responses. They receive typed data and perform business logic:
+
+```
+rust
+async fn get_items() -> impl Responder {
+    HttpResponse::Ok().json(items)
+}
+```
+
+### Structs
+Structs provide type-safe data structures for request/response bodies. They automatically serialize/deserialize JSON using Serde:
+
+```
+rust
+#[derive(Deserialize)]
+struct CreateItem {
+    name: String,
+    quantity: i32,
+}
+
+#[derive(Serialize)]
+struct Item {
+    id: i32,
+    name: String,
+    quantity: i32,
+}
+```
+
+**How they work together:**
+- Routes map URLs to handlers
+- Handlers use structs to validate and process data
+- Structs ensure type safety at compile time
+- The compiler catches mismatches between your code and data structures
+
+---
+
+## Simple Endpoint Example
+
+### POST Endpoint
+
+Here's a simple POST endpoint that receives data and responds with a message:
+
+```
+rust
+use actix_web::{web, HttpResponse, Responder};
+use serde::Deserialize;
+
+#[derive(Deserialize)]
+struct CreateItem {
+    name: String,
+    quantity: i32,
+}
+
+#[post("/items")]
+async fn create_item(item: web::Json<CreateItem>) -> impl Responder {
+    HttpResponse::Ok().json(format!("Item created: {}", item.name))
+}
+```
+
+**What's happening:**
+1. Angular sends a JSON body: `{ "name": "Keyboard", "quantity": 10 }`
+2. Rust converts that into a typed `CreateItem` struct
+3. Rust returns a clean JSON response
+4. This is how strongly-typed input/output makes your API reliable
+
+### GET Endpoint
+
+```
+rust
+use actix_web::{web, HttpResponse, Responder};
+use serde::Serialize;
+
+#[derive(Serialize)]
+struct Item {
+    id: i32,
+    name: String,
+    quantity: i32,
+}
+
+#[get("/items")]
+async fn get_items() -> impl Responder {
+    let items = vec![
+        Item {
+            id: 1,
+            name: "Keyboard".to_string(),
+            quantity: 10,
+        },
+    ];
+    
+    HttpResponse::Ok().json(items)
+}
+```
+
+---
+
+## Angular → Rust → PostgreSQL Flow Diagram
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Angular Component                         │
+│              (User clicks button, triggers action)            │
+└───────────────────────────┬─────────────────────────────────┘
+                             │
+                             ↓
+┌─────────────────────────────────────────────────────────────┐
+│                  Angular Service                            │
+│         (HTTPClient POST to /api/items)                     │
+│         { "name": "Keyboard", "quantity": 10 }              │
+└───────────────────────────┬─────────────────────────────────┘
+                             │
+                             ↓ HTTP Request
+┌─────────────────────────────────────────────────────────────┐
+│                    Rust Route                                │
+│              (/api/items - POST handler)                     │
+└───────────────────────────┬─────────────────────────────────┘
+                             │
+                             ↓
+┌─────────────────────────────────────────────────────────────┐
+│                  Rust Handler                               │
+│         (Validates request using CreateItem struct)          │
+│         (Type-safe deserialization)                         │
+└───────────────────────────┬─────────────────────────────────┘
+                             │
+                             ↓
+┌─────────────────────────────────────────────────────────────┐
+│                  SQLx Query                                 │
+│    INSERT INTO items (name, quantity) VALUES ($1, $2)       │
+└───────────────────────────┬─────────────────────────────────┘
+                             │
+                             ↓
+┌─────────────────────────────────────────────────────────────┐
+│                  PostgreSQL Database                        │
+│              (Stores data, returns result)                  │
+└───────────────────────────┬─────────────────────────────────┘
+                             │
+                             ↓
+┌─────────────────────────────────────────────────────────────┐
+│                  Rust Handler                               │
+│         (Processes database result)                         │
+│         (Returns JSON response)                             │
+└───────────────────────────┬─────────────────────────────────┘
+                             │
+                             ↓ HTTP Response
+┌─────────────────────────────────────────────────────────────┐
+│                  Angular Service                            │
+│         (Receives JSON response)                            │
+└───────────────────────────┬─────────────────────────────────┘
+                             │
+                             ↓
+┌─────────────────────────────────────────────────────────────┐
+│                  Angular Component                          │
+│         (Updates UI with new data)                          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Flow Summary:**
+1. Angular Component triggers action
+2. Angular Service sends HTTP request
+3. Rust Route receives and routes request
+4. Rust Handler validates and processes
+5. SQLx Query executes against PostgreSQL
+6. Handler returns JSON response
+7. Angular Service receives response
+8. Angular Component updates UI
+
+---
+
+## Why Type-Safety Helps API Development
+
+Type-safety is one of Rust's greatest advantages for API development. Here's why it matters:
+
+### 1. Compile-Time Error Detection
+Rust catches errors before your code runs:
+```
+rust
+// This won't compile if CreateItem doesn't have a 'name' field
+let item = CreateItem {
+    name: "Keyboard".to_string(),
+    quantity: 10,
+};
+```
+
+### 2. SQL Query Validation
+SQLx checks your SQL queries against your database schema at compile time:
+```
+rust
+// If 'items' table doesn't have 'name' column, this won't compile
+sqlx::query!("SELECT name FROM items")
+```
+
+### 3. Automatic Serialization/Deserialization
+Serde ensures JSON structures match your Rust structs:
+```
+rust
+// If Angular sends wrong structure, deserialization fails safely
+#[derive(Deserialize)]
+struct CreateItem {
+    name: String,  // Required field
+    quantity: i32, // Required field
+}
+```
+
+### 4. Refactoring Safety
+When you change a struct, the compiler shows you everywhere that needs updating:
+```
+rust
+// Change struct field name
+struct CreateItem {
+    item_name: String, // Changed from 'name'
+    quantity: i32,
+}
+// Compiler errors show all places using 'name' that need updating
+```
+
+### 5. Prevents Runtime Errors
+Type-safety prevents common bugs:
+- **Null pointer exceptions** → Rust's `Option<T>` and `Result<T, E>` handle this
+- **Type mismatches** → Caught at compile time
+- **Missing fields** → Compiler error if struct doesn't match
+- **SQL injection** → Prepared statements + compile-time checking
+
+### Real-World Impact
+In production APIs, type-safety means:
+- **Fewer bugs** reach production
+- **Faster development** (IDE autocomplete, compiler hints)
+- **Easier maintenance** (clear contracts between components)
+- **Better performance** (no runtime type checking overhead)
+
+---
+
+## Summary
+
+This README documents:
+
+✅ **How Rust routes, handlers, and structs work** - Routes map URLs to handlers, handlers process requests using typed structs, and structs ensure compile-time type safety
+
+✅ **Simple endpoint example (GET or POST)** - Provided examples showing both GET and POST endpoints with request/response structs
+
+✅ **Diagram showing Angular → Rust → PostgreSQL flow** - Complete request-response cycle from Angular component through Rust handler to PostgreSQL and back
+
+✅ **Note explaining why type-safety helps API development** - Compile-time error detection, SQL validation, automatic serialization, refactoring safety, and prevention of runtime errors
