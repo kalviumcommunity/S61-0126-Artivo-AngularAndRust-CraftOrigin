@@ -541,3 +541,218 @@ This README documents:
 ✅ **Diagram showing Angular → Rust → PostgreSQL flow** - Complete request-response cycle from Angular component through Rust handler to PostgreSQL and back
 
 ✅ **Note explaining why type-safety helps API development** - Compile-time error detection, SQL validation, automatic serialization, refactoring safety, and prevention of runtime errors
+
+
+## Concept - 3
+
+# Concept 3: Creating Interactive, Modular Frontends with Angular
+
+## Overview
+
+This document explains how Angular’s component-driven and modular architecture is used to build scalable frontend applications and how it integrates with a Rust backend. The goal is to demonstrate clean UI structuring, separation of concerns, and smooth frontend–backend communication.
+
+---
+
+## 1. Angular Architecture Used
+
+Angular applications are built using a layered architecture:
+
+* **Components** – Handle UI rendering and user interaction
+* **Services** – Handle business logic and API communication
+* **Modules** – Organize related features
+* **Routing** – Manage navigation between pages
+
+This structure ensures scalability and maintainability as the application grows.
+
+---
+
+## 2. Angular Components
+
+### Purpose
+
+Components are the building blocks of the UI. Each component is responsible for a specific part of the interface.
+
+### Example: Product Card Component
+
+* Displays product data
+* Receives data using `@Input()`
+* Handles user actions such as button clicks
+
+**Responsibilities:**
+
+* UI rendering
+* Event handling
+
+**Not Responsible For:**
+
+* API calls
+* Business logic
+
+---
+
+## 3. Angular Modules
+
+### Purpose
+
+Modules group related components and services into features. This keeps the application organized and prevents code duplication.
+
+### Example: Product Module
+
+* Contains product-related components
+* Imports common Angular utilities
+
+**Benefits:**
+
+* Feature isolation
+* Easier scaling
+* Cleaner folder structure
+
+---
+
+## 4. Angular Services
+
+### Purpose
+
+Services manage shared logic and communication with the backend.
+
+### Example: Product Service
+
+* Sends HTTP requests to Rust APIs
+* Returns observable data to components
+
+**Key Responsibilities:**
+
+* API calls
+* Shared state management
+* Business rules
+
+This keeps components lightweight and focused only on UI logic.
+
+---
+
+## 5. Angular ↔ Rust API Interaction
+
+### Communication Flow
+
+1. User interacts with the UI
+2. Component triggers a method
+3. Service sends HTTP request
+4. Rust backend receives request
+5. Rust handler fetches data from database
+6. JSON response is returned
+7. Angular updates component state
+8. UI updates automatically
+
+This REST-based interaction allows Angular and Rust to evolve independently.
+
+---
+
+## 6. Data Binding
+
+Angular uses data binding to automatically reflect data changes in the UI.
+
+* When component data changes
+* The UI updates instantly
+* No manual DOM manipulation is required
+
+This makes Angular ideal for dashboards and real-time interfaces.
+
+---
+
+## 7. Handling User Interactions
+
+Angular uses event binding to respond to user actions such as clicks and form submissions.
+
+**Example Use Cases:**
+
+* Adding items to cart
+* Submitting forms
+* Triggering API calls
+
+This creates predictable and reactive UI behavior.
+
+---
+
+## 8. Routing
+
+### Purpose
+
+Routing enables navigation between different views without page reloads.
+
+### Example Routes
+
+* `/products` – Product list page
+* `/products/:id` – Product detail page
+
+Routing is essential for building:
+
+* Admin dashboards
+* Inventory systems
+* E-commerce platforms
+
+---
+
+## 9. Overall UI Architecture
+
+```
+App Module
+   ↓
+Feature Modules
+   ↓
+Components
+   ↓
+Services
+   ↓
+Rust Backend (Axum / Actix)
+   ↓
+PostgreSQL Database
+```
+
+This layered structure ensures clear separation of concerns.
+
+---
+
+## 10. Case Study: View Products Flow
+
+**Scenario:** A user clicks “View Products”
+
+1. User clicks the button
+2. Angular component handles the click event
+3. Component calls the product service
+4. Service sends GET request to `/api/products`
+5. Rust route handler executes
+6. Data is fetched from database
+7. JSON response is returned
+8. Angular receives data
+9. UI updates automatically
+
+---
+
+## 11. Reflection: Why Modular Architecture Matters
+
+* Improves code readability
+* Enables team collaboration
+* Makes features reusable
+* Simplifies testing
+* Allows frontend and backend to scale independently
+
+Modular architecture is critical for building production-ready applications.
+
+---
+
+## 12. Deliverables Summary
+
+This implementation includes:
+
+* Angular components for UI rendering
+* Angular services for API communication
+* Modular folder structure
+* Routing configuration
+* Rust API integration
+* Clear frontend–backend flow
+
+---
+
+## Conclusion
+
+By following Angular’s modular architecture and separating UI from logic, we can build scalable, maintainable frontend applications that integrate cleanly with Rust backend services.
