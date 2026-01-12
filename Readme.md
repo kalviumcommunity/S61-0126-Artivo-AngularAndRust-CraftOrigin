@@ -756,3 +756,15 @@ This implementation includes:
 ## Conclusion
 
 By following Angular’s modular architecture and separating UI from logic, we can build scalable, maintainable frontend applications that integrate cleanly with Rust backend services.
+
+# Setting Up Angular CLI, Rust Toolchain, and Actix/Axum Environment
+
+This step involves configuring a full-stack development environment that combines an Angular frontend with a Rust-based backend using modern, high-performance web frameworks such as Actix-Web or Axum.
+
+On the frontend side, Angular CLI is installed and configured to scaffold, build, and manage the Angular application efficiently. It provides tools for component generation, development server execution, and production builds, enabling rapid and structured UI development.
+
+For the backend, the Rust toolchain is installed using rustup, which includes the Rust compiler (rustc), package manager (cargo), and essential developer tools such as clippy (for linting) and rustfmt (for code formatting). This setup ensures safe, fast, and maintainable backend development.
+
+Using Cargo, a Rust backend project is created and configured with either Actix-Web or Axum, both asynchronous web frameworks built on the Tokio runtime. These frameworks enable the creation of a lightweight HTTP server, routing, and API endpoints that can serve JSON responses and communicate with the Angular frontend.
+
+Together, this environment establishes a scalable and performant full-stack foundation, enabling seamless communication between the Angular client and the Rust backend while following modern development best practices.
