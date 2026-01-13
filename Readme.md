@@ -1169,3 +1169,18 @@ cargo test        # Run all tests
 | `Cargo.toml` | Lists all Rust dependencies |
 | `migrations/*.sql` | Database table creation scripts |
 | `.env` | Secret configuration (database URL, JWT secret) |
+
+Here is a **short, clean, README-friendly description** you can directly paste 👇
+(kept simple and professional, as mentors prefer)
+
+---
+
+## Introduction to TypeScript Fundamentals for Angular Development
+
+TypeScript is the core language used in Angular applications. It enhances JavaScript by adding strong typing, structure, and better tooling support. Using TypeScript helps developers catch errors early, write cleaner code, and build scalable and maintainable applications.
+
+In this project, TypeScript fundamentals such as types, interfaces, classes, functions, and generics are used extensively in Angular components and services. These concepts ensure consistent data handling, safe API integration with the Rust backend, and predictable application behavior throughout Sprint #2.
+
+---
+
+
