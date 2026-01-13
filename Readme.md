@@ -768,3 +768,404 @@ For the backend, the Rust toolchain is installed using rustup, which includes th
 Using Cargo, a Rust backend project is created and configured with either Actix-Web or Axum, both asynchronous web frameworks built on the Tokio runtime. These frameworks enable the creation of a lightweight HTTP server, routing, and API endpoints that can serve JSON responses and communicate with the Angular frontend.
 
 Together, this environment establishes a scalable and performant full-stack foundation, enabling seamless communication between the Angular client and the Rust backend while following modern development best practices.
+
+# CraftOrigin - Project Structure Guide
+
+## 📌 What is CraftOrigin?
+
+**CraftOrigin** is a marketplace that connects **tribal and rural artists** directly with **global buyers**, eliminating middlemen and ensuring fair prices.
+
+- **Frontend**: Angular (User Interface)
+- **Backend**: Rust (Server & API)
+- **Database**: PostgreSQL (Data Storage)
+
+---
+
+## 🗂️ Project Structure Overview
+
+```
+craftorigin/
+├── frontend/          # Angular application (UI)
+├── backend/           # Rust application (API server)
+└── README.md          # This file
+```
+
+---
+
+## 🎨 Frontend Structure (Angular)
+
+### 📁 Main Folders
+
+```
+frontend/
+├── src/
+│   ├── app/                    # Main application code
+│   │   ├── components/         # UI components (pages & parts)
+│   │   ├── services/           # API calls to Rust backend
+│   │   ├── guards/             # Route protection (login required)
+│   │   ├── models/             # TypeScript types/interfaces
+│   │   ├── app.component.ts    # Root component (main entry)
+│   │   ├── app.module.ts       # Main module (imports everything)
+│   │   └── app-routing.module.ts  # Page routes
+│   ├── assets/                 # Images, icons, fonts
+│   ├── environments/           # Config (dev/prod URLs)
+│   └── index.html              # Main HTML file
+├── angular.json                # Build configuration
+└── package.json                # Dependencies (npm packages)
+```
+
+---
+
+### 📂 What Each Folder Does
+
+#### 1. **src/app/components/** - UI Pages & Parts
+Each feature gets its own folder with 3 files:
+
+```
+components/
+├── login/
+│   ├── login.component.ts      # Logic (TypeScript)
+│   ├── login.component.html    # HTML template
+│   └── login.component.css     # Styling
+├── product-list/
+├── product-detail/
+├── create-product/
+├── cart/
+├── checkout/
+└── dashboard/
+```
+
+**What it does**: Contains all the pages users see (login, products, cart, checkout, dashboard)
+
+---
+
+#### 2. **src/app/services/** - Talks to Rust Backend
+Services make HTTP calls to the backend API.
+
+**What it does**: Sends requests to Rust backend and gets data back
+
+**Services we have**:
+- `auth.service.ts` - Handles login and registration
+- `product.service.ts` - Gets and creates products
+- `cart.service.ts` - Manages shopping cart
+- `order.service.ts` - Places orders
+- `artist.service.ts` - Artist profile management
+- `file-upload.service.ts` - Uploads product images
+
+---
+
+#### 3. **src/app/guards/** - Protect Routes
+Guards check if user is logged in before showing a page.
+
+**What it does**: Blocks unauthorized users from accessing certain pages
+
+**Guards we have**:
+- `auth.guard.ts` - Checks if user is logged in
+- `role.guard.ts` - Checks if user is artist or buyer
+
+---
+
+#### 4. **src/app/models/** - Data Types
+Defines what data looks like (TypeScript interfaces).
+
+**What it does**: Ensures data has correct structure (type safety)
+
+**Models we have**:
+- `user.model.ts` - User data structure
+- `product.model.ts` - Product data structure
+- `order.model.ts` - Order data structure
+- `cart.model.ts` - Cart data structure
+
+---
+
+#### 5. **app.module.ts** - The Brain
+Imports all components, services, and modules.
+
+**What it does**: Tells Angular what components and services exist in the app
+
+---
+
+#### 6. **app-routing.module.ts** - Page Navigation
+Defines all the routes (URLs) in the application.
+
+**What it does**: Maps URLs to components (e.g., /login → LoginComponent)
+
+---
+
+#### 7. **package.json** - Dependencies
+Lists all npm packages (libraries) the project needs.
+
+**What it does**: Keeps track of external libraries like Angular, RxJS, etc.
+
+**How to install**: Run `npm install`
+
+---
+
+## 🦀 Backend Structure (Rust)
+
+### 📁 Main Folders
+
+```
+backend/
+├── src/
+│   ├── main.rs              # Server starts here
+│   ├── routes/              # API endpoints (/login, /products)
+│   ├── handlers/            # Business logic (what happens when API is called)
+│   ├── models/              # Database structs
+│   ├── services/            # Reusable business logic
+│   ├── config/              # Settings (database URL, JWT secret)
+│   └── middleware/          # JWT authentication
+├── migrations/              # Database schema (SQL files)
+├── Cargo.toml               # Dependencies (like package.json)
+└── .env                     # Secret keys, database URL
+```
+
+---
+
+### 📂 What Each Folder Does
+
+#### 1. **src/main.rs** - Server Entry Point
+This is where the Rust server starts.
+
+**What it does**: 
+- Connects to PostgreSQL database
+- Starts the web server on port 8080
+- Registers all API routes
+
+---
+
+#### 2. **src/routes/** - API Endpoints
+Defines URL paths and maps them to handlers.
+
+**What it does**: Maps URLs to handler functions
+
+**Routes we have**:
+- `auth.rs` - `/auth/login`, `/auth/register`
+- `products.rs` - `/products`, `/products/{id}`
+- `orders.rs` - `/orders`, `/orders/{id}`
+- `artists.rs` - `/artists`, `/artists/{id}`
+- `upload.rs` - `/upload/images`
+
+---
+
+#### 3. **src/handlers/** - Business Logic
+Handlers process requests and return responses.
+
+**What it does**: 
+- Receives requests from Angular
+- Queries the database
+- Processes the data
+- Returns JSON response
+
+**Handlers we have**:
+- `auth_handler.rs` - Login, register, logout
+- `product_handler.rs` - CRUD operations for products
+- `order_handler.rs` - Create and manage orders
+- `artist_handler.rs` - Artist profile management
+- `upload_handler.rs` - File upload handling
+
+---
+
+#### 4. **src/models/** - Data Structures
+Defines what data looks like (structs).
+
+**What it does**: Defines data structure for database tables and API requests
+
+**Models we have**:
+- `user.rs` - User struct
+- `product.rs` - Product struct
+- `order.rs` - Order struct
+- `request_dto.rs` - Request data structures
+- `response_dto.rs` - Response data structures
+
+---
+
+#### 5. **src/services/** - Reusable Logic
+Business logic that can be used by multiple handlers.
+
+**What it does**: Contains reusable functions
+
+**Services we have**:
+- `auth_service.rs` - Password hashing, JWT creation
+- `validation_service.rs` - Input validation
+- `email_service.rs` - Send emails to users
+- `search_service.rs` - Product search functionality
+
+---
+
+#### 6. **migrations/** - Database Schema
+SQL files that create database tables.
+
+**What it does**: Creates database structure
+
+**Migration files**:
+- `001_create_users.sql` - Users table
+- `002_create_products.sql` - Products table
+- `003_create_orders.sql` - Orders table
+- `004_create_reviews.sql` - Reviews table
+
+**How to run**: `sqlx migrate run`
+
+---
+
+#### 7. **Cargo.toml** - Dependencies
+Lists all Rust libraries (crates) needed.
+
+**What it does**: Manages Rust dependencies
+
+**Main dependencies**:
+- `actix-web` - Web framework for building APIs
+- `sqlx` - Database connection and queries
+- `serde` - JSON serialization/deserialization
+- `bcrypt` - Password hashing
+- `jsonwebtoken` - JWT token creation and validation
+
+**How to install**: `cargo build`
+
+---
+
+#### 8. **.env** - Secret Configuration
+Stores sensitive data (NOT committed to Git).
+
+**What it does**: Stores database URLs, JWT secrets, and other configuration
+
+---
+
+## 🔄 How Angular & Rust Work Together
+
+### Complete Flow: User Views Products
+
+1. **User clicks "Products" page**
+2. **Angular**: ProductListComponent loads
+3. **Angular**: Calls `productService.getProducts()`
+4. **Angular**: Sends HTTP GET request to `http://localhost:8080/api/products`
+5. **Rust**: main.rs receives the request
+6. **Rust**: routes/products.rs routes to `get_products` handler
+7. **Rust**: handlers/product_handler.rs executes `get_products()`
+8. **Rust**: Queries PostgreSQL database for products
+9. **Rust**: Returns JSON response with product list
+10. **Angular**: Receives JSON data
+11. **Angular**: Updates UI with products
+12. **User**: Sees product list on screen
+
+---
+
+## 🛠️ Case Study: Creating a "Create Product" Feature
+
+### Question: Which files would you need to edit?
+
+#### **Angular Side (Frontend)**
+
+1. **Create Component**:
+   - **Location**: `src/app/components/create-product/`
+   - **Files**: 
+     - `create-product.component.ts` - Form logic
+     - `create-product.component.html` - Form HTML
+     - `create-product.component.css` - Styling
+   - **Why**: This is the page where artists fill out the form
+
+2. **Service**:
+   - **Location**: `src/app/services/product.service.ts`
+   - **What to add**: A method called `createProduct()` that sends POST request
+   - **Why**: To send product data to Rust backend
+
+3. **Router**:
+   - **Location**: `src/app/app-routing.module.ts`
+   - **What to add**: Route path `/product/create`
+   - **Why**: So users can navigate to the create product page
+
+4. **Model**:
+   - **Location**: `src/app/models/product.model.ts`
+   - **What to add**: Interface for CreateProductDto
+   - **Why**: Type safety for form data
+
+---
+
+#### **Rust Side (Backend)**
+
+1. **Route**:
+   - **Location**: `src/routes/products.rs`
+   - **What to add**: POST route that maps to create_product handler
+   - **Why**: Maps POST /products to handler function
+
+2. **Handler**:
+   - **Location**: `src/handlers/product_handler.rs`
+   - **What to add**: Function `create_product()` that inserts into database
+   - **Why**: Handles the actual product creation logic
+
+3. **Model**:
+   - **Location**: `src/models/product.rs`
+   - **What to add**: Struct `CreateProductRequest`
+   - **Why**: Defines what data backend expects from frontend
+
+4. **Database Migration**:
+   - **Location**: `migrations/002_create_products_table.sql`
+   - **Status**: Already exists (products table already created)
+
+---
+
+## 📦 Installation & Setup
+
+### Prerequisites
+- Node.js 18+ (for Angular)
+- Rust 1.70+ (for backend)
+- PostgreSQL 15+ (database)
+
+### Frontend Setup
+```
+bash
+cd frontend
+npm install
+ng serve
+```
+**Opens at**: http://localhost:4200
+
+### Backend Setup
+```
+bash
+cd backend
+cargo build
+sqlx migrate run
+cargo run
+```
+**Runs on**: http://localhost:8080
+
+---
+
+## 🧪 Testing
+
+### Angular Tests
+```
+bash
+cd frontend
+ng test           # Unit tests
+ng e2e            # End-to-end tests
+```
+
+### Rust Tests
+```
+bash
+cd backend
+cargo test        # Run all tests
+```
+
+---
+
+## 📝 Key Files Summary
+
+| File | Purpose |
+|------|---------|
+| **Angular (Frontend)** |
+| `src/app/app.module.ts` | Main module, imports all components and services |
+| `src/app/services/*.service.ts` | Makes API calls to Rust backend |
+| `src/app/components/*` | All UI pages (login, products, cart, etc.) |
+| `src/app/guards/auth.guard.ts` | Protects routes from unauthorized access |
+| `package.json` | Lists all Angular dependencies |
+| **Rust (Backend)** |
+| `src/main.rs` | Server entry point, starts the application |
+| `src/routes/*.rs` | Defines API endpoint URLs |
+| `src/handlers/*.rs` | Contains business logic for each endpoint |
+| `src/models/*.rs` | Data structures for database and API |
+| `Cargo.toml` | Lists all Rust dependencies |
+| `migrations/*.sql` | Database table creation scripts |
+| `.env` | Secret configuration (database URL, JWT secret) |
