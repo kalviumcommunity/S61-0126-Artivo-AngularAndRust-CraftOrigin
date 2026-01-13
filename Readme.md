@@ -1184,3 +1184,154 @@ In this project, TypeScript fundamentals such as types, interfaces, classes, fun
 ---
 
 
+# Rust Memory Model: Ownership, Borrowing, and Lifetimes
+
+Rust’s memory model is the main reason it is considered one of the safest backend languages. Instead of relying on a garbage collector, Rust uses strict compile-time rules to manage memory. These rules prevent common bugs like null pointer access, data races, and memory leaks.
+
+The three core ideas behind this system are **Ownership**, **Borrowing**, and **Lifetimes**.
+
+---
+
+## 1. Ownership
+
+In Rust, **every value has exactly one owner**.
+When the owner goes out of scope, Rust automatically frees the memory.
+
+This means Rust always knows:
+
+* Who owns the data
+* When the data should be cleaned up
+
+### Simple Explanation
+
+Think of ownership like holding a key to a room. Only one person can have the key. When that person leaves, the room is locked and cleaned.
+
+### Example (Backend-style)
+
+```rust
+fn main() {
+    let request_body = String::from("user data");
+    process_request(request_body);
+    // request_body is no longer valid here
+}
+
+fn process_request(data: String) {
+    println!("{}", data);
+}
+```
+
+Here:
+
+* `request_body` owns the string
+* Ownership is **moved** to `process_request`
+* After the function call, `request_body` cannot be used again
+
+This prevents accidental use of freed memory.
+
+---
+
+## 2. Borrowing
+
+Sometimes we don’t want to transfer ownership.
+Instead, we want to **temporarily access** data. This is called **borrowing**.
+
+Rust allows:
+
+* Multiple **immutable** borrows (`&T`)
+* OR one **mutable** borrow (`&mut T`)
+* But **not both at the same time**
+
+### Simple Explanation
+
+Borrowing is like lending a book:
+
+* You can let many people read it (immutable borrow)
+* Or let one person write in it (mutable borrow)
+* But not both together
+
+### Example (Backend-style)
+
+```rust
+fn main() {
+    let user = String::from("Alice");
+    print_user(&user); // borrowed, not moved
+    println!("{}", user); // still valid
+}
+
+fn print_user(name: &String) {
+    println!("User: {}", name);
+}
+```
+
+Here:
+
+* Ownership stays in `main`
+* `print_user` only borrows the data
+* This avoids unnecessary copying and improves performance
+
+---
+
+## 3. Mutable Borrowing
+
+Mutable borrowing allows changing data, but Rust ensures safety by allowing **only one mutable reference at a time**.
+
+### Example
+
+```rust
+fn main() {
+    let mut counter = 0;
+    increment(&mut counter);
+    println!("{}", counter);
+}
+
+fn increment(value: &mut i32) {
+    *value += 1;
+}
+```
+
+This rule prevents race conditions, which is critical for backend systems handling multiple requests.
+
+---
+
+## 4. Lifetimes
+
+Lifetimes tell Rust **how long references are valid**.
+Rust uses lifetimes to make sure a reference never outlives the data it points to.
+
+Most of the time, Rust figures this out automatically. We only need to write lifetimes when Rust needs clarification.
+
+### Simple Explanation
+
+A reference should never point to data that has already been destroyed.
+
+### Example
+
+```rust
+fn get_longer<'a>(a: &'a str, b: &'a str) -> &'a str {
+    if a.len() > b.len() {
+        a
+    } else {
+        b
+    }
+}
+```
+
+Here:
+
+* `'a` means both inputs and the output must live at least as long as `'a`
+* Rust guarantees the returned reference is always valid
+
+---
+
+## Conclusion
+
+Rust’s memory model may feel strict at first, but it provides powerful guarantees:
+
+* **Ownership** ensures automatic and safe memory cleanup
+* **Borrowing** allows efficient data access without copying
+* **Lifetimes** prevent dangling references
+
+Together, these features make Rust extremely reliable for backend development, especially in systems where performance and safety are critical.
+
+
+
