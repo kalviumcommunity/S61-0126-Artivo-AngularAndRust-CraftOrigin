@@ -1333,5 +1333,51 @@ Rust’s memory model may feel strict at first, but it provides powerful guarant
 
 Together, these features make Rust extremely reliable for backend development, especially in systems where performance and safety are critical.
 
+Here’s a **short and clean README** you can use for a **basic Actix or Axum backend with a health check endpoint**.
 
+---
+
+# Basic Rust Backend (Actix / Axum)
+
+This project demonstrates how to create a minimal backend server in **Rust** using **Actix Web** or **Axum**, with a simple **health check endpoint** to verify that the server is running.
+
+## Features
+
+* Lightweight and fast Rust web server
+* Health check endpoint (`/health`)
+* Easy to extend with APIs, middleware, and databases
+
+## Health Check Endpoint
+
+```
+GET /health
+```
+
+**Response:**
+
+```json
+{
+  "status": "ok"
+}
+```
+
+This endpoint is commonly used for monitoring, load balancers, and container orchestration systems.
+
+## Tech Stack
+
+* Rust
+* Actix Web **or** Axum
+* Tokio (async runtime)
+
+## Running the Project
+
+```bash
+cargo run
+```
+
+Server will start at:
+
+```
+http://127.0.0.1:8080
+```
 
