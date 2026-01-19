@@ -1,0 +1,69 @@
+<section class="py-20 lg:py-28 bg-background">
+  <div class="container mx-auto px-4">
+    <!-- Section Header -->
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <span class="text-primary font-medium text-sm uppercase tracking-wider">
+        Meet The Makers
+      </span>
+      <h2 class="font-display text-3xl lg:text-5xl font-bold mt-4 mb-6 text-foreground">
+        Featured Artists
+      </h2>
+      <p class="text-muted-foreground text-lg">
+        Discover the incredible artisans preserving India's rich cultural heritage 
+        through their timeless craftsmanship.
+      </p>
+    </div>
+
+    <!-- Artists Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div *ngFor="let artist of artists; let i = index" 
+           class="group bg-card rounded-2xl overflow-hidden shadow-warm hover:shadow-warm-lg transition-all duration-500 hover:-translate-y-2"
+           [style.animationDelay]="i * 150 + 'ms'">
+        <!-- Image -->
+        <div class="relative h-72 overflow-hidden">
+          <img 
+            [src]="artist.image" 
+            [alt]="artist.name"
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent"></div>
+          <!-- Rating Badge -->
+          <div class="absolute top-4 right-4 flex items-center gap-1 bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-full">
+            <ng-container *ngIf="isBrowser">
+              <lucide-icon [name]="Star" class="w-4 h-4 fill-amber text-amber"></lucide-icon>
+            </ng-container>
+            <span class="font-semibold text-sm">{{ artist.rating }}</span>
+          </div>
+        </div>
+        <!-- Content -->
+        <div class="p-6">
+          <h3 class="font-display text-xl font-semibold text-foreground mb-1">
+            {{ artist.name }}
+          </h3>
+          <p class="text-primary font-medium mb-3">{{ artist.craft }}</p>
+          <div class="flex items-center gap-2 text-muted-foreground text-sm mb-4">
+            <ng-container *ngIf="isBrowser">
+              <lucide-icon [name]="MapPin" class="w-4 h-4"></lucide-icon>
+            </ng-container>
+            <span>{{ artist.location }}</span>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-t border-border">
+            <span class="text-sm text-muted-foreground">
+              {{ artist.products }} artworks
+            </span>
+            <button class="text-primary font-semibold text-sm hover:underline">
+              View Gallery →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- CTA -->
+    <div class="text-center mt-12">
+      <button class="text-primary font-semibold hover:underline inline-flex items-center gap-2">
+        View All Artists
+        <span>→</span>
+      </button>
+    </div>
+  </div>
+</section>

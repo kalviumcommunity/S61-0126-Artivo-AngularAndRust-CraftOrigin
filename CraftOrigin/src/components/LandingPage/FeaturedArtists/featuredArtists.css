@@ -1,0 +1,22 @@
+.group {
+  transition: box-shadow 0.5s, transform 0.5s;
+}
+.group:hover {
+  box-shadow: 0 8px 32px 0 rgba(255, 193, 7, 0.15);
+  transform: translateY(-8px);
+}
+.bg-card {
+  background: #fff;
+}
+.shadow-warm {
+  box-shadow: 0 2px 8px 0 rgba(255, 193, 7, 0.08);
+}
+.shadow-warm-lg {
+  box-shadow: 0 8px 32px 0 rgba(255, 193, 7, 0.15);
+}
+.fill-amber {
+  fill: #ffc107;
+}
+.text-amber {
+  color: #ffc107;
+}

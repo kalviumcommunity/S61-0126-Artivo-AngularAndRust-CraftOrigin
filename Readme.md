@@ -1381,3 +1381,125 @@ Server will start at:
 http://127.0.0.1:8080
 ```
 
+# Defining Structs, Enums, and Data Models in Rust
+
+
+## What I Learned and Understood from This Module
+
+In this module, I learned the importance of **data modeling in backend systems using Rust**. I understood that a backend is not just about handling requests and responses, but about defining **clear and safe data contracts** that prevent invalid data from ever entering the system.
+
+I learned that in Rust, **data models are enforced at compile time**, which makes backend logic more reliable and predictable compared to loosely typed systems.
+
+---
+
+### Understanding the Role of Structs
+
+I learned how to use **Rust structs** to represent backend entities such as users, accounts, request bodies, and responses. I understood that a struct defines **exactly what data is allowed** and that Rust does not permit missing or extra fields.
+
+From this, I realized that structs act as **blueprints for backend data**, ensuring that all data used in the application follows a strict and predictable structure.
+
+Example I understood:
+
+```rust
+struct User {
+    id: i32,
+    name: String,
+    email: String,
+}
+```
+
+---
+
+### Understanding Request Handling with Structs
+
+I learned how structs are used in backend APIs to **deserialize incoming JSON requests** safely. I understood that when using libraries like Serde, Rust automatically rejects invalid request data before it reaches the business logic.
+
+This helped me understand how Rust makes APIs safer by default and reduces the need for manual validation.
+
+---
+
+### Understanding the Power of Enums
+
+I learned how **Rust enums** are used to represent values that can exist in only a fixed set of states. I understood that enums are much safer than using strings for roles, statuses, or states.
+
+This helped me understand how enums prevent invalid states such as typos or unexpected values from occurring in the application.
+
+Example I understood:
+
+```rust
+enum AccountStatus {
+    Active,
+    Suspended,
+    Deleted,
+}
+```
+
+---
+
+### Preventing Invalid States
+
+I understood that one of Rust’s biggest strengths is its ability to **prevent invalid states at compile time**. By modeling states using enums, I learned that many runtime errors can be completely eliminated.
+
+This made me realize that good data modeling reduces the need for defensive programming and repeated runtime checks.
+
+---
+
+### Combining Structs and Enums
+
+I learned how real-world backend systems combine **structs and enums** to model complex data safely. I understood that embedding enums inside structs ensures that important fields always contain valid values.
+
+Example I understood:
+
+```rust
+struct Account {
+    id: i32,
+    email: String,
+    status: AccountStatus,
+}
+```
+
+---
+
+### Pattern Matching and Exhaustiveness
+
+I learned how **pattern matching** with enums forces me to handle all possible cases explicitly. I understood that Rust’s `match` statement makes backend logic future-proof, because adding a new enum variant will cause compile-time errors until all cases are handled.
+
+This helped me understand how Rust enforces correctness through the compiler.
+
+---
+
+### Modeling API Responses
+
+I learned that enums can also be used to model **API responses** in a clear and predictable way. I understood that response types should be explicit so that both the server and client know exactly what kind of response is being returned.
+
+---
+
+### Overall Understanding
+
+From this module, I understood that **strong data modeling is the foundation of reliable backend development in Rust**. By using structs and enums effectively, I can design systems where invalid data is impossible, logic is easier to reason about, and errors are caught early during development instead of at runtime.
+
+This module gave me a strong foundation for building safe and maintainable Rust backends using frameworks like Actix or Axum.
+
+
+# Angular Components: Quick Summary
+
+## What You Learned
+- Components are the building blocks of Angular apps (logic, template, style).
+- Use Angular CLI: `ng generate component <name>` to scaffold new components.
+- Use `@Component` to define selector, template, and styles.
+- Data binding (`{{ }}`) and event binding (`(click)`) make UIs interactive.
+- Component styles are scoped and modular.
+- Use your component in any template with its selector (e.g., `<app-user-card>`).
+
+## What You Built Today
+- Created and integrated a `FeaturedArtistsComponent` showing a grid of artists.
+- Used lucide-angular icons and fixed SSR/browser rendering issues.
+- Debugged and fixed Angular/TypeScript errors.
+- Practiced modular, reusable UI design.
+
+## Why It Matters
+- We can now build, style, and use Angular components for any UI feature.
+- Now we know how to debug and document your work for your project.
+
+---
+
