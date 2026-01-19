@@ -1,0 +1,67 @@
+<nav class="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16 lg:h-20">
+  
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-2">
+          <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+            <span class="text-primary-foreground font-display text-lg font-bold">CO</span>
+          </div>
+          <span class="font-display text-xl lg:text-2xl font-semibold text-foreground">
+            CraftOrigin
+          </span>
+        </a>
+  
+        <!-- Desktop Navigation -->
+        <div class="hidden lg:flex items-center gap-8">
+          <a href="#" class="text-muted-foreground hover:text-foreground font-medium">Explore Art</a>
+          <a href="#" class="text-muted-foreground hover:text-foreground font-medium">Artists</a>
+          <a href="#" class="text-muted-foreground hover:text-foreground font-medium">How It Works</a>
+          <a href="#" class="text-muted-foreground hover:text-foreground font-medium">About</a>
+        </div>
+  
+        <!-- Desktop Actions -->
+        <div class="hidden lg:flex items-center gap-3">
+          <button class="p-2">
+            <!-- <lucide-icon name="search" class="w-5 h-5"></lucide-icon> -->
+          </button>
+  
+          <button class="p-2">
+            <!-- <lucide-icon name="shopping-bag" class="w-5 h-5"></lucide-icon> -->
+          </button>
+  
+          <button class="border px-3 py-1.5 rounded-md flex items-center gap-2 text-sm">
+            <!-- <lucide-icon name="user" class="w-4 h-4"></lucide-icon> -->
+            Sign In
+          </button>
+  
+          <button class="bg-primary text-primary-foreground px-4 py-1.5 rounded-md text-sm">
+            Sell Art
+          </button>
+        </div>
+  
+        <!-- Mobile Menu Toggle -->
+        <button class="lg:hidden p-2" (click)="toggleMenu()">
+          <!-- <lucide-icon [name]="isOpen ? 'x' : 'menu'" class="w-6 h-6"></lucide-icon> -->
+        </button>
+      </div>
+  
+      <!-- Mobile Menu -->
+      <div *ngIf="isOpen" class="lg:hidden py-4 border-t border-border">
+        <div class="flex flex-col gap-4">
+          <a href="#" class="font-medium py-2">Explore Art</a>
+          <a href="#" class="font-medium py-2">Artists</a>
+          <a href="#" class="font-medium py-2">How It Works</a>
+          <a href="#" class="font-medium py-2">About</a>
+  
+          <div class="flex gap-3 pt-4">
+            <button class="flex-1 border py-2 rounded-md">Sign In</button>
+            <button class="flex-1 bg-primary text-primary-foreground py-2 rounded-md">
+              Sell Art
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  

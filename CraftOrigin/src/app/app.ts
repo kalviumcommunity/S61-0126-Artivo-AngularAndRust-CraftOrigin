@@ -1,11 +1,13 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ProductService } from './services/product.service';
+import { HeroSectionComponent } from '../components/LandingPage/HeroSection/heroSection';
+import { NavbarComponent } from '../components/LandingPage/Navigation/navagation';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, HeroSectionComponent, NavbarComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

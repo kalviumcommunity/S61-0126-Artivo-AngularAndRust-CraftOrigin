@@ -1,3 +1,143 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import "tailwindcss";
+
+/* ============================================
+   CSS Variables for Theme Colors
+   ============================================ */
+:root {
+  --color-primary: #f97316;
+  --color-primary-foreground: #ffffff;
+  --color-accent: #8b5cf6;
+  --color-accent-foreground: #ffffff;
+  --color-foreground: #1a1a1a;
+  --color-muted-foreground: #6b7280;
+  --color-card: #ffffff;
+  --color-border: #e5e7eb;
+  --color-background: #ffffff;
+}
+
+/* ============================================
+   Tailwind Custom Utilities
+   ============================================ */
+@theme {
+  /* Custom colors for Tailwind utilities */
+  --color-primary: #f97316;
+  --color-primary-foreground: #ffffff;
+  --color-accent: #8b5cf6;
+  --color-accent-foreground: #ffffff;
+  --color-foreground: #1a1a1a;
+  --color-muted-foreground: #6b7280;
+  --color-card: #ffffff;
+  --color-border: #e5e7eb;
+  --color-background: #ffffff;
+  
+  /* Custom gradient backgrounds */
+  --gradient-hero: linear-gradient(135deg, #fef3e2 0%, #fff7ed 50%, #fef3e2 100%);
+  
+  /* Custom shadows */
+  --shadow-warm-lg: 0 20px 25px -5px rgba(249, 115, 22, 0.1), 0 10px 10px -5px rgba(249, 115, 22, 0.04);
+}
+
+/* Additional Tailwind color utilities */
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-accent {
+  background-color: var(--color-accent);
+}
+
+.bg-card {
+  background-color: var(--color-card);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-foreground {
+  color: var(--color-foreground);
+}
+
+.text-muted-foreground {
+  color: var(--color-muted-foreground);
+}
+
+.text-accent-foreground {
+  color: var(--color-accent-foreground);
+}
+
+.text-primary-foreground {
+  color: var(--color-primary-foreground);
+}
+
+.border-border {
+  border-color: var(--color-border);
+}
+
+/* Custom utility classes */
+.bg-hero-gradient {
+  background: var(--gradient-hero);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #f97316 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.shadow-warm-lg {
+  box-shadow: var(--shadow-warm-lg);
+}
+
+/* Animations */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.6s ease-out;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Font display utility */
+.font-display {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+}
