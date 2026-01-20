@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 
@@ -20,6 +21,7 @@ interface Product {
   styleUrls: ['./FeaturedArtWork.css'],
 })
 export class ProductGalleryComponent {
+  isBrowser: boolean;
   categories: string[] = [
     'All',
     'Pottery',
@@ -29,6 +31,15 @@ export class ProductGalleryComponent {
   ];
 
   selectedCategory = 'All';
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
+
+  onImgError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.src = 'https://via.placeholder.com/300';
+  }
 
   products: Product[] = [
     {

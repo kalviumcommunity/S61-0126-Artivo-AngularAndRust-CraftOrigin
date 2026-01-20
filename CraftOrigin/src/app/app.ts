@@ -5,11 +5,12 @@ import { HeroSectionComponent } from '../components/LandingPage/HeroSection/hero
 import { NavbarComponent } from '../components/LandingPage/Navigation/navagation';
 import { FeaturedArtistsComponent } from '../components/LandingPage/FeaturedArtists/featuredArtists';
 import { ProductGalleryComponent } from '../components/LandingPage/FeaturedArtWorks/FeaturedArtWork';
+import { HowItWorksComponent } from '../components/LandingPage/HowItWorks/howItWorks';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeroSectionComponent, NavbarComponent, FeaturedArtistsComponent, ProductGalleryComponent],
+  imports: [RouterOutlet, HeroSectionComponent, NavbarComponent, FeaturedArtistsComponent, ProductGalleryComponent, HowItWorksComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

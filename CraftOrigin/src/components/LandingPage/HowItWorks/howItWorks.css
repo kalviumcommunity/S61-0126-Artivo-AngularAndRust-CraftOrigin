@@ -1,0 +1,23 @@
+.shadow-warm {
+  box-shadow: 0 2px 8px 0 rgba(255, 193, 7, 0.08);
+}
+.bg-card {
+  background: #fff;
+}
+
+.text-primary {
+  color: #3b82f6;
+}
+.bg-accent\/10 {
+  background-color: rgba(16, 185, 129, 0.1);
+}
+.text-accent {
+  color: #10b981;
+}
+.bg-amber\/10 {
+  background-color: rgba(251, 191, 36, 0.1);
+}
+.text-amber {
+  color: #fbbf24;
+}
+
