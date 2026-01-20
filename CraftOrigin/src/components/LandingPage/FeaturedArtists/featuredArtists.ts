@@ -13,8 +13,6 @@ import { LucideAngularModule, Star, MapPin } from 'lucide-angular';
     styleUrl: './featuredArtists.css'
 })
 export class FeaturedArtistsComponent {
-    public Star = Star;
-    public MapPin = MapPin;
     public isBrowser: boolean;
 
     constructor(@Inject(PLATFORM_ID) private platformId: Object) {

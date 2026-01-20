@@ -1,0 +1,61 @@
+<section class="py-20 lg:py-28 bg-background">
+  <div class="container mx-auto px-4">
+    <!-- Section Header -->
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <span class="text-primary font-medium text-sm uppercase tracking-wider">
+        Simple &amp; Transparent
+      </span>
+      <h2 class="font-display text-3xl lg:text-5xl font-bold mt-4 mb-6 text-foreground">
+        How It Works
+      </h2>
+      <p class="text-muted-foreground text-lg">
+        We've made it simple for you to discover and own authentic art while 
+        ensuring fair compensation for our artisans.
+      </p>
+    </div>
+
+    <!-- Steps -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div *ngFor="let step of steps; let i = index" class="relative text-center group">
+        <!-- Connector Line -->
+        <div *ngIf="i < steps.length - 1" class="hidden lg:block absolute top-12 left-1/2 w-full h-0.5 bg-border"></div>
+        <!-- Icon -->
+          <div class="relative w-24 h-24 mx-auto rounded-2xl {{step.color}} flex items-center justify-center mb-6 shadow-warm group-hover:scale-110 transition-transform duration-300">
+            <img [src]="'assets/' + step.icon + '.svg'" [alt]="step.title + ' icon'" class="w-10 h-10" />
+            <span class="absolute -top-2 -right-2 w-8 h-8 bg-foreground text-background rounded-full flex items-center justify-center font-bold text-sm">
+              {{ i + 1 }}
+            </span>
+          </div>
+        <!-- Content -->
+        <h3 class="font-display text-xl font-semibold mb-3 text-foreground">
+          {{ step.title }}
+        </h3>
+        <p class="text-muted-foreground leading-relaxed">
+          {{ step.description }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Stats Banner -->
+    <div class="mt-20 bg-card rounded-3xl p-8 lg:p-12 shadow-warm">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+        <div>
+          <p class="font-display text-3xl lg:text-4xl font-bold text-primary mb-2">85%</p>
+          <p class="text-muted-foreground text-sm">Goes to Artists</p>
+        </div>
+        <div>
+          <p class="font-display text-3xl lg:text-4xl font-bold text-accent mb-2">2,500+</p>
+          <p class="text-muted-foreground text-sm">Artists Onboarded</p>
+        </div>
+        <div>
+          <p class="font-display text-3xl lg:text-4xl font-bold text-amber mb-2">15K+</p>
+          <p class="text-muted-foreground text-sm">Artworks Sold</p>
+        </div>
+        <div>
+          <p class="font-display text-3xl lg:text-4xl font-bold text-primary mb-2">50+</p>
+          <p class="text-muted-foreground text-sm">Countries Shipped</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

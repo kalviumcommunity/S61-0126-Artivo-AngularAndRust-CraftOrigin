@@ -1842,4 +1842,64 @@ These fundamentals are essential for fast and confident development during the s
 
 ---
 
+# Responsive Layouts in Angular: Lesson Summary & Today's Progress
+
+## What You Learned
+
+### 1. Responsive Design Principles
+- Responsive design adapts layouts to different screen sizes (mobile, tablet, desktop, large screens).
+- Ensures content remains readable and usable without horizontal scrolling or broken layouts.
+- UI components reorganize intelligently for a seamless user experience.
+
+### 2. CSS Flexbox (One-Dimensional Layouts)
+- Flexbox is ideal for arranging items in a row or column.
+- Example:
+  ```css
+  .container { display: flex; gap: 12px; flex-wrap: wrap; }
+  .card { flex: 1 1 200px; padding: 12px; border: 1px solid #ccc; }
+  ```
+- Items wrap automatically and maintain spacing on smaller screens.
+
+### 3. CSS Grid (Two-Dimensional Layouts)
+- CSS Grid is perfect for layouts with both rows and columns (e.g., dashboards, product cards).
+- Example:
+  ```css
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+  ```
+- Grid adapts the number of columns based on screen size, often without media queries.
+
+### 4. Responsive Breakpoints with Media Queries
+- Use media queries for finer control:
+  ```css
+  @media (max-width: 768px) { .container { flex-direction: column; } }
+  ```
+- Switches layout direction or other styles at specific screen widths.
+
+### 5. Angular Flex Layout (Optional)
+- Angular Flex Layout provides directive-based responsiveness (e.g., `fxLayout`, `fxFlex`).
+- Example:
+  ```html
+  <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="12px">
+    <div fxFlex="50">Left</div>
+    <div fxFlex="50">Right</div>
+  </div>
+  ```
+- Minimal CSS, responsive out-of-the-box.
+
+### 6. Combining Responsiveness with Angular Data Binding
+- Use `*ngFor` to render responsive grids of components (e.g., product cards).
+- Layout remains responsive as data changes.
+
+
+## Today's Work & Achievements
+
+- Fixed SSR and icon rendering issues in Angular (How It Works section)
+- Integrated static SVG icons and ensured correct asset paths
+- Matched color schemes and backgrounds to React reference (Discover & Impact steps)
+- Added/updated CSS for backgrounds, text, and font styles for pixel-perfect match
+- Ensured responsive layout for the How It Works steps using CSS Grid
+- Verified UI matches design on desktop and mobile
+- Learned and applied best practices for responsive, maintainable Angular UIs
+
+---
 

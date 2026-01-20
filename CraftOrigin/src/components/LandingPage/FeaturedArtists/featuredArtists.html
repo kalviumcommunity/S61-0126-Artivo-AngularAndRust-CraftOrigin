@@ -29,9 +29,9 @@
           <div class="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent"></div>
           <!-- Rating Badge -->
           <div class="absolute top-4 right-4 flex items-center gap-1 bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-full">
-            <ng-container *ngIf="isBrowser">
-              <lucide-icon [name]="Star" class="w-4 h-4 fill-amber text-amber"></lucide-icon>
-            </ng-container>
+            <!-- <ng-template [ngIf]="isBrowser">
+              <lucide-icon name="star" class="w-4 h-4 fill-amber text-amber"></lucide-icon>
+            </ng-template> -->
             <span class="font-semibold text-sm">{{ artist.rating }}</span>
           </div>
         </div>
@@ -42,9 +42,9 @@
           </h3>
           <p class="text-primary font-medium mb-3">{{ artist.craft }}</p>
           <div class="flex items-center gap-2 text-muted-foreground text-sm mb-4">
-            <ng-container *ngIf="isBrowser">
-              <lucide-icon [name]="MapPin" class="w-4 h-4"></lucide-icon>
-            </ng-container>
+            <!-- <ng-template [ngIf]="isBrowser">
+              <lucide-icon name="map-pin" class="w-4 h-4"></lucide-icon>
+            </ng-template> -->
             <span>{{ artist.location }}</span>
           </div>
           <div class="flex items-center justify-between pt-4 border-t border-border">
