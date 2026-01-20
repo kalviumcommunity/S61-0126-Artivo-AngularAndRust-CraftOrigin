@@ -1584,3 +1584,262 @@ This project is intended for learning:
 * REST API concepts in Rust
 * Actix routing & handlers
 * Safe and predictable backend design
+
+
+# Angular CLI – Learning Documentation 
+
+In this lesson, I learned how to use the **Angular CLI**, the command-line tool that powers Angular applications.
+
+Angular CLI acts like a **developer toolkit**. It automates repetitive tasks, enforces best practices, and helps keep Angular projects **scalable, clean, and maintainable**.
+
+By the end of this session, I understood how to:
+
+* Create Angular files using CLI generators
+* Run an Angular app locally
+* Build optimized production bundles
+* Run unit tests
+* Understand when and why each CLI command is used
+
+
+---
+
+## 1️⃣ What is Angular CLI?
+
+Angular CLI (Command-Line Interface) is a powerful tool provided by Angular to simplify development.
+
+It helps by:
+
+* Generating boilerplate code automatically
+* Setting up best-practice folder structures
+* Running a local development server
+* Creating optimized production builds
+* Handling unit testing setup
+
+👉 Instead of manually creating files and configurations, Angular CLI does everything for you in a structured and reliable way.
+
+---
+
+## 2️⃣ Installing Angular CLI
+
+If Angular CLI is not already installed, use the following command:
+
+```bash
+npm install -g @angular/cli
+```
+
+To verify installation:
+
+```bash
+ng version
+```
+
+A successful installation shows:
+
+* Angular version
+* Node.js version
+* Angular CLI version
+
+---
+
+## 3️⃣ Essential Angular CLI Commands
+
+### A. Generating Code – `ng generate` / `ng g`
+
+Angular CLI allows us to generate most Angular files automatically.
+
+#### Generate a Component
+
+```bash
+ng generate component dashboard
+```
+
+or shorter:
+
+```bash
+ng g c dashboard
+```
+
+This creates:
+
+```
+dashboard/
+ ├─ dashboard.component.ts
+ ├─ dashboard.component.html
+ ├─ dashboard.component.css
+ └─ dashboard.component.spec.ts
+```
+
+---
+
+#### Generate a Service
+
+```bash
+ng g s auth
+```
+
+Creates a service file used for business logic or API calls.
+
+---
+
+#### Generate a Module
+
+```bash
+ng g m user
+```
+
+Creates a module to group related features.
+
+---
+
+#### Why Code Generation Matters
+
+* Maintains consistent project structure
+* Automatically registers components (for non-standalone apps)
+* Saves development time
+* Prevents manual setup errors
+
+---
+
+### B. Running the App Locally – `ng serve`
+
+To start the development server:
+
+```bash
+ng serve
+```
+
+or:
+
+```bash
+ng s
+```
+
+Open in browser:
+
+```
+http://localhost:4200
+```
+
+#### Features
+
+* Hot Reload → UI updates instantly on save
+* Compilation warnings → shows template & TypeScript errors
+* Ideal for fast development and debugging
+
+---
+
+### C. Building the App – `ng build`
+
+To create a production-ready build:
+
+```bash
+ng build
+```
+
+For optimized output:
+
+```bash
+ng build --configuration production
+```
+
+This generates a **dist/** folder containing:
+
+* Minified JavaScript and CSS
+* Optimized bundles
+* Assets ready for deployment
+
+👉 This build can be deployed using Rust backend or any hosting service.
+
+---
+
+### D. Running Tests – `ng test`
+
+Angular uses **Karma + Jasmine** for unit testing.
+
+Run tests using:
+
+```bash
+ng test
+```
+
+This:
+
+* Launches the test runner
+* Watches file changes
+* Displays pass/fail results
+* Helps maintain code quality
+
+Unit testing becomes very important as the project grows.
+
+---
+
+## 4️⃣ CLI Workflow Cheat Sheet
+
+| Task                 | Command                               | Purpose                             |
+| -------------------- | ------------------------------------- | ----------------------------------- |
+| Create a component   | `ng g c name`                         | Generates TS, HTML, CSS, spec files |
+| Create a service     | `ng g s name`                         | Creates injectable service          |
+| Serve locally        | `ng serve`                            | Starts dev server with hot reload   |
+| Build for production | `ng build --configuration production` | Creates optimized bundle            |
+| Run tests            | `ng test`                             | Runs unit tests                     |
+| Check versions       | `ng version`                          | Shows Angular & Node versions       |
+
+---
+
+## 5️⃣ Small Practice Exercise (Recommended)
+
+### Step 1: Generate a Component
+
+```bash
+ng g c counter
+```
+
+### Step 2: Add Logic
+
+Inside `counter.component.ts`:
+
+* Add a number variable
+* Create `increment()` and `decrement()` methods
+
+### Step 3: Template
+
+* Display the count
+* Add **+** and **−** buttons
+* Bind button clicks to methods
+
+### Step 4: Run the App
+
+```bash
+ng serve
+```
+
+This exercise reinforces:
+
+* CLI code generation
+* Data binding
+* Event handling
+* Debugging with live reload
+
+---
+
+## 6️⃣ My Understanding After This Lesson
+
+After completing this lesson, I can clearly answer:
+
+* **Which CLI command creates components?**
+  → `ng g c`
+
+* **How do I run an Angular app locally?**
+  → `ng serve`
+
+* **What does the build process generate?**
+  → An optimized production bundle inside `dist/`
+
+* **How do I run tests?**
+  → `ng test`
+
+These fundamentals are essential for fast and confident development during the sprint.
+
+---
+
+
