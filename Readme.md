@@ -1503,3 +1503,84 @@ This module gave me a strong foundation for building safe and maintainable Rust 
 
 ---
 
+## Actix REST API
+
+A simple REST API built using **Rust** and **Actix Web**, demonstrating how to create typed routes, handlers, and JSON-based request/response models.
+
+---
+
+## Features
+
+* RESTful API structure
+* Typed request & response models using Serde
+* JSON request handling
+* Proper HTTP status codes
+* Clean separation of routes, handlers, and models
+
+---
+
+## Tech Stack
+
+* Rust
+* Actix Web
+* Serde (JSON serialization/deserialization)
+
+---
+
+## Project Structure
+
+```
+src/
+ ├── main.rs
+ ├── routes/
+ ├── handlers/
+ └── models/
+```
+
+---
+
+## Running the Server
+
+```bash
+cargo run
+```
+
+Server will start at:
+
+```
+http://localhost:8080
+```
+
+---
+
+## API Endpoints
+
+| Method | Endpoint    | Description    |
+| ------ | ----------- | -------------- |
+| GET    | /users      | Get all users  |
+| POST   | /users      | Create a user  |
+| GET    | /users/{id} | Get user by ID |
+
+---
+
+## Testing with cURL
+
+```bash
+curl http://localhost:8080/users
+```
+
+```bash
+curl -X POST http://localhost:8080/users \
+-H "Content-Type: application/json" \
+-d '{"name":"Alex","email":"alex@test.com"}'
+```
+
+---
+
+## Learning Goal
+
+This project is intended for learning:
+
+* REST API concepts in Rust
+* Actix routing & handlers
+* Safe and predictable backend design
