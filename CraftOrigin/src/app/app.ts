@@ -4,11 +4,12 @@ import { ProductService } from './services/product.service';
 import { HeroSectionComponent } from '../components/LandingPage/HeroSection/heroSection';
 import { NavbarComponent } from '../components/LandingPage/Navigation/navagation';
 import { FeaturedArtistsComponent } from '../components/LandingPage/FeaturedArtists/featuredArtists';
+import { ProductGalleryComponent } from '../components/LandingPage/FeaturedArtWorks/FeaturedArtWork';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeroSectionComponent, NavbarComponent, FeaturedArtistsComponent],
+  imports: [RouterOutlet, HeroSectionComponent, NavbarComponent, FeaturedArtistsComponent, ProductGalleryComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
