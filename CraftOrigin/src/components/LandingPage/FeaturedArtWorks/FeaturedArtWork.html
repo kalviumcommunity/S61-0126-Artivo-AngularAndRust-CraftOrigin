@@ -1,0 +1,92 @@
+<section class="product-gallery">
+  <div class="product-gallery__container">
+    <!-- Section Header -->
+    <div class="product-gallery__header">
+      <div>
+        <span class="product-gallery__subtitle">Handpicked For You</span>
+        <h2 class="product-gallery__title">Featured Artworks</h2>
+      </div>
+
+      <!-- Category Filters -->
+      <div class="product-gallery__filters">
+        <button
+          *ngFor="let cat of categories; let i = index"
+          (click)="selectCategory(cat)"
+          [class.active]="selectedCategory === cat"
+        >
+          {{ cat }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="product-gallery__grid">
+      <div class="product-card" *ngFor="let product of filteredProducts">
+        <!-- Image -->
+        <div class="product-card__image">
+          <img
+            [src]="product.image"
+            [alt]="product.name"
+          />
+        </div>
+
+        <!-- Badges -->
+        <div class="product-card__badges">
+          <span *ngIf="product.isNew" class="badge badge--accent">
+            New
+          </span>
+          <span *ngIf="product.originalPrice" class="badge badge--primary">
+            Sale
+          </span>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="product-card__actions">
+          <button class="icon-btn">
+            <lucide-icon name="heart" class="w-4 h-4"></lucide-icon>
+          </button>
+        </div>
+
+        <!-- Add to Cart -->
+        <div class="product-card__cta">
+          <button class="add-btn">
+            <lucide-icon name="shopping-bag" class="w-4 h-4"></lucide-icon>
+            Add to Cart
+          </button>
+        </div>
+
+        <!-- Content -->
+        <div class="product-card__content">
+          <p class="product-card__category">
+            {{ product.category }}
+          </p>
+
+          <h3 class="product-card__name">
+            {{ product.name }}
+          </h3>
+
+          <p class="product-card__artist">
+            by {{ product.artist }}
+          </p>
+
+          <div class="product-card__price">
+            <span class="current">
+              ₹{{ product.price | number: '1.0-0' }}
+            </span>
+
+            <span *ngIf="product.originalPrice" class="original">
+              ₹{{ product.originalPrice | number: '1.0-0' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View All CTA -->
+    <div class="product-gallery__footer">
+      <button class="outline-btn">
+        View All Products
+      </button>
+    </div>
+  </div>
+</section>
