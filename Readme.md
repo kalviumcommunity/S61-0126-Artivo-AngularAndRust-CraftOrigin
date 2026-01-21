@@ -2139,3 +2139,9 @@ ng test
 ```
 
 ---
+## Database Setup & Team Workflow
+
+This project uses **PostgreSQL via Docker** for local development. Each team member runs their own PostgreSQL container using the shared `docker-compose.yml`, ensuring a consistent database schema while keeping data isolated per developer.
+
+Database structure is shared through migrations, while environment variables are managed using `.env.example`. This approach enables reliable local development and smooth collaboration without sharing sensitive credentials or local data.
+
