@@ -1,0 +1,48 @@
+version: "3.9"
+
+# This Compose file starts PostgreSQL and the Rust backend together.
+# How to run:
+#   1) cd backend
+#   2) docker compose up --build
+# Data persistence:
+#   We use a named Docker volume (db_data) so that PostgreSQL data
+#   survives container restarts and rebuilds.
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: backend_postgres
+    environment:
+      POSTGRES_DB: my_app_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d my_app_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rust_backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      # Ensure the server binds to all interfaces in the container
+      HOST: "0.0.0.0"
+    ports:
+      - "8080:8080"
+
+volumes:
+  db_data:
+    # Named volume for persistent PostgreSQL storage
+    name: backend_db_data
