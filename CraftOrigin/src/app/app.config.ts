@@ -2,7 +2,23 @@ import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListen
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { LucideAngularModule, Heart, ShoppingBag, Search, User, Menu, X } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  Heart,
+  ShoppingBag,
+  Search,
+  User,
+  Menu,
+  X,
+  Facebook,
+  Instagram,
+  Twitter,
+  Youtube,
+  Mail,
+  Phone,
+  MapPin
+} from 'lucide-angular';
+import { SharedModule } from './shared/shared.module';
 
 import { routes } from './app.routes';
 
@@ -19,8 +35,18 @@ export const appConfig: ApplicationConfig = {
         Search,
         User,
         Menu,
-        X
+        X,
+        Facebook,
+        Instagram,
+        Twitter,
+        Youtube,
+        Mail,
+        Phone,
+        MapPin
       })
+    ),
+    importProvidersFrom(
+      SharedModule
     )
   ]
 };

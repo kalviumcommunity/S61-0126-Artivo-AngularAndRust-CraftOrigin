@@ -7,10 +7,11 @@ import { FeaturedArtistsComponent } from '../components/LandingPage/FeaturedArti
 import { ProductGalleryComponent } from '../components/LandingPage/FeaturedArtWorks/FeaturedArtWork';
 import { HowItWorksComponent } from '../components/LandingPage/HowItWorks/howItWorks';
 import { CallToActionComponent } from '../components/LandingPage/CallToAction/CallToAction';
+import { FooterComponent } from '../components/LandingPage/Footer/footer.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeroSectionComponent, NavbarComponent, FeaturedArtistsComponent, ProductGalleryComponent, HowItWorksComponent, CallToActionComponent],
+  imports: [RouterOutlet, HeroSectionComponent, NavbarComponent, FeaturedArtistsComponent, ProductGalleryComponent, HowItWorksComponent, CallToActionComponent, FooterComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
