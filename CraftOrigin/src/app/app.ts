@@ -6,11 +6,11 @@ import { NavbarComponent } from '../components/LandingPage/Navigation/navagation
 import { FeaturedArtistsComponent } from '../components/LandingPage/FeaturedArtists/featuredArtists';
 import { ProductGalleryComponent } from '../components/LandingPage/FeaturedArtWorks/FeaturedArtWork';
 import { HowItWorksComponent } from '../components/LandingPage/HowItWorks/howItWorks';
-
+import { CallToActionComponent } from '../components/LandingPage/CallToAction/CallToAction';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeroSectionComponent, NavbarComponent, FeaturedArtistsComponent, ProductGalleryComponent, HowItWorksComponent],
+  imports: [RouterOutlet, HeroSectionComponent, NavbarComponent, FeaturedArtistsComponent, ProductGalleryComponent, HowItWorksComponent, CallToActionComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
