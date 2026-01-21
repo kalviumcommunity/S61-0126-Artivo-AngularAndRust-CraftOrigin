@@ -1982,3 +1982,160 @@ A complete **Call To Action section** was successfully built with:
 * Improved user experience and accessibility best practices
 
 ---
+
+# Reusable UI Components & Shared Modules – Learning & Implementation
+
+## Overview
+
+In this module, I learned how to design **reusable UI components** in Angular and organize them using **Shared Modules**.
+The focus was on writing clean, maintainable code that can be reused across multiple pages without duplication.
+
+This approach helps in building scalable Angular applications with consistent UI and better teamwork.
+
+---
+
+## What I Learned
+
+### 1. Importance of Reusability
+
+I learned why reusing components is important in real-world applications:
+
+* It reduces duplicate code and bugs
+* It keeps the UI consistent across the application
+* It speeds up development
+* It follows the **DRY (Don’t Repeat Yourself)** principle
+
+Instead of rewriting the same button, card, or layout multiple times, we can create it once and reuse it everywhere.
+
+---
+
+### 2. What Makes a Component Reusable
+
+I understood that a reusable component should:
+
+* Accept data and configuration using `@Input()`
+* Communicate user actions using `@Output()`
+* Avoid page-specific or business logic
+* Have flexible and configurable styles
+
+This ensures the component can be used in different parts of the application without modification.
+
+---
+
+### 3. Using `@Input()` for Configuration
+
+I learned how `@Input()` allows parent components to pass data into child components.
+
+#### Example Learning:
+
+* A button component should not hardcode text or state
+* Instead, label and disabled state should come from inputs
+
+```ts
+@Input() label = 'Click';
+@Input() disabled = false;
+```
+
+```html
+<button [disabled]="disabled">{{ label }}</button>
+```
+
+#### Usage:
+
+```html
+<app-button label="Save" [disabled]="isSaving"></app-button>
+```
+
+This makes the button reusable in different situations like **Save**, **Submit**, or **Delete**.
+
+---
+
+### 4. Using `@Output()` for Communication
+
+I learned that reusable components should not decide what happens on click.
+Instead, they should **emit events** and let the parent handle the logic.
+
+```ts
+@Output() clicked = new EventEmitter<void>();
+
+onClick() {
+  this.clicked.emit();
+}
+```
+
+```html
+<app-button (clicked)="handleSave()"></app-button>
+```
+
+This keeps the component clean and flexible.
+
+---
+
+### 5. Shared Module Pattern
+
+I learned how to organize reusable components using a **Shared Module**.
+
+#### Why Shared Module?
+
+* Central place for common components
+* Easy to import and reuse across the app
+* Improves project structure
+
+#### Folder Structure Used:
+
+```
+src/app/shared/
+├─ components/
+│  ├─ button/
+│  ├─ card/
+└─ shared.module.ts
+```
+
+#### Shared Module Implementation:
+
+```ts
+@NgModule({
+  declarations: [ButtonComponent, CardComponent],
+  exports: [ButtonComponent, CardComponent],
+})
+export class SharedModule {}
+```
+
+Any feature module can now use these components by importing `SharedModule`.
+
+---
+
+### 6. Styling Reusable Components
+
+I learned best practices for styling shared components:
+
+* Keep CSS minimal and clean
+* Avoid fixed margins or layout assumptions
+* Use theme colors and consistent classes
+* Make visual styles configurable (size, variant, color)
+
+This ensures components fit well in different layouts.
+
+---
+
+## Best Practices I Followed
+
+* Built small, single-purpose components
+* Used Inputs and Outputs only
+* Avoided business logic inside UI components
+* Made components configurable
+* Documented usage clearly
+
+---
+
+## Angular CLI Commands Used
+
+```bash
+ng g c my-button
+ng g m shared
+ng serve
+ng build --configuration production
+ng test
+```
+
+---
