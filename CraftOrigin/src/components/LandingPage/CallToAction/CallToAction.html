@@ -1,0 +1,30 @@
+
+<section class="cta-section">
+  <!-- Background Pattern -->
+  <div class="cta-bg-pattern">
+    <div class="cta-bg-circle-amber"></div>
+    <div class="cta-bg-circle-accent"></div>
+  </div>
+  <div class="cta-container">
+    <div class="cta-icon">
+      <img src="assets/palette.svg" alt="Palette Icon" class="palette-icon" />
+    </div>
+    <h2 class="cta-title">{{ title }}</h2>
+    <p class="cta-subtitle">{{ subtitle }}</p>
+    <div class="cta-buttons">
+      <button class="cta-btn-main" [disabled]="primaryBtnDisabled" (click)="onPrimaryClick()">
+        {{ primaryBtnText }}
+        <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+      <button class="cta-btn-secondary" (click)="onLearnMoreClick()">
+        {{ learnMoreBtnText }}
+      </button>
+    </div>
+    <div class="cta-trust-points">
+      <div *ngFor="let point of trustPoints" class="cta-trust-point">
+        <span class="trust-dot"></span>
+        <span class="trust-text">{{ point }}</span>
+      </div>
+    </div>
+  </div>
+</section>
