@@ -2145,3 +2145,6 @@ This project uses **PostgreSQL via Docker** for local development. Each team mem
 
 Database structure is shared through migrations, while environment variables are managed using `.env.example`. This approach enables reliable local development and smooth collaboration without sharing sensitive credentials or local data.
 
+Working with Angular Forms
+
+This module introduces Angular Forms and explains how Angular handles user input in a structured and predictable way. It covers both Template-Driven Forms and Reactive Forms, showing how forms act as state managers that connect user input with application logic. The lesson focuses on building reliable, maintainable, and scalable forms for real-world features like login, registration, and dashboards.
