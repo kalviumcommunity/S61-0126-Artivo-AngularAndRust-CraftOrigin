@@ -2148,3 +2148,10 @@ Database structure is shared through migrations, while environment variables are
 Working with Angular Forms
 
 This module introduces Angular Forms and explains how Angular handles user input in a structured and predictable way. It covers both Template-Driven Forms and Reactive Forms, showing how forms act as state managers that connect user input with application logic. The lesson focuses on building reliable, maintainable, and scalable forms for real-world features like login, registration, and dashboards.
+
+Database Migrations with SQLx
+
+This project uses SQLx migrations to manage PostgreSQL schema changes in a safe and version-controlled way.
+All database changes are tracked using migration files, ensuring consistent schemas across environments.
+
+Migrations are applied automatically on application startup and can also be run manually using the SQLx CLI.
