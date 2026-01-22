@@ -1,0 +1,174 @@
+<div class="register-container">
+  <!-- Header -->
+  <div class="register-header">
+    <h2 class="register-title">Create Account</h2>
+    <p class="register-subtitle">Join CraftOrigin today</p>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="successMessage" class="success-message">
+    <span class="success-icon">✓</span>
+    <span>{{ successMessage }}</span>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    <span class="error-icon">⚠️</span>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <!-- Registration Form -->
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+    
+    <!-- Full Name Field -->
+    <div class="form-group">
+      <label for="name" class="form-label">Full Name</label>
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        class="form-input"
+        [class.error]="name?.invalid && name?.touched"
+        placeholder="Enter your full name"
+        autocomplete="name"
+      />
+      <div *ngIf="name?.invalid && name?.touched" class="field-error">
+        <span *ngIf="name?.errors?.['required']">Name is required</span>
+        <span *ngIf="name?.errors?.['minlength']">Name must be at least 2 characters</span>
+      </div>
+    </div>
+
+    <!-- Email Field -->
+    <div class="form-group">
+      <label for="register-email" class="form-label">Email Address</label>
+      <input
+        type="email"
+        id="register-email"
+        formControlName="email"
+        class="form-input"
+        [class.error]="email?.invalid && email?.touched"
+        placeholder="Enter your email"
+        autocomplete="email"
+      />
+      <div *ngIf="email?.invalid && email?.touched" class="field-error">
+        <span *ngIf="email?.errors?.['required']">Email is required</span>
+        <span *ngIf="email?.errors?.['email']">Please enter a valid email</span>
+      </div>
+    </div>
+
+    <!-- Password Field -->
+    <div class="form-group">
+      <label for="register-password" class="form-label">Password</label>
+      <div class="password-input-wrapper">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          id="register-password"
+          formControlName="password"
+          class="form-input"
+          [class.error]="password?.invalid && password?.touched"
+          placeholder="Create a password"
+          autocomplete="new-password"
+        />
+        <button
+          type="button"
+          class="password-toggle"
+          (click)="togglePasswordVisibility()"
+          aria-label="Toggle password visibility"
+        >
+          {{ showPassword ? '👁️' : '👁️‍🗨️' }}
+        </button>
+      </div>
+      <div *ngIf="password?.invalid && password?.touched" class="field-error">
+        <span *ngIf="password?.errors?.['required']">Password is required</span>
+        <span *ngIf="password?.errors?.['minlength']">Password must be at least 6 characters</span>
+        <span *ngIf="password?.errors?.['passwordStrength']">Password must contain uppercase, lowercase, and number</span>
+      </div>
+      
+      <!-- Password Strength Indicator -->
+      <div class="password-strength" *ngIf="password?.value">
+        <div class="strength-bars">
+          <div class="strength-bar" 
+               [class.weak]="password?.value.length >= 1"
+               [class.medium]="password?.value.length >= 6"
+               [class.strong]="password?.value.length >= 8 && !password?.errors?.['passwordStrength']">
+          </div>
+          <div class="strength-bar" 
+               [class.medium]="password?.value.length >= 6"
+               [class.strong]="password?.value.length >= 8 && !password?.errors?.['passwordStrength']">
+          </div>
+          <div class="strength-bar" 
+               [class.strong]="password?.value.length >= 8 && !password?.errors?.['passwordStrength']">
+          </div>
+        </div>
+        <span class="strength-text">
+          <span *ngIf="password?.value.length < 6">Weak</span>
+          <span *ngIf="password?.value.length >= 6 && password?.errors?.['passwordStrength']">Medium</span>
+          <span *ngIf="password?.value.length >= 8 && !password?.errors?.['passwordStrength']">Strong</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Confirm Password Field -->
+    <div class="form-group">
+      <label for="confirm-password" class="form-label">Confirm Password</label>
+      <div class="password-input-wrapper">
+        <input
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          id="confirm-password"
+          formControlName="confirmPassword"
+          class="form-input"
+          [class.error]="(confirmPassword?.invalid && confirmPassword?.touched) || (registerForm.errors?.['passwordMismatch'] && confirmPassword?.touched)"
+          placeholder="Confirm your password"
+          autocomplete="new-password"
+        />
+        <button
+          type="button"
+          class="password-toggle"
+          (click)="toggleConfirmPasswordVisibility()"
+          aria-label="Toggle confirm password visibility"
+        >
+          {{ showConfirmPassword ? '👁️' : '👁️‍🗨️' }}
+        </button>
+      </div>
+      <div *ngIf="confirmPassword?.touched" class="field-error">
+        <span *ngIf="confirmPassword?.errors?.['required']">Please confirm your password</span>
+        <span *ngIf="registerForm.errors?.['passwordMismatch'] && !confirmPassword?.errors?.['required']">Passwords do not match</span>
+      </div>
+    </div>
+
+    <!-- Terms and Conditions -->
+    <div class="terms-notice">
+      <p>By signing up, you agree to our <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a></p>
+    </div>
+
+    <!-- Submit Button -->
+    <button
+      type="submit"
+      class="register-button"
+      [disabled]="isLoading || registerForm.invalid"
+    >
+      <span *ngIf="!isLoading">Create Account</span>
+      <span *ngIf="isLoading" class="loading-spinner">
+        <span class="spinner"></span>
+        Creating account...
+      </span>
+    </button>
+  </form>
+
+  <!-- Divider -->
+  <div class="divider">
+    <span>OR</span>
+  </div>
+
+  <!-- Social Registration Options -->
+  <div class="social-register">
+    <button type="button" class="social-button google-button">
+      <span class="social-icon">🔵</span>
+      Sign up with Google
+    </button>
+    <button type="button" class="social-button facebook-button">
+      <span class="social-icon">📘</span>
+      Sign up with Facebook
+    </button>
+  </div>
+</div>

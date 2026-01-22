@@ -2149,9 +2149,14 @@ Working with Angular Forms
 
 This module introduces Angular Forms and explains how Angular handles user input in a structured and predictable way. It covers both Template-Driven Forms and Reactive Forms, showing how forms act as state managers that connect user input with application logic. The lesson focuses on building reliable, maintainable, and scalable forms for real-world features like login, registration, and dashboards.
 
-Database Migrations with SQLx
+Here is a **short, clean, and professional README** you can use directly 👇
 
-This project uses SQLx migrations to manage PostgreSQL schema changes in a safe and version-controlled way.
-All database changes are tracked using migration files, ensuring consistent schemas across environments.
+---
 
-Migrations are applied automatically on application startup and can also be run manually using the SQLx CLI.
+### Angular Form Validation and Error Handling
+
+This lesson demonstrates how to build user-friendly and reliable Angular forms using proper validation and clear error handling. It covers both template-driven and reactive forms, showing how to prevent invalid submissions, display meaningful error messages, and guide users with visual feedback.
+
+By completing this module, you will understand how to apply validation rules, manage form state safely, and create forms that provide a clean and professional user experience.
+
+---

@@ -1,17 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, of } from 'rxjs';
-
-// Login request interface
+import { RegisterComponent } from '../Register/register';
 interface LoginRequest {
   email: string;
   password: string;
 }
 
-// Login response interface
+
 interface LoginResponse {
   token?: string;
   user?: {
@@ -37,8 +36,10 @@ export class LoginComponent {
   isLoading: boolean = false;
   errorMessage: string = '';
   showPassword: boolean = false;
+  // showRegisterModal: boolean = false;
 
   private apiUrl: string = 'http://localhost:8080/api/auth/login';
+  // private registrationSuccessListener: any;
 
   constructor(
     private fb: FormBuilder,
@@ -51,12 +52,13 @@ export class LoginComponent {
     });
   }
 
-  // Toggle password visibility
+  // ngOnInit(): void {}
+  // ngOnDestroy(): void {}
+
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
 
-  // Get form control for easy access in template
   get email() {
     return this.loginForm.get('email');
   }
@@ -65,10 +67,8 @@ export class LoginComponent {
     return this.loginForm.get('password');
   }
 
-  // Handle form submission
   onSubmit(): void {
     if (this.loginForm.invalid) {
-      // Mark all fields as touched to show validation errors
       Object.keys(this.loginForm.controls).forEach(key => {
         this.loginForm.get(key)?.markAsTouched();
       });
@@ -87,26 +87,22 @@ export class LoginComponent {
       next: (response) => {
         this.isLoading = false;
         
-        // Store token if provided
         if (response.token) {
           localStorage.setItem('authToken', response.token);
         }
         
-        // Store user data if provided
         if (response.user) {
           localStorage.setItem('user', JSON.stringify(response.user));
         }
 
-        // Navigate to dashboard or home
         this.router.navigate(['/dashboard']).catch(() => {
-          this.router.navigate(['/']); // Fallback to home if dashboard route doesn't exist
+          this.router.navigate(['/']);
         });
       },
       error: (error) => {
         this.isLoading = false;
         console.error('Login error:', error);
         
-        // Handle different error scenarios
         if (error.status === 401) {
           this.errorMessage = 'Invalid email or password. Please try again.';
         } else if (error.status === 0) {
@@ -118,14 +114,11 @@ export class LoginComponent {
     });
   }
 
-  // Login API call
   private login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(this.apiUrl, credentials).pipe(
       catchError((error) => {
-        // If backend is not available, use mock response for development
         console.warn('Backend not available, using mock login:', error);
         
-        // Mock successful login for development
         if (credentials.email && credentials.password) {
           return of({
             token: 'mock-jwt-token-' + Date.now(),
@@ -142,10 +135,8 @@ export class LoginComponent {
     );
   }
 
-  // Navigate to registration page
-  navigateToRegister(): void {
-    this.router.navigate(['/register']).catch(() => {
-      console.log('Register route not found');
-    });
+  // Navigate to register page
+  goToRegister(): void {
+    this.router.navigate(['/register']);
   }
 }

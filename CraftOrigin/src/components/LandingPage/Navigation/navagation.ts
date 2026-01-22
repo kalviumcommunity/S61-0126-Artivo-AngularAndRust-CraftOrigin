@@ -34,15 +34,25 @@ interface LoginResponse {
   templateUrl: './navigation.html',
   styleUrl: './navigation.css'
 })
+
 export class NavbarComponent {
   isOpen = false;
-  showLoginModal = false;
+  showAuthModal = false;
+  authMode: 'signin' | 'signup' = 'signin';
   loginForm: FormGroup;
   isLoading: boolean = false;
   errorMessage: string = '';
   showPassword: boolean = false;
+  // Registration form state
+  registerForm: FormGroup;
+  registerLoading: boolean = false;
+  registerError: string = '';
+  registerSuccess: string = '';
+  showRegisterPassword: boolean = false;
+  showRegisterConfirmPassword: boolean = false;
 
   private apiUrl: string = 'http://localhost:8080/api/auth/login';
+  private registerApiUrl: string = 'http://localhost:8080/api/auth/register';
 
   constructor(
     private router: Router,
@@ -53,25 +63,87 @@ export class NavbarComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
+    this.registerForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]]
+    }, { validators: this.passwordMatchValidator });
   }
 
   toggleMenu() {
     this.isOpen = !this.isOpen;
   }
 
-  toggleLoginModal() {
-    this.showLoginModal = !this.showLoginModal;
-    if (!this.showLoginModal) {
-      // Reset form when closing
-      this.loginForm.reset();
-      this.errorMessage = '';
-    }
-  }
 
-  closeLoginModal() {
-    this.showLoginModal = false;
+
+  openAuthModal(mode: 'signin' | 'signup' = 'signin') {
+    this.authMode = mode;
+    this.showAuthModal = true;
     this.loginForm.reset();
     this.errorMessage = '';
+    this.registerForm.reset();
+    this.registerError = '';
+    this.registerSuccess = '';
+  }
+
+  setAuthMode(mode: 'signin' | 'signup') {
+    this.authMode = mode;
+    // Do not reset forms here to preserve user input when toggling tabs
+  }
+
+  closeAuthModal() {
+    this.showAuthModal = false;
+    this.loginForm.reset();
+    this.errorMessage = '';
+    this.registerForm.reset();
+    this.registerError = '';
+    this.registerSuccess = '';
+  }
+
+
+  // Removed closeLoginModal and closeRegisterModal, replaced by closeAuthModal
+  // Registration logic
+  passwordMatchValidator(form: FormGroup) {
+    const password = form.get('password')?.value;
+    const confirmPassword = form.get('confirmPassword')?.value;
+    return password === confirmPassword ? null : { passwordMismatch: true };
+  }
+
+  get registerName() { return this.registerForm.get('name'); }
+  get registerEmail() { return this.registerForm.get('email'); }
+  get registerPassword() { return this.registerForm.get('password'); }
+  get registerConfirmPassword() { return this.registerForm.get('confirmPassword'); }
+
+  toggleRegisterPasswordVisibility() { this.showRegisterPassword = !this.showRegisterPassword; }
+  toggleRegisterConfirmPasswordVisibility() { this.showRegisterConfirmPassword = !this.showRegisterConfirmPassword; }
+
+  onRegisterSubmit() {
+    if (this.registerForm.invalid) {
+      Object.keys(this.registerForm.controls).forEach(key => {
+        this.registerForm.get(key)?.markAsTouched();
+      });
+      return;
+    }
+    this.registerLoading = true;
+    this.registerError = '';
+    this.registerSuccess = '';
+    const data = this.registerForm.value;
+    this.http.post<any>(this.registerApiUrl, data).pipe(
+      catchError((error) => {
+        this.registerLoading = false;
+        this.registerError = error.error?.message || 'Registration failed.';
+        return of(null);
+      })
+    ).subscribe((res) => {
+      this.registerLoading = false;
+      if (res && res.token) {
+        this.registerSuccess = 'Account created! You can now sign in.';
+        setTimeout(() => {
+          this.authMode = 'signin';
+        }, 1200);
+      }
+    });
   }
 
   // Toggle password visibility
@@ -121,7 +193,7 @@ export class NavbarComponent {
         }
 
         // Close modal and navigate
-        this.closeLoginModal();
+        this.closeAuthModal();
         
         // Navigate to dashboard or home
         this.router.navigate(['/dashboard']).catch(() => {
@@ -168,11 +240,12 @@ export class NavbarComponent {
     );
   }
 
-  // Navigate to registration page
+  // Switch to register modal from login
   navigateToRegister(): void {
-    this.closeLoginModal();
-    this.router.navigate(['/register']).catch(() => {
-      console.log('Register route not found');
-    });
+    this.setAuthMode('signup');
+  }
+
+  navigateToLogin(): void {
+    this.setAuthMode('signin');
   }
 }
