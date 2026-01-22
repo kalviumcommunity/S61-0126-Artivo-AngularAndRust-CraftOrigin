@@ -3,7 +3,6 @@ mod routes;
 mod handlers;
 mod models;
 mod config;
-use crate::config::database::ensure_schema;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -17,7 +16,10 @@ let pool = sqlx::PgPool::connect(&database_url)
     .await
     .expect("Failed to connect to DB");
 
-ensure_schema(&pool).await;
+sqlx::migrate!("./migrations")
+    .run(&pool)
+    .await
+    .expect("Failed to run database migrations");
 
     HttpServer::new(move|| {
         App::new()
