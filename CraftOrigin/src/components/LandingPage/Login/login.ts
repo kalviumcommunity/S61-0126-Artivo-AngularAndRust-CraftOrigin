@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, of } from 'rxjs';
-import { LucideAngularModule } from 'lucide-angular';
 
 // Login request interface
 interface LoginRequest {
@@ -24,19 +23,16 @@ interface LoginResponse {
 }
 
 @Component({
-  selector: 'app-navbar',
+  selector: 'app-login',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    LucideAngularModule
+    ReactiveFormsModule
   ],
-  templateUrl: './navigation.html',
-  styleUrl: './navigation.css'
+  templateUrl: './login.html',
+  styleUrl: './login.css'
 })
-export class NavbarComponent {
-  isOpen = false;
-  showLoginModal = false;
+export class LoginComponent {
   loginForm: FormGroup;
   isLoading: boolean = false;
   errorMessage: string = '';
@@ -45,33 +41,14 @@ export class NavbarComponent {
   private apiUrl: string = 'http://localhost:8080/api/auth/login';
 
   constructor(
-    private router: Router,
     private fb: FormBuilder,
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
-  }
-
-  toggleMenu() {
-    this.isOpen = !this.isOpen;
-  }
-
-  toggleLoginModal() {
-    this.showLoginModal = !this.showLoginModal;
-    if (!this.showLoginModal) {
-      // Reset form when closing
-      this.loginForm.reset();
-      this.errorMessage = '';
-    }
-  }
-
-  closeLoginModal() {
-    this.showLoginModal = false;
-    this.loginForm.reset();
-    this.errorMessage = '';
   }
 
   // Toggle password visibility
@@ -120,9 +97,6 @@ export class NavbarComponent {
           localStorage.setItem('user', JSON.stringify(response.user));
         }
 
-        // Close modal and navigate
-        this.closeLoginModal();
-        
         // Navigate to dashboard or home
         this.router.navigate(['/dashboard']).catch(() => {
           this.router.navigate(['/']); // Fallback to home if dashboard route doesn't exist
@@ -170,7 +144,6 @@ export class NavbarComponent {
 
   // Navigate to registration page
   navigateToRegister(): void {
-    this.closeLoginModal();
     this.router.navigate(['/register']).catch(() => {
       console.log('Register route not found');
     });
