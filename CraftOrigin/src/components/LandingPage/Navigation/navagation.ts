@@ -248,4 +248,53 @@ export class NavbarComponent {
   navigateToLogin(): void {
     this.setAuthMode('signin');
   }
+
+  // Scroll to section on the same page
+  scrollToSection(sectionId: string): void {
+    // Close mobile menu if open
+    this.isOpen = false;
+    
+    // Check if we're on the home page
+    const currentUrl = this.router.url;
+    const isOnHomePage = currentUrl === '/' || currentUrl === '';
+    
+    if (!isOnHomePage) {
+      // Navigate to home first, then scroll to section
+      this.router.navigate(['/']).then(() => {
+        // Wait for the DOM to update after navigation
+        setTimeout(() => {
+          const element = document.getElementById(sectionId);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+      });
+    } else {
+      // Already on home page, just scroll to section
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }
+
+  // Navigate to About Us page
+  navigateToAbout(): void {
+    this.router.navigate(['/about']);
+    this.isOpen = false;
+  }
+
+  // Navigate to Home/Landing page
+  navigateToHome(): void {
+    this.router.navigate(['/']);
+    this.isOpen = false;
+    // Scroll to top when navigating to home
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Navigate to Sell Art page
+  navigateToSellArt(): void {
+    this.router.navigate(['/sell-art']);
+    this.isOpen = false;
+  }
 }
