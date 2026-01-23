@@ -14,4 +14,11 @@ import { LucideAngularModule } from 'lucide-angular';
 })
 export class HeroSectionComponent {
   heroImage = 'assets/hero-artisan.jpg';
+
+  scrollToSection(sectionId: string): void {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
 }

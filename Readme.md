@@ -2160,3 +2160,256 @@ This lesson demonstrates how to build user-friendly and reliable Angular forms u
 By completing this module, you will understand how to apply validation rules, manage form state safely, and create forms that provide a clean and professional user experience.
 
 ---
+
+# Structuring Multi-Page Navigation Using Angular Router
+
+As applications grow beyond a single screen, users need to move between pages, views, and workflows smoothly. Login pages, dashboards, profiles, settings, and detail views all require clear navigation and predictable flows.
+
+Angular solves this using the Angular Router, which lets you define routes, map them to components, and control how users move through your app.
+
+By the end of this guide, you will be able to build multi-page Angular applications with clean route configuration and well-structured navigation flows.
+
+## Understanding Angular Router
+
+The Angular Router is a powerful navigation system that enables single-page application (SPA) behavior. Instead of loading entirely new HTML pages from the server, Angular Router dynamically loads different components based on the URL, creating a seamless user experience.
+
+### Key Concepts
+
+**Routes**: Routes define the mapping between URLs and components. Each route tells Angular which component to display when a specific URL is accessed.
+
+**Router Outlet**: The router outlet is a directive that acts as a placeholder where Angular inserts the component that matches the current route. Think of it as a container that swaps out content based on navigation.
+
+**Navigation**: Navigation can happen in two ways - declaratively through router links in templates, or programmatically through the Router service in TypeScript components.
+
+**Route Configuration**: Routes are typically defined in a separate routes file, keeping navigation logic organized and maintainable.
+
+## Setting Up Routes
+
+### Step 1: Create a Routes Configuration File
+
+Create a routes configuration file in your app directory. This file exports an array of route definitions that Angular will use to match URLs to components.
+
+Each route object contains:
+- A path property that defines the URL segment
+- A component property that specifies which component to load
+- Optional properties like redirects, guards, and data
+
+### Step 2: Configure the Router in Your App
+
+In your main application component, import the RouterOutlet directive and place it in your template where you want routed components to appear. The router outlet serves as the insertion point for components based on the current route.
+
+### Step 3: Import RouterModule or Use Standalone Router
+
+If you're using standalone components (which is the modern approach), you'll need to provide the router configuration when bootstrapping your application. This typically happens in your main application bootstrap file where you configure the application providers.
+
+## Defining Routes
+
+### Basic Route Structure
+
+Routes follow a hierarchical structure. The root route typically maps to your home or landing page component. Additional routes represent different pages or views in your application.
+
+### Route Paths
+
+Route paths can be:
+- Empty string for the root/home route
+- Static paths like 'about' or 'contact'
+- Dynamic paths with parameters like 'product/:id'
+- Wildcard paths for 404 pages
+
+### Component Mapping
+
+Each route must specify which component should be rendered when that route is active. This creates a clear connection between URLs and the user interface.
+
+## Navigation Methods
+
+### Declarative Navigation with Router Links
+
+In your templates, use router link directives to create navigation links. These directives automatically handle navigation without requiring JavaScript event handlers. Router links can be applied to anchor tags, buttons, or any clickable element.
+
+Router links support:
+- Absolute paths starting with a forward slash
+- Relative paths for nested navigation
+- Query parameters and fragments
+- Active route styling
+
+### Programmatic Navigation
+
+In your component TypeScript files, inject the Router service to navigate programmatically. This is useful when navigation needs to happen based on user actions, form submissions, or conditional logic.
+
+The Router service provides methods to:
+- Navigate to specific routes
+- Navigate with query parameters
+- Navigate with state data
+- Handle navigation errors
+- Check current route information
+
+### Navigation Guards
+
+Navigation guards allow you to control route access. You can:
+- Prevent navigation to certain routes
+- Redirect users based on authentication status
+- Load data before activating a route
+- Confirm navigation before leaving a page
+
+## Route Configuration Best Practices
+
+### Organizing Routes
+
+Keep your route configuration clean and organized:
+- Group related routes together
+- Use descriptive path names
+- Consider route hierarchy for nested views
+- Document complex route structures
+
+### Route Data and Metadata
+
+Routes can carry additional data that components can access. This is useful for:
+- Page titles
+- Breadcrumb information
+- Permission requirements
+- Custom configuration
+
+### Lazy Loading
+
+For larger applications, implement lazy loading for routes. This means components are only loaded when their route is accessed, improving initial load times and application performance.
+
+## Navigation Flows
+
+### Home to Detail Pages
+
+Create flows where users navigate from a list or gallery view to detailed views. This typically involves:
+- A list component showing multiple items
+- Click handlers that navigate with item IDs
+- Detail components that receive and display item information
+
+### Form Submissions
+
+After form submissions, navigate users to appropriate pages:
+- Success pages after successful submissions
+- Confirmation pages for important actions
+- Return to previous pages on cancellation
+
+### Authentication Flows
+
+Implement authentication-based navigation:
+- Redirect unauthenticated users to login
+- Redirect authenticated users away from login
+- Protect routes that require authentication
+- Handle session expiration gracefully
+
+### Cross-Page Section Navigation
+
+For single-page applications with sections, implement smart navigation that:
+- Scrolls to sections when on the same page
+- Navigates to the page first, then scrolls when coming from other pages
+- Handles browser back and forward buttons correctly
+
+## Common Navigation Patterns
+
+### Navigation Bar
+
+Create a persistent navigation bar that:
+- Highlights the active route
+- Works on both desktop and mobile
+- Handles menu toggling on mobile devices
+- Maintains state across route changes
+
+### Breadcrumbs
+
+Implement breadcrumb navigation for deep hierarchies:
+- Show current location in the application
+- Allow quick navigation to parent pages
+- Update dynamically based on route
+
+### Tab Navigation
+
+Use router links for tab interfaces:
+- Each tab represents a different route
+- Active tab styling based on current route
+- Smooth transitions between tabs
+
+## Handling Route Parameters
+
+### Reading Route Parameters
+
+Components can access route parameters to:
+- Load specific data based on IDs
+- Filter content based on query parameters
+- Display user-specific information
+
+### Updating Route Parameters
+
+Programmatically update route parameters to:
+- Reflect filter changes in the URL
+- Enable bookmarkable filtered views
+- Support browser back/forward navigation
+
+## Error Handling
+
+### 404 Pages
+
+Create a wildcard route that catches unmatched URLs and displays a user-friendly 404 page. This improves user experience when users navigate to non-existent routes.
+
+### Navigation Errors
+
+Handle navigation errors gracefully:
+- Display error messages when navigation fails
+- Provide fallback navigation options
+- Log errors for debugging
+
+## Testing Navigation
+
+### Testing Route Configuration
+
+Verify that:
+- All routes are properly configured
+- Components load correctly for each route
+- Route parameters are passed correctly
+
+### Testing Navigation Actions
+
+Test that:
+- Router links navigate to correct routes
+- Programmatic navigation works as expected
+- Navigation guards function properly
+- Error cases are handled correctly
+
+## Performance Considerations
+
+### Route Preloading
+
+Configure route preloading strategies to:
+- Improve perceived performance
+- Balance between speed and bandwidth
+- Preload critical routes
+
+### Route Data Loading
+
+Optimize data loading for routes:
+- Load data after route activation
+- Show loading states during data fetching
+- Cache route data when appropriate
+
+## Best Practices Summary
+
+1. **Keep Routes Organized**: Maintain a clear, logical structure in your routes configuration file.
+
+2. **Use Descriptive Paths**: Choose URL paths that are meaningful and user-friendly.
+
+3. **Implement Guards**: Protect routes that require authentication or specific permissions.
+
+4. **Handle Errors**: Always provide fallback routes and error handling for navigation failures.
+
+5. **Optimize Loading**: Use lazy loading for routes that aren't immediately needed.
+
+6. **Test Navigation**: Ensure all navigation paths work correctly and handle edge cases.
+
+7. **Maintain State**: Consider how route changes affect component state and user data.
+
+8. **Mobile Considerations**: Ensure navigation works well on mobile devices with appropriate menu handling.
+
+9. **Accessibility**: Use proper semantic HTML and ARIA attributes for navigation elements.
+
+10. **User Feedback**: Provide visual feedback during navigation, such as loading indicators or active route highlighting.
+
+By following these principles and understanding how Angular Router works, you can create intuitive, maintainable navigation systems that enhance user experience and keep your application organized.
