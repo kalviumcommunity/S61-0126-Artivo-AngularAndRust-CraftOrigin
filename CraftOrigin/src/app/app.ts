@@ -9,6 +9,6 @@ import { NavbarComponent } from '../components/LandingPage/Navigation/navagation
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App implements OnInit {
+export class App {
   protected readonly title = signal('CraftOrigin');
 }
