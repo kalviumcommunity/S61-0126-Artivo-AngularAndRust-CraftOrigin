@@ -1,6 +1,7 @@
 use actix_web::{web, HttpResponse, Responder};
 use crate::models::user::{CreateUser, UserResponse};
 use sqlx::{Pool, Row};
+use uuid::Uuid;
 
 pub async fn get_users(pool: web::Data<Pool<sqlx::Postgres>>) -> impl Responder {
     let rows = sqlx::query("SELECT id, name, email FROM users ORDER BY id")
@@ -11,7 +12,7 @@ pub async fn get_users(pool: web::Data<Pool<sqlx::Postgres>>) -> impl Responder 
             let users: Vec<UserResponse> = rows
                 .into_iter()
                 .map(|r| UserResponse {
-                    id: r.get::<i32, _>("id"),
+                    id: r.get::<Uuid, _>("id"),
                     name: r.get::<String, _>("name"),
                     email: r.get::<String, _>("email"),
                 })
@@ -33,7 +34,7 @@ pub async fn create_user(
         .await;
     match result {
         Ok(row) => {
-            let id: i32 = row.get("id");
+            let id: Uuid = row.get("id");
             let user = UserResponse {
                 id,
                 name: payload.name.clone(),
@@ -46,7 +47,7 @@ pub async fn create_user(
 }
 
 pub async fn get_user_by_id(
-    path: web::Path<i32>,
+    path: web::Path<Uuid>,
     pool: web::Data<Pool<sqlx::Postgres>>,
 ) -> impl Responder {
     let id = path.into_inner();
@@ -57,7 +58,7 @@ pub async fn get_user_by_id(
     match row {
         Ok(r) => {
             let user = UserResponse {
-                id: r.get::<i32, _>("id"),
+                id: r.get::<Uuid, _>("id"),
                 name: r.get::<String, _>("name"),
                 email: r.get::<String, _>("email"),
             };
