@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from '../components/LandingPage/Navigation/navagation';
 
@@ -9,6 +9,6 @@ import { NavbarComponent } from '../components/LandingPage/Navigation/navagation
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
+export class App implements OnInit {
   protected readonly title = signal('CraftOrigin');
 }

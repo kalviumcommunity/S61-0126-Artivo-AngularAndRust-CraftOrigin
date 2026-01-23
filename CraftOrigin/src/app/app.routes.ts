@@ -1,11 +1,16 @@
 import { Routes } from '@angular/router';
-import { AboutUsComponent } from '../components/LandingPage/AboutUs/aboutUs';
 import { HomeComponent } from '../components/LandingPage/Home/home';
+import { AboutUsComponent } from '../components/LandingPage/AboutUs/aboutUs';
 import { SellArtComponent } from '../components/LandingPage/SellArt/sellArt';
+import { ArtistOnboardingComponent } from '../components/ArtistOnboarding/ArtistOnboarding';
 
 export const routes: Routes = [
   {
     path: '',
+    component: HomeComponent
+  },
+  {
+    path: 'home',
     component: HomeComponent
   },
   {
@@ -15,5 +20,13 @@ export const routes: Routes = [
   {
     path: 'sell-art',
     component: SellArtComponent
+  },
+  {
+    path: 'artist-onboarding',
+    component: ArtistOnboardingComponent
+  },
+  {
+    path: '**',
+    redirectTo: ''
   }
 ];
