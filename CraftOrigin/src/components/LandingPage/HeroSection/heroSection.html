@@ -31,12 +31,12 @@
           </p>
   
           <div class="flex flex-col sm:flex-row gap-4">
-            <button class="btn-hero flex items-center gap-2">
+            <button (click)="scrollToSection('featuredArtWorks')" class="btn-hero flex items-center gap-2">
               Explore Collection
               <span>→</span>
             </button>
-  
-            <button class="btn-hero-outline">
+
+            <button (click)="scrollToSection('featuredArtists')" class="btn-hero-outline">
               Meet Our Artists
             </button>
           </div>

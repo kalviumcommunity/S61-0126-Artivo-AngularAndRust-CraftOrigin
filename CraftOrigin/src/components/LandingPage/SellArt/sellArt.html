@@ -1,0 +1,208 @@
+<section class="sell-art-section">
+  <div class="container mx-auto px-4 py-12 lg:py-20">
+    <div class="max-w-3xl mx-auto">
+      
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h1 class="font-display text-4xl md:text-5xl font-bold mb-4 text-foreground">
+          Sell Your <span class="text-gradient">Artwork</span>
+        </h1>
+        <p class="text-lg text-muted-foreground">
+          Share your handcrafted creations with the world. Fill out the form below to list your artwork.
+        </p>
+      </div>
+
+      <!-- Success Message -->
+      <div *ngIf="submitSuccess" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">✅</span>
+          <p class="text-green-800 font-medium">Artwork submitted successfully! Your listing is being reviewed.</p>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="submitError" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">⚠️</span>
+          <p class="text-red-800 font-medium">{{ submitError }}</p>
+        </div>
+      </div>
+
+      <!-- Form Container -->
+      <div class="form-container">
+        <!-- Form -->
+        <form [formGroup]="sellArtForm" (ngSubmit)="onSubmit()" class="sell-art-form">
+        
+        <!-- Title -->
+        <div class="form-group">
+          <label for="title" class="form-label">Artwork Title *</label>
+          <input
+            type="text"
+            id="title"
+            formControlName="title"
+            class="form-input"
+            [class.error]="title?.invalid && title?.touched"
+            placeholder="e.g., Handcrafted Terracotta Vase"
+          />
+          <div *ngIf="title?.invalid && title?.touched" class="field-error">
+            <span *ngIf="title?.errors?.['required']">Title is required</span>
+            <span *ngIf="title?.errors?.['minlength']">Title must be at least 3 characters</span>
+            <span *ngIf="title?.errors?.['maxlength']">Title must be less than 200 characters</span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="description" class="form-label">Description *</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            rows="5"
+            class="form-input"
+            [class.error]="description?.invalid && description?.touched"
+            placeholder="Describe your artwork in detail. Include materials used, techniques, dimensions, and any special features..."
+          ></textarea>
+          <div *ngIf="description?.invalid && description?.touched" class="field-error">
+            <span *ngIf="description?.errors?.['required']">Description is required</span>
+            <span *ngIf="description?.errors?.['minlength']">Description must be at least 10 characters</span>
+            <span *ngIf="description?.errors?.['maxlength']">Description must be less than 2000 characters</span>
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div class="form-group">
+          <label for="category" class="form-label">Category *</label>
+          <select
+            id="category"
+            formControlName="category"
+            class="form-input"
+            [class.error]="category?.invalid && category?.touched"
+          >
+            <option value="">Select a category</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+          <div *ngIf="category?.invalid && category?.touched" class="field-error">
+            <span>Please select a category</span>
+          </div>
+        </div>
+
+        <!-- Price and Quantity Row -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <!-- Price -->
+          <div class="form-group">
+            <label for="price" class="form-label">Price (₹) *</label>
+            <input
+              type="number"
+              id="price"
+              formControlName="price"
+              step="0.01"
+              min="0.01"
+              class="form-input"
+              [class.error]="price?.invalid && price?.touched"
+              placeholder="0.00"
+            />
+            <div *ngIf="price?.invalid && price?.touched" class="field-error">
+              <span *ngIf="price?.errors?.['required']">Price is required</span>
+              <span *ngIf="price?.errors?.['min']">Price must be greater than 0</span>
+            </div>
+          </div>
+
+          <!-- Quantity Available -->
+          <div class="form-group">
+            <label for="quantity_available" class="form-label">Quantity Available *</label>
+            <input
+              type="number"
+              id="quantity_available"
+              formControlName="quantity_available"
+              min="1"
+              class="form-input"
+              [class.error]="quantity_available?.invalid && quantity_available?.touched"
+              placeholder="1"
+            />
+            <div *ngIf="quantity_available?.invalid && quantity_available?.touched" class="field-error">
+              <span *ngIf="quantity_available?.errors?.['required']">Quantity is required</span>
+              <span *ngIf="quantity_available?.errors?.['min']">Quantity must be at least 1</span>
+              <span *ngIf="quantity_available?.errors?.['pattern']">Quantity must be a whole number</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Authenticity Reference -->
+        <div class="form-group">
+          <label for="authenticity_ref" class="form-label">Authenticity Reference</label>
+          <input
+            type="text"
+            id="authenticity_ref"
+            formControlName="authenticity_ref"
+            class="form-input"
+            [class.error]="authenticity_ref?.invalid && authenticity_ref?.touched"
+            placeholder="Optional: Certificate number, registration ID, etc."
+          />
+          <p class="text-sm text-muted-foreground mt-1">Optional reference for authenticity verification</p>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="form-group">
+          <label class="form-label">Artwork Image *</label>
+          <div class="image-upload-area">
+            <input
+              type="file"
+              id="image"
+              accept="image/*"
+              (change)="onImageSelected($event)"
+              class="hidden"
+            />
+            
+            <div *ngIf="!imagePreview" class="upload-placeholder">
+              <label for="image" class="upload-label">
+                <div class="upload-icon">📷</div>
+                <p class="upload-text">Click to upload or drag and drop</p>
+                <p class="upload-hint">PNG, JPG, WEBP up to 10MB</p>
+              </label>
+            </div>
+
+            <div *ngIf="imagePreview" class="image-preview-container">
+              <img [src]="imagePreview" alt="Preview" class="image-preview" />
+              <button type="button" (click)="removeImage()" class="remove-image-btn">✕</button>
+            </div>
+          </div>
+          <p class="text-sm text-muted-foreground mt-2">Upload a high-quality image of your artwork</p>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex flex-col sm:flex-row gap-4 pt-4">
+          <button
+            type="submit"
+            [disabled]="isSubmitting || sellArtForm.invalid"
+            class="btn-submit"
+          >
+            <span *ngIf="!isSubmitting">Submit Artwork</span>
+            <span *ngIf="isSubmitting" class="flex items-center gap-2">
+              <span class="spinner"></span>
+              Submitting...
+            </span>
+          </button>
+          <button
+            type="button"
+            (click)="navigateToHome()"
+            class="btn-cancel"
+          >
+            Cancel
+          </button>
+        </div>
+
+        <!-- Info Note -->
+        <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <p class="text-sm text-blue-800">
+            <strong>Note:</strong> Your artwork will be reviewed before being published. 
+            You'll receive a notification once it's approved and listed on the marketplace.
+          </p>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <app-footer></app-footer>
+</section>

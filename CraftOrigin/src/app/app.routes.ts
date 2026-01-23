@@ -1,15 +1,25 @@
 import { Routes } from '@angular/router';
+import { HomeComponent } from '../components/LandingPage/Home/home';
+import { AboutUsComponent } from '../components/LandingPage/AboutUs/aboutUs';
+import { SellArtComponent } from '../components/LandingPage/SellArt/sellArt';
 import { ArtistOnboardingComponent } from '../components/ArtistOnboarding/ArtistOnboarding';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/home',
-    pathMatch: 'full'
+    component: HomeComponent
   },
   {
     path: 'home',
-    loadComponent: () => import('../components/home/home.component').then(m => m.HomeComponent)
+    component: HomeComponent
+  },
+  {
+    path: 'about',
+    component: AboutUsComponent
+  },
+  {
+    path: 'sell-art',
+    component: SellArtComponent
   },
   {
     path: 'artist-onboarding',
@@ -17,6 +27,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '/home'
+    redirectTo: ''
   }
 ];
