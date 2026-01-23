@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-call-to-action',
@@ -31,8 +32,10 @@ export class CallToActionComponent {
   ];
 
   // Event binding example
+  constructor(private router: Router) {}
+
   onPrimaryClick() {
-    alert('Welcome, ' + (this.username || 'Artisan') + '!');
+    this.router.navigate(['/artist-onboarding']);
   }
   onLearnMoreClick() {
     alert('Learn more about joining as an artisan!');

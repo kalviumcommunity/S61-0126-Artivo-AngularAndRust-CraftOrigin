@@ -1,0 +1,19 @@
+/* Placeholder for Artist Onboarding styles. Add your CSS here. */
+.artist-onboarding-wrapper {
+  padding: 2rem;
+  background: #fff7ed;
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.08);
+}
+
+.min-h-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 80px; 
+}
+
+.max-w-5xl {
+  margin-top: 40px;
+}

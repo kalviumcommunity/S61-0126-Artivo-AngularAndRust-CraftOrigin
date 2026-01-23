@@ -1,0 +1,275 @@
+<div class="min-h-screen bg-gradient-to-br from-orange-50 to-pink-50 py-12 px-4">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">Join CraftOrigin as an Artist</h1>
+      <p class="text-lg text-gray-600">Share your art with the world and earn fair compensation</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-xl p-8">
+      <!-- Step Indicator -->
+      <div *ngIf="currentStep < 6" class="mb-8">
+        <div class="flex items-center justify-between max-w-4xl mx-auto">
+          <ng-container *ngFor="let step of [1,2,3,4,5]; let i = index">
+            <div class="flex items-center">
+              <div [ngClass]="{
+                'w-10 h-10 rounded-full flex items-center justify-center font-bold': true,
+                'bg-green-500 text-white': currentStep > step,
+                'bg-orange-500 text-white': currentStep === step,
+                'bg-gray-200 text-gray-500': currentStep < step
+              }">
+                <ng-container *ngIf="currentStep > step; else stepNum">
+                  ✓
+                </ng-container>
+                <ng-template #stepNum>{{step}}</ng-template>
+              </div>
+              <div *ngIf="step < 5" [ngClass]="{
+                'w-16 h-1': true,
+                'bg-green-500': currentStep > step,
+                'bg-gray-200': currentStep <= step
+              }"></div>
+            </div>
+          </ng-container>
+        </div>
+        <div class="flex justify-between max-w-4xl mx-auto mt-2 text-xs text-gray-600">
+          <span>Personal</span>
+          <span>Location</span>
+          <span>Art Details</span>
+          <span>Documents</span>
+          <span>Bank Info</span>
+        </div>
+      </div>
+
+      <!-- Step 1: Personal Information -->
+      <div *ngIf="currentStep === 1" class="space-y-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Personal Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Full Name <span class="text-red-500">*</span>
+            </label>
+            <input type="text" [(ngModel)]="formData.fullName"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="Enter your full name" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Date of Birth <span class="text-red-500">*</span>
+            </label>
+            <input type="date" [(ngModel)]="formData.dateOfBirth"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Email Address <span class="text-red-500">*</span>
+            </label>
+            <input type="email" [(ngModel)]="formData.email"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="your.email@example.com" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Phone Number <span class="text-red-500">*</span>
+            </label>
+            <input type="tel" [(ngModel)]="formData.phone"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="+91 98765 43210" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Location Details -->
+      <div *ngIf="currentStep === 2" class="space-y-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Location Details</h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Full Address <span class="text-red-500">*</span>
+            </label>
+            <textarea [(ngModel)]="formData.address"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              rows="3" placeholder="House No., Street, Landmark"></textarea>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Village/Town</label>
+              <input type="text" [(ngModel)]="formData.village"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">District</label>
+              <input type="text" [(ngModel)]="formData.district"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                State <span class="text-red-500">*</span>
+              </label>
+              <select [(ngModel)]="formData.state"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                <option value="">Select State</option>
+                <option *ngFor="let state of states" [value]="state">{{state}}</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                PIN Code <span class="text-red-500">*</span>
+              </label>
+              <input type="text" [(ngModel)]="formData.pincode"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                placeholder="110001" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Art & Craft Details -->
+      <div *ngIf="currentStep === 3" class="space-y-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Art & Craft Details</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Art Form <span class="text-red-500">*</span>
+            </label>
+            <select [(ngModel)]="formData.artForm"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+              <option value="">Select Art Form</option>
+              <option *ngFor="let form of artForms" [value]="form">{{form}}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Tribe/Community</label>
+            <input type="text" [(ngModel)]="formData.tribe"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="e.g., Warli, Gond, Bhil" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Years of Experience <span class="text-red-500">*</span>
+            </label>
+            <input type="number" [(ngModel)]="formData.yearsOfExperience"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="5" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Specialization</label>
+            <input type="text" [(ngModel)]="formData.specialization"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="e.g., Traditional patterns, Modern fusion" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: Upload Documents -->
+      <div *ngIf="currentStep === 4" class="space-y-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Upload Documents</h2>
+        <div class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+              <p class="text-sm font-medium text-gray-700 mb-2">
+                Your Photo <span class="text-red-500">*</span>
+              </p>
+              <input type="file" accept="image/*" (change)="onFileSelect($event, 'photo')"
+                class="hidden" id="photo-upload" />
+              <label for="photo-upload" class="cursor-pointer text-orange-600 hover:text-orange-700">
+                {{formData.photo ? formData.photo.name : 'Choose File'}}
+              </label>
+            </div>
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+              <p class="text-sm font-medium text-gray-700 mb-2">
+                ID Proof <span class="text-red-500">*</span>
+              </p>
+              <p class="text-xs text-gray-500 mb-2">Aadhaar, Voter ID, Passport</p>
+              <input type="file" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelect($event, 'idProof')"
+                class="hidden" id="id-upload" />
+              <label for="id-upload" class="cursor-pointer text-orange-600 hover:text-orange-700">
+                {{formData.idProof ? formData.idProof.name : 'Choose File'}}
+              </label>
+            </div>
+          </div>
+          <div class="border-2 border-dashed border-gray-300 rounded-lg p-6">
+            <p class="text-sm font-medium text-gray-700 mb-2 text-center">
+              Art Samples <span class="text-red-500">*</span> (Minimum 3, Maximum 5)
+            </p>
+            <input type="file" accept="image/*" multiple (change)="onFileSelect($event, 'artSamples')"
+              class="hidden" id="art-samples-upload" />
+            <label for="art-samples-upload" class="cursor-pointer text-orange-600 hover:text-orange-700 block text-center mb-4">
+              Choose Files ({{formData.artSamples.length}}/5 selected)
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5: Bank Account Details -->
+      <div *ngIf="currentStep === 5" class="space-y-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Bank Account Details</h2>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <p class="text-sm text-blue-800">
+            <strong>Why we need this:</strong> Your bank details are required to transfer your earnings directly to your account. We ensure 85% of every sale goes directly to you.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Account Holder Name <span class="text-red-500">*</span>
+            </label>
+            <input type="text" [(ngModel)]="formData.accountName"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="As per bank records" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Account Number <span class="text-red-500">*</span>
+            </label>
+            <input type="text" [(ngModel)]="formData.accountNumber"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="1234567890" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              IFSC Code <span class="text-red-500">*</span>
+            </label>
+            <input type="text" [(ngModel)]="formData.ifscCode"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="SBIN0001234" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Bank Name</label>
+            <input type="text" [(ngModel)]="formData.bankName"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="State Bank of India" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 6: Success Message -->
+      <div *ngIf="currentStep === 6" class="text-center py-8">
+        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <span class="text-green-600 text-5xl">✓</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">Application Submitted!</h2>
+        <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+          Thank you for applying to join CraftOrigin. Our team will review your application and verify your documents within 2-3 business days.
+        </p>
+        <button (click)="goToHome()" class="px-8 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600">
+          Back to Home
+        </button>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div *ngIf="currentStep < 6" class="flex justify-between mt-8 pt-6 border-t">
+        <button type="button" (click)="prevStep()" [disabled]="currentStep === 1"
+          class="px-6 py-3 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+          Previous
+        </button>
+        <button type="button" (click)="nextStep()" *ngIf="currentStep < 5"
+          class="px-6 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors">
+          Next Step
+        </button>
+        <button type="button" (click)="submitApplication()" *ngIf="currentStep === 5"
+          class="px-6 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors">
+          Submit Application
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

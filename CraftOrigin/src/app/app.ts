@@ -1,27 +1,20 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ProductService } from './services/product.service';
-import { HeroSectionComponent } from '../components/LandingPage/HeroSection/heroSection';
 import { NavbarComponent } from '../components/LandingPage/Navigation/navagation';
-import { FeaturedArtistsComponent } from '../components/LandingPage/FeaturedArtists/featuredArtists';
-import { ProductGalleryComponent } from '../components/LandingPage/FeaturedArtWorks/FeaturedArtWork';
-import { HowItWorksComponent } from '../components/LandingPage/HowItWorks/howItWorks';
-import { CallToActionComponent } from '../components/LandingPage/CallToAction/CallToAction';
-import { FooterComponent } from '../components/LandingPage/Footer/footer.component';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeroSectionComponent, NavbarComponent, FeaturedArtistsComponent, ProductGalleryComponent, HowItWorksComponent, CallToActionComponent, FooterComponent],
+  imports: [RouterOutlet, NavbarComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App implements OnInit {
   protected readonly title = signal('CraftOrigin');
 
-  // Inject ProductService to call getProducts()
   constructor(private productService: ProductService) {}
 
-  // Call getProducts on app initialization to display mock data in console
   ngOnInit(): void {
     this.productService.getProducts().subscribe({
       next: (products) => {
