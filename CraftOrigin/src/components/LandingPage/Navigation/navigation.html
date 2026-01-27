@@ -140,11 +140,7 @@
             <span *ngIf="isLoading" class="loading-spinner"><span class="spinner"></span>Signing in...</span>
           </button>
         </form>
-        <div class="divider"><span>OR</span></div>
-        <div class="social-login">
-          <button type="button" class="social-button google-button"><span class="social-icon">🔵</span>Continue with Google</button>
-          <button type="button" class="social-button facebook-button"><span class="social-icon">📘</span>Continue with Facebook</button>
-        </div>
+        <!-- Divider and social login removed for cleaner sign-in UI -->
         <div class="register-link">
           <p>Don't have an account? <a (click)="navigateToRegister()" class="register-link-text">Sign Up</a></p>
         </div>
@@ -198,16 +194,12 @@
           <div class="terms-notice">
             <p>By signing up, you agree to our <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a></p>
           </div>
-          <button type="submit" class="register-button" [disabled]="registerLoading || registerForm.invalid">
-            <span *ngIf="!registerLoading">Create Account</span>
-            <span *ngIf="registerLoading" class="loading-spinner"><span class="spinner"></span>Creating account...</span>
+          <button type="submit" class="login-button gradient-btn" [disabled]="registerLoading || registerForm.invalid" style="width: 100%; max-width: 320px; font-size: 1.08rem; letter-spacing: 0.01em; margin-top: 1.2rem;">
+            <span *ngIf="!registerLoading">Sign Up</span>
+            <span *ngIf="registerLoading" class="loading-spinner"><span class="spinner"></span>Signing up...</span>
           </button>
         </form>
-        <div class="divider"><span>OR</span></div>
-        <div class="social-register">
-          <button type="button" class="social-button google-button"><span class="social-icon">🔵</span>Sign up with Google</button>
-          <button type="button" class="social-button facebook-button"><span class="social-icon">📘</span>Sign up with Facebook</button>
-        </div>
+        <!-- Divider and social sign-up removed for cleaner sign-up UI -->
         <div class="register-link">
           <p>Already have an account? <a (click)="navigateToLogin()" class="register-link-text">Sign In</a></p>
         </div>
