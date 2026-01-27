@@ -142,33 +142,22 @@
     </div>
 
     <!-- Submit Button -->
-    <button
-      type="submit"
-      class="register-button"
-      [disabled]="isLoading || registerForm.invalid"
-    >
-      <span *ngIf="!isLoading">Create Account</span>
-      <span *ngIf="isLoading" class="loading-spinner">
-        <span class="spinner"></span>
-        Creating account...
-      </span>
-    </button>
+    <div style="display: flex; justify-content: center; margin-top: 1.2rem;">
+      <button
+        type="submit"
+        class="login-button gradient-btn"
+        [disabled]="isLoading || registerForm.invalid"
+        style="width: 100%; max-width: 320px; font-size: 1.08rem; letter-spacing: 0.01em;"
+      >
+        <span *ngIf="!isLoading">Sign Up</span>
+        <span *ngIf="isLoading" class="loading-spinner">
+          <span class="spinner"></span>
+          Signing up...
+        </span>
+      </button>
+    </div>
   </form>
-
-  <!-- Divider -->
-  <div class="divider">
-    <span>OR</span>
-  </div>
-
-  <!-- Social Registration Options -->
-  <div class="social-register">
-    <button type="button" class="social-button google-button">
-      <span class="social-icon">🔵</span>
-      Sign up with Google
-    </button>
-    <button type="button" class="social-button facebook-button">
-      <span class="social-icon">📘</span>
-      Sign up with Facebook
-    </button>
+  <div class="register-link" style="text-align: center; margin-top: 1.5rem;">
+    <p style="font-size: 0.97rem; color: #718096;">Already have an account? <a href="#" class="link">Sign In</a></p>
   </div>
 </div>

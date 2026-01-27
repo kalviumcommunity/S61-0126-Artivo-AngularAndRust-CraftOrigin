@@ -1,3 +1,129 @@
+.gradient-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.08);
+}
+
+.gradient-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.18);
+}
+
+.gradient-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.gradient-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(80, 80, 120, 0.07);
+  padding: 0 0.5rem;
+}
+
+.form-group label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2d3748;
+  margin-bottom: 0.25rem;
+}
+
+.form-input {
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  padding: 0.85rem 1rem;
+  background: #f9f9fb;
+  color: #1a202c;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  border-color: #764ba2;
+  box-shadow: 0 0 0 2px #e9d8fd;
+}
+
+.form-input.error {
+  border-color: #e53e3e;
+}
+
+.register-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 0.5rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.register-subtitle {
+  color: #718096;
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+}
+
+.register-link {
+  margin-top: 1.5rem;
+}
+
+.register-link .link {
+  color: #764ba2;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.register-link .link:hover {
+  text-decoration: underline;
+  color: #667eea;
+}
+
+.register-button {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.register-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.register-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.register-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 /* Register Component Styles */
 .register-container {
   width: 100%;
@@ -311,47 +437,6 @@
 }
 
 /* Social Registration */
-.social-register {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
-.social-button {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 10px;
-  background: white;
-  color: #2d3748;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.social-button:hover {
-  border-color: #667eea;
-  background: #f7fafc;
-  transform: translateY(-1px);
-}
-
-.social-icon {
-  font-size: 1.2rem;
-}
-
-.google-button:hover {
-  border-color: #4285f4;
-}
-
-.facebook-button:hover {
-  border-color: #1877f2;
-}
 
 /* Responsive Design */
 @media (max-width: 640px) {
