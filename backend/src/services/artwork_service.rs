@@ -5,8 +5,9 @@ use crate::models::artwork::{CreateArtworkRequest, UpdateArtworkRequest, Artwork
 #[derive(Debug)]
 pub enum ServiceError {
     NotFound,
+    #[allow(dead_code)]
     BadRequest(String),
-    Db(sqlx::Error),
+    Db(#[allow(dead_code)] sqlx::Error),
 }
 
 impl From<sqlx::Error> for ServiceError {
@@ -16,22 +17,21 @@ impl From<sqlx::Error> for ServiceError {
 }
 
 pub async fn create_artwork(pool: &Pool<sqlx::Postgres>, req: CreateArtworkRequest) -> Result<ArtworkResponse, ServiceError> {
-    let row = sqlx::query_as!(
-        ArtworkResponse,
+    let row = sqlx::query_as::<_, ArtworkResponse>(
         r#"
         INSERT INTO artworks
         (id, artist_id, title, description, category, price, quantity_available, authenticity_ref, active, created_at, updated_at)
         VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, TRUE, now(), now())
         RETURNING id, artist_id, title, description, category, price, quantity_available, authenticity_ref, active, created_at, updated_at
         "#,
-        req.artist_id,
-        req.title,
-        req.description,
-        req.category,
-        req.price,
-        req.quantity_available,
-        req.authenticity_ref
     )
+    .bind(req.artist_id)
+    .bind(req.title)
+    .bind(req.description)
+    .bind(req.category)
+    .bind(req.price)
+    .bind(req.quantity_available)
+    .bind(req.authenticity_ref)
     .fetch_one(pool)
     .await?;
     Ok(row)
@@ -69,15 +69,14 @@ pub async fn list_artworks(pool: &Pool<sqlx::Postgres>, q: ArtworkListQuery) -> 
 }
 
 pub async fn get_artwork(pool: &Pool<sqlx::Postgres>, id: Uuid) -> Result<ArtworkResponse, ServiceError> {
-    let row = sqlx::query_as!(
-        ArtworkResponse,
+    let row = sqlx::query_as::<_, ArtworkResponse>(
         r#"
         SELECT id, artist_id, title, description, category, price, quantity_available, authenticity_ref, active, created_at, updated_at
         FROM artworks
         WHERE id = $1 AND active = TRUE
         "#,
-        id
     )
+    .bind(id)
     .fetch_optional(pool)
     .await?;
     match row {
@@ -87,8 +86,7 @@ pub async fn get_artwork(pool: &Pool<sqlx::Postgres>, id: Uuid) -> Result<Artwor
 }
 
 pub async fn update_artwork(pool: &Pool<sqlx::Postgres>, id: Uuid, req: UpdateArtworkRequest) -> Result<ArtworkResponse, ServiceError> {
-    let row = sqlx::query_as!(
-        ArtworkResponse,
+    let row = sqlx::query_as::<_, ArtworkResponse>(
         r#"
         UPDATE artworks
         SET title = $1,
@@ -101,14 +99,14 @@ pub async fn update_artwork(pool: &Pool<sqlx::Postgres>, id: Uuid, req: UpdateAr
         WHERE id = $7 AND active = TRUE
         RETURNING id, artist_id, title, description, category, price, quantity_available, authenticity_ref, active, created_at, updated_at
         "#,
-        req.title,
-        req.description,
-        req.category,
-        req.price,
-        req.quantity_available,
-        req.authenticity_ref,
-        id
     )
+    .bind(req.title)
+    .bind(req.description)
+    .bind(req.category)
+    .bind(req.price)
+    .bind(req.quantity_available)
+    .bind(req.authenticity_ref)
+    .bind(id)
     .fetch_optional(pool)
     .await?;
     match row {
@@ -118,15 +116,15 @@ pub async fn update_artwork(pool: &Pool<sqlx::Postgres>, id: Uuid, req: UpdateAr
 }
 
 pub async fn soft_delete_artwork(pool: &Pool<sqlx::Postgres>, id: Uuid) -> Result<(), ServiceError> {
-    let res: sqlx::postgres::PgQueryResult = sqlx::query!(
+    let res = sqlx::query(
         r#"
         UPDATE artworks
         SET active = FALSE,
             updated_at = now()
         WHERE id = $1 AND active = TRUE
         "#,
-        id
     )
+    .bind(id)
     .execute(pool)
     .await?;
 

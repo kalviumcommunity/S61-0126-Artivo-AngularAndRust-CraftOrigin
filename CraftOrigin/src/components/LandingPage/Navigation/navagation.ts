@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, catchError, throwError } from 'rxjs';
 import { LucideAngularModule } from 'lucide-angular';
 
 // Login request interface
@@ -16,7 +16,7 @@ interface LoginRequest {
 interface LoginResponse {
   token?: string;
   user?: {
-    id: number;
+    id: string; // UUID from backend
     name: string;
     email: string;
   };
@@ -129,19 +129,40 @@ export class NavbarComponent {
     this.registerError = '';
     this.registerSuccess = '';
     const data = this.registerForm.value;
-    this.http.post<any>(this.registerApiUrl, data).pipe(
-      catchError((error) => {
+    
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    this.http.post<LoginResponse>(this.registerApiUrl, {
+      name: data.name,
+      email: data.email,
+      password: data.password
+    }, { headers }).subscribe({
+      next: (res) => {
         this.registerLoading = false;
-        this.registerError = error.error?.message || 'Registration failed.';
-        return of(null);
-      })
-    ).subscribe((res) => {
-      this.registerLoading = false;
-      if (res && res.token) {
-        this.registerSuccess = 'Account created! You can now sign in.';
-        setTimeout(() => {
-          this.authMode = 'signin';
-        }, 1200);
+        if (res && res.token) {
+          // Store auth data
+          localStorage.setItem('authToken', res.token);
+          if (res.user) {
+            localStorage.setItem('user', JSON.stringify(res.user));
+          }
+          this.registerSuccess = 'Account created! You can now sign in.';
+          setTimeout(() => {
+            this.authMode = 'signin';
+          }, 1200);
+        }
+      },
+      error: (error) => {
+        this.registerLoading = false;
+        console.error('Registration error:', error);
+        
+        if (error.status === 409) {
+          this.registerError = 'This email is already registered. Please sign in.';
+        } else if (error.status === 400) {
+          this.registerError = error.error?.message || 'Invalid input. Please check your information.';
+        } else if (error.status === 0) {
+          this.registerError = 'Unable to connect to server. Please check your connection.';
+        } else {
+          this.registerError = error.error?.message || 'Registration failed. Please try again.';
+        }
       }
     });
   }
@@ -218,24 +239,11 @@ export class NavbarComponent {
 
   // Login API call
   private login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(this.apiUrl, credentials).pipe(
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.post<LoginResponse>(this.apiUrl, credentials, { headers }).pipe(
       catchError((error) => {
-        // If backend is not available, use mock response for development
-        console.warn('Backend not available, using mock login:', error);
-        
-        // Mock successful login for development
-        if (credentials.email && credentials.password) {
-          return of({
-            token: 'mock-jwt-token-' + Date.now(),
-            user: {
-              id: 1,
-              name: 'Demo User',
-              email: credentials.email
-            }
-          });
-        }
-        
-        throw error;
+        // Re-throw error to be handled by the subscribe error handler
+        return throwError(() => error);
       })
     );
   }

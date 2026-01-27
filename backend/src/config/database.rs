@@ -1,5 +1,6 @@
 use sqlx::Pool;
 
+#[allow(dead_code)]
 pub async fn ensure_schema(pool: &Pool<sqlx::Postgres>) {
     sqlx::query(
         "CREATE TABLE IF NOT EXISTS users (
