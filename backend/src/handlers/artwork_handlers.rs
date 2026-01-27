@@ -1,7 +1,7 @@
 use actix_web::{web, HttpResponse, Responder};
 use sqlx::Pool;
 use uuid::Uuid;
-use crate::models::artwork::{CreateArtworkRequest, UpdateArtworkRequest};
+use crate::models::artwork::{CreateArtworkRequest, UpdateArtworkRequest, ArtworkListQuery};
 use crate::services::artwork_service;
 
 fn map_error(e: artwork_service::ServiceError) -> HttpResponse {
@@ -24,8 +24,9 @@ pub async fn create_artwork(
 
 pub async fn list_artworks(
     pool: web::Data<Pool<sqlx::Postgres>>,
+    query: web::Query<ArtworkListQuery>,
 ) -> impl Responder {
-    match artwork_service::list_artworks(pool.get_ref()).await {
+    match artwork_service::list_artworks(pool.get_ref(), query.into_inner()).await {
         Ok(rows) => HttpResponse::Ok().json(rows),
         Err(e) => map_error(e),
     }
