@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, catchError, throwError } from 'rxjs';
 
 // Register request interface
 interface RegisterRequest {
@@ -16,7 +16,7 @@ interface RegisterRequest {
 interface RegisterResponse {
   token?: string;
   user?: {
-    id: number;
+    id: string; // UUID from backend
     name: string;
     email: string;
   };
@@ -38,6 +38,7 @@ export class RegisterComponent {
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
 
+  // Use backend auth endpoint for registration
   private apiUrl: string = 'http://localhost:8080/api/auth/register';
 
   constructor(
@@ -130,6 +131,15 @@ export class RegisterComponent {
       next: (response) => {
         this.isLoading = false;
         this.successMessage = 'Registration successful! You can now sign in.';
+        
+        // Store auth data
+        if (response.token) {
+          localStorage.setItem('authToken', response.token);
+        }
+        if (response.user) {
+          localStorage.setItem('user', JSON.stringify(response.user));
+        }
+        
         this.registerForm.reset();
         
         // Auto-close modal after 2 seconds
@@ -155,24 +165,15 @@ export class RegisterComponent {
 
   // Register API call
   private register(credentials: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(this.apiUrl, credentials).pipe(
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.post<RegisterResponse>(this.apiUrl, {
+      name: credentials.name,
+      email: credentials.email,
+      password: credentials.password
+    }, { headers }).pipe(
       catchError((error) => {
-        console.warn('Backend not available, using mock registration:', error);
-        
-        // Mock successful registration for development
-        if (credentials.email && credentials.password) {
-          return of({
-            token: 'mock-jwt-token-' + Date.now(),
-            user: {
-              id: Math.floor(Math.random() * 1000),
-              name: credentials.name,
-              email: credentials.email
-            },
-            message: 'Registration successful'
-          });
-        }
-        
-        throw error;
+        // Re-throw error to be handled by the subscribe error handler
+        return throwError(() => error);
       })
     );
   }

@@ -3,6 +3,7 @@ import { HomeComponent } from '../components/LandingPage/Home/home';
 import { AboutUsComponent } from '../components/LandingPage/AboutUs/aboutUs';
 import { SellArtComponent } from '../components/LandingPage/SellArt/sellArt';
 import { ArtistOnboardingComponent } from '../components/ArtistOnboarding/ArtistOnboarding';
+import { RegisterComponent } from '../components/LandingPage/Register/register';
 
 export const routes: Routes = [
   {
@@ -24,6 +25,10 @@ export const routes: Routes = [
   {
     path: 'artist-onboarding',
     component: ArtistOnboardingComponent
+  },
+  {
+    path: 'register',
+    component: RegisterComponent
   },
   {
     path: '**',
