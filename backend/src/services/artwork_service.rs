@@ -1,6 +1,6 @@
-use sqlx::{Pool};
+use sqlx::{Pool, QueryBuilder};
 use uuid::Uuid;
-use crate::models::artwork::{CreateArtworkRequest, UpdateArtworkRequest, ArtworkResponse};
+use crate::models::artwork::{CreateArtworkRequest, UpdateArtworkRequest, ArtworkResponse, ArtworkListQuery};
 
 #[derive(Debug)]
 pub enum ServiceError {
@@ -37,18 +37,34 @@ pub async fn create_artwork(pool: &Pool<sqlx::Postgres>, req: CreateArtworkReque
     Ok(row)
 }
 
-pub async fn list_artworks(pool: &Pool<sqlx::Postgres>) -> Result<Vec<ArtworkResponse>, ServiceError> {
-    let rows = sqlx::query_as!(
-        ArtworkResponse,
-        r#"
-        SELECT id, artist_id, title, description, category, price, quantity_available, authenticity_ref, active, created_at, updated_at
-        FROM artworks
-        WHERE active = TRUE
-        ORDER BY created_at DESC
-        "#
-    )
-    .fetch_all(pool)
-    .await?;
+pub async fn list_artworks(pool: &Pool<sqlx::Postgres>, q: ArtworkListQuery) -> Result<Vec<ArtworkResponse>, ServiceError> {
+    let limit = q.limit.unwrap_or(10).max(1);
+    let page = q.page.unwrap_or(1).max(1);
+    let offset = (page - 1) * limit;
+
+    let mut builder = QueryBuilder::new(
+        "SELECT id, artist_id, title, description, category, price, quantity_available, authenticity_ref, active, created_at, updated_at FROM artworks WHERE active = TRUE"
+    );
+
+    if let Some(category) = q.category {
+        builder.push(" AND category = ").push_bind(category);
+    }
+    if let Some(artist_id) = q.artist_id {
+        builder.push(" AND artist_id = ").push_bind(artist_id);
+    }
+    if let Some(min_price) = q.min_price {
+        builder.push(" AND price >= ").push_bind(min_price);
+    }
+    if let Some(max_price) = q.max_price {
+        builder.push(" AND price <= ").push_bind(max_price);
+    }
+
+    builder.push(" ORDER BY created_at DESC");
+    builder.push(" LIMIT ").push_bind(limit);
+    builder.push(" OFFSET ").push_bind(offset);
+
+    let query = builder.build_query_as::<ArtworkResponse>();
+    let rows = query.fetch_all(pool).await?;
     Ok(rows)
 }
 
