@@ -31,10 +31,23 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  background: white;
   border-radius: 16px;
   box-shadow: 0 4px 24px rgba(80, 80, 120, 0.07);
+  
   padding: 0 0.5rem;
+}
+.register-card {
+  background: rgba(26, 32, 44, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
+  color: white;
+  animation: slideUp 0.5s ease-out;
 }
 
 .form-group label {
@@ -94,7 +107,7 @@
 }
 
 .register-button {
-  width: 100%;
+ width: 100%;
   padding: 0.875rem 1.5rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -126,9 +139,14 @@
 }
 /* Register Component Styles */
 .register-container {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  overflow: hidden;;
 }
 
 /* Header */
@@ -235,7 +253,7 @@
 
 .form-label {
   font-weight: 600;
-  color: #2d3748;
+  color: #ffffff;
   font-size: 0.9rem;
 }
 
@@ -246,7 +264,7 @@
   border-radius: 10px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.95);
   color: #1a202c;
   font-family: inherit;
 }
