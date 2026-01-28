@@ -6,9 +6,6 @@ import { ArtistOnboardingComponent } from '../components/ArtistOnboarding/Artist
 import { RegisterComponent } from '../components/LandingPage/Register/register';
 import { LoginComponent } from '../components/LandingPage/Login/login';
 
-
-
-
 export const routes: Routes = [
   {
     path: '',
