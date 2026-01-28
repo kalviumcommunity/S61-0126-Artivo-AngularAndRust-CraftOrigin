@@ -22,6 +22,7 @@ pub struct CreateArtworkRequest {
     pub price: Decimal,
     pub quantity_available: i32,
     pub authenticity_ref: Option<String>,
+    pub image_url: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -32,6 +33,7 @@ pub struct UpdateArtworkRequest {
     pub price: Decimal,
     pub quantity_available: i32,
     pub authenticity_ref: Option<String>,
+    pub image_url: Option<String>,
 }
 
 #[derive(Serialize, sqlx::FromRow)]
@@ -44,6 +46,7 @@ pub struct ArtworkResponse {
     pub price: Decimal,
     pub quantity_available: i32,
     pub authenticity_ref: Option<String>,
+    pub image_url: Option<String>,
     pub active: bool,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,

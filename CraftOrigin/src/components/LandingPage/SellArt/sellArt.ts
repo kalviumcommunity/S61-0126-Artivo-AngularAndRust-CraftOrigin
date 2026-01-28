@@ -95,58 +95,55 @@ export class SellArtComponent implements OnInit {
     const user = userStr ? JSON.parse(userStr) : null;
     const artistId = user?.id || 'temp-artist-id'; // Replace with actual artist ID
 
-    // Prepare artwork data
-    const artworkData = {
-      artist_id: artistId,
-      title: this.sellArtForm.value.title,
-      description: this.sellArtForm.value.description,
-      category: this.sellArtForm.value.category,
-      price: parseFloat(this.sellArtForm.value.price),
-      quantity_available: parseInt(this.sellArtForm.value.quantity_available),
-      authenticity_ref: this.sellArtForm.value.authenticity_ref || '',
-      active: true
-    };
+    const createArtworkWithImage = (imageUrl?: string) => {
+      // Prepare artwork data
+      const artworkData = {
+        artist_id: artistId,
+        title: this.sellArtForm.value.title,
+        description: this.sellArtForm.value.description,
+        category: this.sellArtForm.value.category,
+        price: parseFloat(this.sellArtForm.value.price),
+        quantity_available: parseInt(this.sellArtForm.value.quantity_available),
+        authenticity_ref: this.sellArtForm.value.authenticity_ref || '',
+        image_url: imageUrl || '',
+        active: true
+      };
 
-    // Submit artwork
-    this.artworkService.createArtwork(artworkData).subscribe({
-      next: (response) => {
-        // If image is selected, upload it
-        if (this.selectedImage && response.id) {
-          this.artworkService.uploadImage(response.id, this.selectedImage).subscribe({
-            next: () => {
-              this.isSubmitting = false;
-              this.submitSuccess = true;
-              this.sellArtForm.reset();
-              this.removeImage();
-              
-              // Reset form after 3 seconds
-              setTimeout(() => {
-                this.submitSuccess = false;
-              }, 3000);
-            },
-            error: (error) => {
-              this.isSubmitting = false;
-              this.submitError = 'Artwork created but image upload failed. Please try uploading the image later.';
-              console.error('Image upload error:', error);
-            }
-          });
-        } else {
+      // Submit artwork
+      this.artworkService.createArtwork(artworkData).subscribe({
+        next: (response) => {
           this.isSubmitting = false;
           this.submitSuccess = true;
           this.sellArtForm.reset();
           this.removeImage();
           
+          // Reset form after 3 seconds
           setTimeout(() => {
             this.submitSuccess = false;
           }, 3000);
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          this.submitError = error.error?.message || 'Failed to create artwork. Please try again.';
+          console.error('Error creating artwork:', error);
         }
-      },
-      error: (error) => {
-        this.isSubmitting = false;
-        this.submitError = error.error?.message || 'Failed to create artwork. Please try again.';
-        console.error('Error creating artwork:', error);
-      }
-    });
+      });
+    };
+
+    if (this.selectedImage) {
+      this.artworkService.uploadImage(this.selectedImage).subscribe({
+        next: (response) => {
+          createArtworkWithImage(response.url);
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          this.submitError = 'Image upload failed. Please try again.';
+          console.error('Image upload error:', error);
+        }
+      });
+    } else {
+      createArtworkWithImage();
+    }
   }
 
   // Navigate back to home

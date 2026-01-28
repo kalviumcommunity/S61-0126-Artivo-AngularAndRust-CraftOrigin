@@ -1,0 +1,1 @@
+ALTER TABLE artworks ADD COLUMN IF NOT EXISTS image_url TEXT;

@@ -41,8 +41,13 @@ services:
       HOST: "0.0.0.0"
     ports:
       - "8080:8080"
+    volumes:
+      - uploads_data:/app/static
 
 volumes:
   db_data:
     # Named volume for persistent PostgreSQL storage
     name: backend_db_data
+  uploads_data:
+    # Named volume for persistent image uploads
+    name: backend_uploads_data
