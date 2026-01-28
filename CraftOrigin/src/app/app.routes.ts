@@ -6,6 +6,9 @@ import { ArtistOnboardingComponent } from '../components/ArtistOnboarding/Artist
 import { RegisterComponent } from '../components/LandingPage/Register/register';
 import { LoginComponent } from '../components/LandingPage/Login/login';
 
+
+
+
 export const routes: Routes = [
   {
     path: '',
@@ -34,6 +37,18 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent
+  },
+  {
+    path: 'dashboard',
+    loadComponent: () => import('../components/buyer-dashboard/buyer-dashboard.component').then(m => m.BuyerDashboardComponent),
+    children: [
+      { path: '', redirectTo: 'profile', pathMatch: 'full' },
+      { path: 'profile', loadComponent: () => import('../components/buyer-dashboard/profile/profile.component').then(m => m.BuyerProfileComponent) },
+      { path: 'orders', loadComponent: () => import('../components/buyer-dashboard/orders/orders.component').then(m => m.OrdersComponent) },
+      { path: 'wishlist', loadComponent: () => import('../components/buyer-dashboard/wishlist/wishlist.component').then(m => m.WishlistComponent) },
+      { path: 'addresses', loadComponent: () => import('../components/buyer-dashboard/addresses/addresses.component').then(m => m.BuyerAddressesComponent) },
+      { path: 'settings', loadComponent: () => import('../components/buyer-dashboard/settings/settings.component').then(m => m.BuyerSettingsComponent) }
+    ]
   },
   {
     path: '**',

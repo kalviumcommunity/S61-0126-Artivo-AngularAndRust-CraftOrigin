@@ -1,0 +1,35 @@
+<h2>Saved Addresses</h2>
+<div class="addresses-list">
+  <div *ngIf="loading">Loading...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="!loading && !error && addresses.length === 0" class="empty">No addresses saved.</div>
+  <div *ngIf="!loading && !error && addresses.length > 0">
+    <div class="address-grid">
+      <div *ngFor="let address of addresses" class="address-card">
+        <div class="address-lines">
+          <div>{{ address.line1 }}</div>
+          <div *ngIf="address.line2">{{ address.line2 }}</div>
+          <div>{{ address.city }}, {{ address.state }} {{ address.zip }}</div>
+          <div>{{ address.country }}</div>
+        </div>
+        <button class="address-remove">Remove</button>
+      </div>
+    </div>
+  </div>
+  <div class="address-actions">
+    <button (click)="showAddForm()" *ngIf="!addMode">Add New Address</button>
+  </div>
+  <form *ngIf="addMode" [formGroup]="addressForm" (ngSubmit)="saveAddress()" class="address-form">
+    <h3>Add Address</h3>
+    <input formControlName="line1" placeholder="Address Line 1" required />
+    <input formControlName="line2" placeholder="Address Line 2" />
+    <input formControlName="city" placeholder="City" required />
+    <input formControlName="state" placeholder="State" required />
+    <input formControlName="zip" placeholder="ZIP Code" required />
+    <input formControlName="country" placeholder="Country" required />
+    <div class="address-form-actions">
+      <button type="submit" [disabled]="addressForm.invalid">Save</button>
+      <button type="button" (click)="cancelAdd()">Cancel</button>
+    </div>
+  </form>
+</div>

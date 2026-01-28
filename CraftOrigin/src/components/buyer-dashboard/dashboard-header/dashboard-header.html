@@ -1,0 +1,21 @@
+<header class="dashboard-header">
+  <div class="dashboard-header__container">
+    <div class="dashboard-header__logo">
+      <span class="logo-circle">CO</span>
+      <span class="logo-text">CraftOrigin</span>
+    </div>
+    <form class="dashboard-header__search">
+      <input type="text" placeholder="Search for anything..." />
+      <button type="submit"><span class="icon-search"></span></button>
+    </form>
+    <div class="dashboard-header__actions">
+      <button class="icon-btn" title="Cart">
+        <span class="icon-cart"></span>
+      </button>
+      <div class="dashboard-header__profile">
+        <img [src]="user?.avatar || 'assets/default-avatar.png'" alt="Profile" class="profile-avatar" />
+        <span class="profile-name">{{ user?.name || 'User' }}</span>
+      </div>
+    </div>
+  </div>
+</header>

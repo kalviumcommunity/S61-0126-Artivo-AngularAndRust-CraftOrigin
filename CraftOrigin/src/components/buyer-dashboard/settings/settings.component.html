@@ -1,0 +1,18 @@
+<h2>Account Settings</h2>
+<div class="settings-info">
+  <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+    <div *ngIf="loading">Processing...</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+    <div *ngIf="success" class="success">{{ success }}</div>
+    <label>Current Password:<br>
+      <input type="password" formControlName="currentPassword" required />
+    </label><br><br>
+    <label>New Password:<br>
+      <input type="password" formControlName="newPassword" required />
+    </label><br><br>
+    <label>Confirm New Password:<br>
+      <input type="password" formControlName="confirmPassword" required />
+    </label><br><br>
+    <button type="submit" [disabled]="passwordForm.invalid || loading">Change Password</button>
+  </form>
+</div>

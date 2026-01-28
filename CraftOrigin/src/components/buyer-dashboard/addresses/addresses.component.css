@@ -1,0 +1,64 @@
+.addresses-list {
+	background: #fff;
+	padding: 2rem;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px #eee;
+	max-width: 700px;
+	margin: 0 auto;
+}
+.address-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 1.5rem;
+	margin-bottom: 1.5rem;
+}
+.address-card {
+	background: #fafbfc;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	box-shadow: 0 1px 4px #f0f0f0;
+	padding: 1rem 1.2rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	min-height: 120px;
+}
+.address-lines {
+	margin-bottom: 0.7rem;
+	font-size: 1.05rem;
+}
+.address-remove {
+	background: #fff;
+	border: 1px solid #d32f2f;
+	color: #d32f2f;
+	border-radius: 4px;
+	padding: 0.3em 1.2em;
+	cursor: pointer;
+	font-size: 0.95em;
+	margin-top: 0.5rem;
+	transition: background 0.2s, color 0.2s;
+}
+.address-remove:hover {
+	background: #d32f2f;
+	color: #fff;
+}
+.address-actions {
+	margin-top: 1.5rem;
+	text-align: right;
+}
+.address-form {
+	margin-top: 2rem;
+	background: #f5f5f5;
+	padding: 1.5rem;
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 0.7rem;
+}
+.address-form-actions {
+	display: flex;
+	gap: 1rem;
+	margin-top: 0.7rem;
+}
+.error { color: #d32f2f; margin-bottom: 1rem; }
+.empty { color: #888; text-align: center; margin: 2rem 0; }
