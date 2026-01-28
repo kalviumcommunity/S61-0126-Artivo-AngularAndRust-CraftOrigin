@@ -2469,3 +2469,20 @@ Optimize data loading for routes:
 10. **User Feedback**: Provide visual feedback during navigation, such as loading indicators or active route highlighting.
 
 By following these principles and understanding how Angular Router works, you can create intuitive, maintainable navigation systems that enhance user experience and keep your application organized.
+
+Calling Rust API Endpoints from Angular Using HttpClient
+
+In this sprint, we bring everything together by connecting the Angular frontend with the Rust backend. After building both sides separately, the key step in full-stack development is enabling communication between them.
+
+This lesson focuses on how Angular uses HttpClient to send and receive data from Rust API endpoints, allowing you to build complete, real-world application flows.
+
+
+A modular Angular frontend
+
+A secure Rust backend with REST APIs
+
+Middleware configuration and CORS handling
+
+Authentication and database integration
+
+Now, it’s time to make the frontend and backend talk to each other.
