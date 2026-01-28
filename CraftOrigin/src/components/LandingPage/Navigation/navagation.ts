@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { LucideAngularModule } from 'lucide-angular';
@@ -29,6 +29,7 @@ interface LoginResponse {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterModule,
     LucideAngularModule
   ],
   templateUrl: './navigation.html',
