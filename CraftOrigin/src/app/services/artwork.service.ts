@@ -23,13 +23,38 @@ export class ArtworkService {
   }
 
   // Upload artwork image
-  uploadImage(artworkId: string, imageFile: File): Observable<any> {
+  uploadImage(imageFile: File): Observable<{ url: string }> {
     const formData = new FormData();
     formData.append('image', imageFile);
-    return this.http.post(`${this.apiUrl}/${artworkId}/image`, formData).pipe(
+    return this.http.post<{ url: string }>('http://localhost:8080/api/upload', formData).pipe(
       catchError((error) => {
         console.error('Error uploading image:', error);
         throw error;
+      })
+    );
+  }
+
+  // Get all artworks with pagination and filtering
+  getArtworks(params: {
+    page?: number;
+    limit?: number;
+    category?: string;
+    min_price?: number;
+    max_price?: number;
+    artist_id?: string;
+  } = {}): Observable<{ data: Artwork[]; total?: number; page?: number; total_pages?: number } | Artwork[]> {
+    let httpParams = new HttpParams();
+    if (params.page !== undefined) httpParams = httpParams.set('page', String(params.page));
+    if (params.limit !== undefined) httpParams = httpParams.set('limit', String(params.limit));
+    if (params.category) httpParams = httpParams.set('category', params.category);
+    if (params.min_price !== undefined) httpParams = httpParams.set('min_price', String(params.min_price));
+    if (params.max_price !== undefined) httpParams = httpParams.set('max_price', String(params.max_price));
+    if (params.artist_id) httpParams = httpParams.set('artist_id', params.artist_id);
+
+    return this.http.get<{ data: Artwork[]; total?: number; page?: number; total_pages?: number } | Artwork[]>(this.apiUrl, { params: httpParams }).pipe(
+      catchError((error) => {
+        console.error('Error fetching artworks:', error);
+        return of({ data: [], total: 0, page: 1, total_pages: 0 });
       })
     );
   }

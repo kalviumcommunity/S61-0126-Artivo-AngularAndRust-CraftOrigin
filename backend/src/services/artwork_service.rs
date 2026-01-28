@@ -20,9 +20,9 @@ pub async fn create_artwork(pool: &Pool<sqlx::Postgres>, req: CreateArtworkReque
     let row = sqlx::query_as::<_, ArtworkResponse>(
         r#"
         INSERT INTO artworks
-        (id, artist_id, title, description, category, price, quantity_available, authenticity_ref, active, created_at, updated_at)
-        VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, TRUE, now(), now())
-        RETURNING id, artist_id, title, description, category, price, quantity_available, authenticity_ref, active, created_at, updated_at
+        (id, artist_id, title, description, category, price, quantity_available, authenticity_ref, image_url, active, created_at, updated_at)
+        VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, TRUE, now(), now())
+        RETURNING id, artist_id, title, description, category, price, quantity_available, authenticity_ref, image_url, active, created_at, updated_at
         "#,
     )
     .bind(req.artist_id)
@@ -32,6 +32,7 @@ pub async fn create_artwork(pool: &Pool<sqlx::Postgres>, req: CreateArtworkReque
     .bind(req.price)
     .bind(req.quantity_available)
     .bind(req.authenticity_ref)
+    .bind(req.image_url)
     .fetch_one(pool)
     .await?;
     Ok(row)
@@ -43,7 +44,7 @@ pub async fn list_artworks(pool: &Pool<sqlx::Postgres>, q: ArtworkListQuery) -> 
     let offset = (page - 1) * limit;
 
     let mut builder = QueryBuilder::new(
-        "SELECT id, artist_id, title, description, category, price, quantity_available, authenticity_ref, active, created_at, updated_at FROM artworks WHERE active = TRUE"
+        "SELECT id, artist_id, title, description, category, price, quantity_available, authenticity_ref, image_url, active, created_at, updated_at FROM artworks WHERE active = TRUE"
     );
 
     if let Some(category) = q.category {
@@ -71,7 +72,7 @@ pub async fn list_artworks(pool: &Pool<sqlx::Postgres>, q: ArtworkListQuery) -> 
 pub async fn get_artwork(pool: &Pool<sqlx::Postgres>, id: Uuid) -> Result<ArtworkResponse, ServiceError> {
     let row = sqlx::query_as::<_, ArtworkResponse>(
         r#"
-        SELECT id, artist_id, title, description, category, price, quantity_available, authenticity_ref, active, created_at, updated_at
+        SELECT id, artist_id, title, description, category, price, quantity_available, authenticity_ref, image_url, active, created_at, updated_at
         FROM artworks
         WHERE id = $1 AND active = TRUE
         "#,
@@ -95,9 +96,10 @@ pub async fn update_artwork(pool: &Pool<sqlx::Postgres>, id: Uuid, req: UpdateAr
             price = $4,
             quantity_available = $5,
             authenticity_ref = $6,
+            image_url = $7,
             updated_at = now()
-        WHERE id = $7 AND active = TRUE
-        RETURNING id, artist_id, title, description, category, price, quantity_available, authenticity_ref, active, created_at, updated_at
+        WHERE id = $8 AND active = TRUE
+        RETURNING id, artist_id, title, description, category, price, quantity_available, authenticity_ref, image_url, active, created_at, updated_at
         "#,
     )
     .bind(req.title)
@@ -106,6 +108,7 @@ pub async fn update_artwork(pool: &Pool<sqlx::Postgres>, id: Uuid, req: UpdateAr
     .bind(req.price)
     .bind(req.quantity_available)
     .bind(req.authenticity_ref)
+    .bind(req.image_url)
     .bind(id)
     .fetch_optional(pool)
     .await?;
