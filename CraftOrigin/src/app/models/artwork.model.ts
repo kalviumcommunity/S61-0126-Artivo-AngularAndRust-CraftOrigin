@@ -19,7 +19,7 @@ export interface ArtworkFormData {
   title: string;
   description: string;
   category: string;
-  price: number;
+  price: number | string;
   quantity_available: number;
   authenticity_ref: string;
   image?: File; // For file upload

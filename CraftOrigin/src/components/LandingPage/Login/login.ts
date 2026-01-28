@@ -14,7 +14,7 @@ interface LoginRequest {
 interface LoginResponse {
   token?: string;
   user?: {
-    id: number;
+    id: string;
     name: string;
     email: string;
   };
@@ -123,7 +123,7 @@ export class LoginComponent {
           return of({
             token: 'mock-jwt-token-' + Date.now(),
             user: {
-              id: 1,
+              id: "",
               name: 'Demo User',
               email: credentials.email
             }
