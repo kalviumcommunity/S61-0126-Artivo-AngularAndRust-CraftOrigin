@@ -22,7 +22,7 @@ export class ProductService {
       price: 45.99,
       description: 'Beautiful handcrafted wooden bowl',
       artistName: 'John Smith',
-      imageUrl: 'https://via.placeholder.com/300'
+      imageUrl: 'assets/product-1.jpg'
     },
     {
       id: 2,
@@ -30,7 +30,7 @@ export class ProductService {
       price: 32.50,
       description: 'Elegant ceramic vase with unique design',
       artistName: 'Sarah Johnson',
-      imageUrl: 'https://via.placeholder.com/300'
+      imageUrl: 'assets/product-2.jpg'
     },
     {
       id: 3,
@@ -38,7 +38,7 @@ export class ProductService {
       price: 125.00,
       description: 'Modern metal sculpture',
       artistName: 'Mike Davis',
-      imageUrl: 'https://via.placeholder.com/300'
+      imageUrl: 'assets/product-3.jpg'
     }
   ];
 

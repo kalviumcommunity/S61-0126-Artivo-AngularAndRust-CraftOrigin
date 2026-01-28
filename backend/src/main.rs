@@ -40,6 +40,9 @@ sqlx::migrate!("./migrations")
     .await
     .expect("Failed to run database migrations");
 
+    // Ensure static/uploads directory exists
+    std::fs::create_dir_all("./static/uploads")?;
+
     println!("🚀 Starting server on http://127.0.0.1:8080");
     println!("📡 CORS enabled for all origins (development mode)");
     println!("🔗 Auth endpoints: POST /api/auth/register, POST /api/auth/login");
@@ -55,10 +58,12 @@ sqlx::migrate!("./migrations")
         App::new()
             .wrap(cors)
             .app_data(web::Data::new(pool.clone()))
+            .service(actix_files::Files::new("/static", "./static").show_files_listing())
             .configure(routes::user_routes::user_routes)
             .configure(routes::health_routes::health_routes)
             .configure(routes::artwork_routes::artwork_routes)
             .configure(routes::auth_routes::auth_routes)
+            .configure(routes::upload_routes::upload_routes)
     })
     
     .bind((std::env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string()), 8080))?
