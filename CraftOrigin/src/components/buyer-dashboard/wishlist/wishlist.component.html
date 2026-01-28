@@ -1,0 +1,18 @@
+<h2>Wishlist</h2>
+<div class="wishlist-list">
+  <div *ngIf="loading">Loading...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="!loading && !error && wishlist.length === 0" class="empty">No items in wishlist.</div>
+  <div *ngIf="!loading && !error && wishlist.length > 0">
+    <div class="wishlist-grid">
+      <div *ngFor="let item of wishlist" class="wishlist-card">
+        <img [src]="item.image" alt="{{ item.name }}" class="wishlist-img" />
+        <div class="wishlist-info">
+          <div class="wishlist-title">{{ item.name }}</div>
+          <div class="wishlist-price">₹{{ item.price | number:'1.2-2' }}</div>
+        </div>
+        <button class="wishlist-remove">Remove</button>
+      </div>
+    </div>
+  </div>
+</div>

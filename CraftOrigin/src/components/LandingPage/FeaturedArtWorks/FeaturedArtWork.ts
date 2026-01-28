@@ -1,4 +1,5 @@
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
@@ -32,8 +33,12 @@ export class ProductGalleryComponent {
 
   selectedCategory = 'All';
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
     this.isBrowser = isPlatformBrowser(this.platformId);
+  }
+
+  goToDashboard() {
+    this.router.navigate(['/dashboard']);
   }
 
   onImgError(event: Event) {

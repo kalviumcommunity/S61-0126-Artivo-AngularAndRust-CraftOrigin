@@ -1,0 +1,22 @@
+<app-dashboard-header [user]="user"></app-dashboard-header>
+<div class="dashboard-container">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="dashboard-logo">🛒</div>
+      <div class="dashboard-title">Buyer Dashboard</div>
+    </div>
+    <nav>
+      <ul>
+        <li routerLinkActive="active"><a routerLink="profile"><span class="icon">👤</span> Profile</a></li>
+        <li routerLinkActive="active"><a routerLink="orders"><span class="icon">📦</span> Orders</a></li>
+        <li routerLinkActive="active"><a routerLink="wishlist"><span class="icon">❤️</span> Wishlist</a></li>
+        <li routerLinkActive="active"><a routerLink="addresses"><span class="icon">🏠</span> Addresses</a></li>
+        <li routerLinkActive="active"><a routerLink="settings"><span class="icon">⚙️</span> Settings</a></li>
+        <li><a (click)="logout()"><span class="icon">🚪</span> Logout</a></li>
+      </ul>
+    </nav>
+  </aside>
+  <main class="dashboard-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
