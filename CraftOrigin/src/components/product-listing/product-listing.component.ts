@@ -10,6 +10,7 @@ import { DashboardHeaderComponent } from '../buyer-dashboard/dashboard-header/da
     styleUrls: ['./product-listing.component.css']
 })
 
+
 export class ProductListingComponent {
     user = {
         name: '',
