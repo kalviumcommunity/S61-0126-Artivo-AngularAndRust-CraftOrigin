@@ -7,6 +7,9 @@ mod handlers;
 mod models;
 mod config;
 mod services;
+mod middleware;
+
+use middleware::auth_middleware::Auth;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -44,26 +47,36 @@ sqlx::migrate!("./migrations")
     std::fs::create_dir_all("./static/uploads")?;
 
     println!("🚀 Starting server on http://127.0.0.1:8080");
-    println!("📡 CORS enabled for all origins (development mode)");
+    println!("📡 CORS enabled for development");
     println!("🔗 Auth endpoints: POST /api/auth/register, POST /api/auth/login");
 
     HttpServer::new(move|| {
-        // CORS configuration for development - permissive to handle all requests
-        // This allows requests from Angular app and handles preflight OPTIONS requests
+        // CORS configuration
         let cors = Cors::default()
-            .allow_any_origin()
+            .allowed_origin("http://localhost:4200") // Allow Angular frontend
+            .allowed_origin("http://localhost:4000") // Allow SSR/Other frontend
             .allow_any_method()
-            .allow_any_header();
+            .allow_any_header()
+            .max_age(3600);
 
         App::new()
             .wrap(cors)
             .app_data(web::Data::new(pool.clone()))
             .service(actix_files::Files::new("/static", "./static").show_files_listing())
-            .configure(routes::user_routes::user_routes)
+            
+            // Public Routes
             .configure(routes::health_routes::health_routes)
-            .configure(routes::artwork_routes::artwork_routes)
             .configure(routes::auth_routes::auth_routes)
-            .configure(routes::upload_routes::upload_routes)
+            .configure(routes::artwork_routes::public_artwork_routes)
+
+            // Protected Routes (require Authentication)
+            .service(
+                web::scope("")
+                    .wrap(Auth)
+                    .configure(routes::user_routes::user_routes)
+                    .configure(routes::artwork_routes::protected_artwork_routes)
+                    .configure(routes::upload_routes::upload_routes)
+            )
     })
     
     .bind((std::env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string()), 8080))?
@@ -71,4 +84,3 @@ sqlx::migrate!("./migrations")
     .await
     
 }
-

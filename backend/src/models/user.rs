@@ -1,6 +1,13 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Claims {
+    pub sub: String, // Subject (User ID)
+    pub exp: usize,  // Expiration time (as UTC timestamp)
+    pub role: String, // User role (optional, but good for authorization)
+}
+
 #[derive(Deserialize)]
 pub struct CreateUser {
     pub name: String,
