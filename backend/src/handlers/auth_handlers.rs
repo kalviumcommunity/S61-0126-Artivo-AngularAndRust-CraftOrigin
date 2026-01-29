@@ -1,56 +1,47 @@
 use actix_web::{web, HttpResponse, Responder};
 use sqlx::{Pool, Row};
 use uuid::Uuid;
-use crate::models::user::{AuthRequest, AuthResponse, UserResponse};
+use crate::models::user::{AuthRequest, AuthResponse, UserResponse, Claims};
+use argon2::{
+    password_hash::{
+        rand_core::OsRng,
+        PasswordHash, PasswordHasher, PasswordVerifier, SaltString
+    },
+    Argon2
+};
+use jsonwebtoken::{encode, Header, EncodingKey};
+use chrono::{Utc, Duration};
+use std::env;
 
-/// Generate a simple JWT-like token for authentication
-/// In production, use a proper JWT library like `jsonwebtoken`
-fn generate_token() -> String {
-    format!("jwt-token-{}", chrono::Utc::now().timestamp_millis())
+/// Generate a real JWT token using jsonwebtoken
+fn generate_token(user_id: Uuid, _email: &str, role: &str) -> Result<String, jsonwebtoken::errors::Error> {
+    let secret = env::var("JWT_SECRET").unwrap_or_else(|_| "secret_key".to_string());
+    let expiration = Utc::now()
+        .checked_add_signed(Duration::hours(24))
+        .expect("valid timestamp")
+        .timestamp() as usize;
+
+    let claims = Claims {
+        sub: user_id.to_string(),
+        exp: expiration,
+        role: role.to_string(),
+    };
+
+    encode(&Header::default(), &claims, &EncodingKey::from_secret(secret.as_bytes()))
 }
 
 /// Register a new user
-/// POST /api/auth/register
-/// 
-/// Request body:
-/// ```json
-/// {
-///   "name": "John Doe",
-///   "email": "john@example.com",
-///   "password": "password123"
-/// }
-/// ```
-/// 
-/// Response (201 Created):
-/// ```json
-/// {
-///   "token": "jwt-token-...",
-///   "user": {
-///     "id": "uuid",
-///     "name": "John Doe",
-///     "email": "john@example.com"
-///   },
-///   "message": "Registration successful"
-/// }
-/// ```
 pub async fn register(
     payload: web::Json<AuthRequest>,
     pool: web::Data<Pool<sqlx::Postgres>>,
 ) -> impl Responder {
     // Validate required fields
-    if payload.email.is_empty() {
+    if payload.email.is_empty() || payload.password.is_empty() {
         return HttpResponse::BadRequest().json(serde_json::json!({
-            "message": "Email is required"
+            "message": "Email and password are required"
         }));
     }
 
-    if payload.password.is_empty() {
-        return HttpResponse::BadRequest().json(serde_json::json!({
-            "message": "Password is required"
-        }));
-    }
-
-    // Basic password validation (minimum length)
     if payload.password.len() < 6 {
         return HttpResponse::BadRequest().json(serde_json::json!({
             "message": "Password must be at least 6 characters long"
@@ -60,56 +51,75 @@ pub async fn register(
     let name = payload.name.clone().unwrap_or_else(|| "User".to_string());
     let email = payload.email.clone().to_lowercase().trim().to_string();
 
-    // Validate email format (basic check)
     if !email.contains('@') {
         return HttpResponse::BadRequest().json(serde_json::json!({
             "message": "Invalid email format"
         }));
     }
 
-    // Check if user already exists
-    match sqlx::query("SELECT id, name, email FROM users WHERE email = $1")
+    // Check if user exists
+    let user_exists = sqlx::query("SELECT id FROM users WHERE email = $1")
         .bind(&email)
         .fetch_optional(pool.get_ref())
-        .await
-    {
+        .await;
+
+    match user_exists {
         Ok(Some(_)) => {
             return HttpResponse::Conflict().json(serde_json::json!({
                 "message": "Email already registered"
             }));
         }
-        Ok(None) => {
-            // User doesn't exist, proceed with registration
-        }
         Err(e) => {
-            eprintln!("Database error checking existing user: {:?}", e);
+            eprintln!("Database error: {:?}", e);
             return HttpResponse::InternalServerError().json(serde_json::json!({
                 "message": "Registration failed"
             }));
         }
+        Ok(None) => {}
     }
 
-    // Insert new user into database
-    match sqlx::query("INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id, name, email")
+    // Hash password
+    let salt = SaltString::generate(&mut OsRng);
+    let argon2 = Argon2::default();
+    let password_hash = match argon2.hash_password(payload.password.as_bytes(), &salt) {
+        Ok(hash) => hash.to_string(),
+        Err(e) => {
+            eprintln!("Hashing error: {:?}", e);
+            return HttpResponse::InternalServerError().json(serde_json::json!({
+                "message": "Registration failed"
+            }));
+        }
+    };
+
+    // Insert user
+    match sqlx::query("INSERT INTO users (name, email, password_hash, role) VALUES ($1, $2, $3, 'BUYER') RETURNING id, name, email, role")
         .bind(&name)
         .bind(&email)
+        .bind(&password_hash)
         .fetch_one(pool.get_ref())
         .await
     {
         Ok(row) => {
-            let user = UserResponse {
-                id: row.get::<Uuid, _>("id"),
-                name: row.get::<String, _>("name"),
-                email: row.get::<String, _>("email"),
-            };
+            let id: Uuid = row.get("id");
+            let name: String = row.get("name");
+            let email: String = row.get("email");
+            let role: String = row.get("role");
+
+            let user = UserResponse { id, name, email: email.clone() };
             
-            let resp = AuthResponse {
-                token: generate_token(),
-                user,
-                message: "Registration successful".into(),
-            };
-            
-            HttpResponse::Created().json(resp)
+            match generate_token(id, &email, &role) {
+                Ok(token) => HttpResponse::Created().json(AuthResponse {
+                    token,
+                    user,
+                    message: "Registration successful".into(),
+                }),
+                Err(e) => {
+                    eprintln!("Token generation error: {:?}", e);
+                    HttpResponse::InternalServerError().json(serde_json::json!({
+                        "message": "Registration successful but token generation failed"
+                    }))
+                }
+            }
         }
         Err(e) => {
             eprintln!("Registration error: {:?}", e);
@@ -121,76 +131,56 @@ pub async fn register(
 }
 
 /// Login an existing user
-/// POST /api/auth/login
-/// 
-/// Request body:
-/// ```json
-/// {
-///   "email": "john@example.com",
-///   "password": "password123"
-/// }
-/// ```
-/// 
-/// Response (200 OK):
-/// ```json
-/// {
-///   "token": "jwt-token-...",
-///   "user": {
-///     "id": "uuid",
-///     "name": "John Doe",
-///     "email": "john@example.com"
-///   },
-///   "message": "Login successful"
-/// }
-/// ```
 pub async fn login(
     payload: web::Json<AuthRequest>,
     pool: web::Data<Pool<sqlx::Postgres>>,
 ) -> impl Responder {
-    // Validate required fields
-    if payload.email.is_empty() {
+    if payload.email.is_empty() || payload.password.is_empty() {
         return HttpResponse::BadRequest().json(serde_json::json!({
-            "message": "Email is required"
-        }));
-    }
-
-    if payload.password.is_empty() {
-        return HttpResponse::BadRequest().json(serde_json::json!({
-            "message": "Password is required"
+            "message": "Email and password are required"
         }));
     }
 
     let email = payload.email.clone().to_lowercase().trim().to_string();
 
-    // Find user by email
-    // Note: Password validation is not implemented yet
-    // In production, you should hash passwords and compare them here
-    match sqlx::query("SELECT id, name, email FROM users WHERE email = $1")
+    match sqlx::query("SELECT id, name, email, password_hash, role FROM users WHERE email = $1")
         .bind(&email)
         .fetch_optional(pool.get_ref())
         .await
     {
         Ok(Some(row)) => {
-            let user = UserResponse {
-                id: row.get::<Uuid, _>("id"),
-                name: row.get::<String, _>("name"),
-                email: row.get::<String, _>("email"),
+            let password_hash: String = row.get("password_hash");
+            let parsed_hash = match PasswordHash::new(&password_hash) {
+                Ok(h) => h,
+                Err(_) => return HttpResponse::InternalServerError().json(serde_json::json!({"message": "Login failed"}))
             };
-            
-            let resp = AuthResponse {
-                token: generate_token(),
-                user,
-                message: "Login successful".into(),
-            };
-            
-            HttpResponse::Ok().json(resp)
+
+            if Argon2::default().verify_password(payload.password.as_bytes(), &parsed_hash).is_ok() {
+                let id: Uuid = row.get("id");
+                let name: String = row.get("name");
+                let role: String = row.get("role");
+                
+                let user = UserResponse { id, name, email: email.clone() };
+
+                match generate_token(id, &email, &role) {
+                    Ok(token) => HttpResponse::Ok().json(AuthResponse {
+                        token,
+                        user,
+                        message: "Login successful".into(),
+                    }),
+                    Err(_) => HttpResponse::InternalServerError().json(serde_json::json!({
+                        "message": "Login failed"
+                    }))
+                }
+            } else {
+                HttpResponse::Unauthorized().json(serde_json::json!({
+                    "message": "Invalid email or password"
+                }))
+            }
         }
-        Ok(None) => {
-            // User not found - return generic error for security
-            HttpResponse::Unauthorized().json(serde_json::json!({
-                "message": "Invalid email or password"
-            }))
-        }
+        Ok(None) => HttpResponse::Unauthorized().json(serde_json::json!({
+            "message": "Invalid email or password"
+        })),
         Err(e) => {
             eprintln!("Login error: {:?}", e);
             HttpResponse::InternalServerError().json(serde_json::json!({
