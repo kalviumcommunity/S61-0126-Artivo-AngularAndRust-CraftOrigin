@@ -1,3 +1,9 @@
+<div *ngIf="toastVisible" class="toast-container">
+  <div class="toast">
+    <span class="toast-icon">⚠️</span>
+    <span class="toast-text">{{ toastMessage }}</span>
+  </div>
+</div>
 <nav class="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
     <div class="container mx-auto px-4">
       <div class="flex items-center justify-between h-16 lg:h-20">
@@ -31,9 +37,20 @@
             <!-- <lucide-icon name="shopping-bag" class="w-5 h-5"></lucide-icon> -->
           </button>
   
-          <a [routerLink]="'/login'" class="border px-3 py-1.5 rounded-md flex items-center gap-2 text-sm cursor-pointer">
-            Sign In
-          </a>
+          <ng-container *ngIf="!isLoggedIn">
+            <a [routerLink]="'/login'" class="border px-3 py-1.5 rounded-md flex items-center gap-2 text-sm cursor-pointer">
+              Sign In
+            </a>
+          </ng-container>
+          
+          <ng-container *ngIf="isLoggedIn">
+            <a [routerLink]="'/dashboard'" class="border px-3 py-1.5 rounded-md flex items-center gap-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+              Dashboard
+            </a>
+            <button (click)="logout()" class="border px-3 py-1.5 rounded-md flex items-center gap-2 text-sm cursor-pointer text-red-600 border-red-200 hover:bg-red-50 transition-colors">
+              Logout
+            </button>
+          </ng-container>
           <button (click)="navigateToSellArt()" class="bg-primary text-primary-foreground px-4 py-1.5 rounded-md text-sm cursor-pointer">
             Sell Art
           </button>
@@ -54,10 +71,18 @@
           <a (click)="scrollToSection('howItWorks')" class="font-medium py-2 cursor-pointer">How It Works</a>
           <a (click)="navigateToAbout()" class="font-medium py-2 cursor-pointer">About</a>
   
-          <div class="flex gap-3 pt-4">
-            <a [routerLink]="'/login'" class="flex-1 border py-2 rounded-md text-center cursor-pointer">Sign In</a>
-            <a [routerLink]="'/register'" class="flex-1 border py-2 rounded-md text-center cursor-pointer">Sign Up</a>
-            <button (click)="navigateToSellArt()" class="flex-1 bg-primary text-primary-foreground py-2 rounded-md cursor-pointer">
+          <div class="flex flex-col gap-3 pt-4">
+            <div class="flex gap-3">
+              <ng-container *ngIf="!isLoggedIn">
+                <a [routerLink]="'/login'" class="flex-1 border py-2 rounded-md text-center cursor-pointer">Sign In</a>
+                <a [routerLink]="'/register'" class="flex-1 border py-2 rounded-md text-center cursor-pointer">Sign Up</a>
+              </ng-container>
+              <ng-container *ngIf="isLoggedIn">
+                <a [routerLink]="'/dashboard'" class="flex-1 border py-2 rounded-md text-center cursor-pointer">Dashboard</a>
+                <button (click)="logout()" class="flex-1 border py-2 rounded-md text-center cursor-pointer text-red-600 border-red-200 hover:bg-red-50">Logout</button>
+              </ng-container>
+            </div>
+            <button (click)="navigateToSellArt()" class="w-full bg-primary text-primary-foreground py-2 rounded-md cursor-pointer">
               Sell Art
             </button>
           </div>

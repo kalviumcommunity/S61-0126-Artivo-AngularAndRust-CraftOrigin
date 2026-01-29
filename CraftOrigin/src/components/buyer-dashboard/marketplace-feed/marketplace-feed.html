@@ -1,0 +1,76 @@
+<app-marketplace-navbar></app-marketplace-navbar>
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-display font-bold mb-8">Marketplace</h1>
+
+  <div *ngIf="isLoading" class="flex justify-center items-center h-64">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+  </div>
+
+  <div *ngIf="error" class="text-red-500 text-center py-8">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!isLoading && !error">
+    <ng-container *ngFor="let category of categories">
+      <div *ngIf="artworksByCategory[category]?.length" class="mb-12">
+        <div class="flex justify-between items-end mb-4">
+          <h2 class="text-2xl font-semibold">{{ category }}</h2>
+          <!-- Future: Add 'View all' link -->
+        </div>
+
+        <div class="relative">
+          <!-- Horizontal Scroll Container -->
+          <div class="flex overflow-x-auto gap-6 pb-4 -mx-4 px-4 scrollbar-hide snap-x">
+            <div *ngFor="let artwork of artworksByCategory[category]" class="flex-none w-64 snap-start">
+              <div class="group bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col cursor-pointer">
+                <!-- Image -->
+                <div class="aspect-square bg-muted relative overflow-hidden">
+                  <img 
+                    [src]="artwork.image_url || 'assets/placeholder-art.jpg'" 
+                    [alt]="artwork.title"
+                    class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                    onerror="this.src='assets/placeholder-art.jpg'"
+                  >
+                  <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+                  
+                  <!-- Stock Status -->
+                  <div *ngIf="artwork.quantity_available === 0" class="absolute inset-0 bg-black/50 flex items-center justify-center">
+                    <span class="bg-red-600 text-white px-3 py-1 text-sm font-bold rounded">SOLD OUT</span>
+                  </div>
+                  <div *ngIf="artwork.quantity_available > 0 && artwork.quantity_available < 5" class="absolute top-2 right-2">
+                     <span class="bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full font-medium">Only {{artwork.quantity_available}} left</span>
+                  </div>
+                </div>
+                
+                <!-- Content -->
+                <div class="p-4 flex flex-col flex-grow">
+                  <h3 class="font-medium text-lg truncate" [title]="artwork.title">{{ artwork.title }}</h3>
+                  <p class="text-muted-foreground text-sm truncate mb-2">{{ artwork.description || 'No description' }}</p>
+                  
+                  <div class="mt-auto flex justify-between items-center">
+                    <span class="font-bold text-lg">${{ artwork.price }}</span>
+                    <button 
+                      (click)="$event.stopPropagation(); addToCart(artwork)"
+                      class="px-3 py-1.5 bg-black text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors flex items-center gap-1"
+                      [disabled]="artwork.quantity_available === 0"
+                      [class.opacity-50]="artwork.quantity_available === 0"
+                    >
+                      <lucide-icon name="shopping-cart" class="w-4 h-4"></lucide-icon>
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Empty State if no categories have items -->
+    <div *ngIf="!hasArtworks()" class="text-center py-12 text-muted-foreground">
+      <p>No artworks found yet.</p>
+      <p class="mt-2 text-sm">Check back later or start selling!</p>
+    </div>
+  </div>
+</div>

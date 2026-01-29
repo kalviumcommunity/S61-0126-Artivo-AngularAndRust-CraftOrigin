@@ -17,7 +17,10 @@ import {
   Youtube,
   Mail,
   Phone,
-  MapPin
+  MapPin,
+  Store,
+  ShoppingCart,
+  LogOut
 } from 'lucide-angular';
 import { SharedModule } from './shared/shared.module';
 
@@ -28,7 +31,10 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withFetch()),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([authInterceptor])
+    ),
     importProvidersFrom(
       LucideAngularModule.pick({
         Heart,
@@ -43,7 +49,10 @@ export const appConfig: ApplicationConfig = {
         Youtube,
         Mail,
         Phone,
-        MapPin
+        MapPin,
+        Store,
+        ShoppingCart,
+        LogOut
       })
     ),
     importProvidersFrom(

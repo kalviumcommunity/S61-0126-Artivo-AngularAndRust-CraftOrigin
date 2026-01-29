@@ -5,11 +5,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
     const token = localStorage.getItem('authToken');
 
-    if (token) {
+    // Check if the request is for our API
+    const isApiUrl = req.url.includes('/api/');
+
+    if (token && isApiUrl) {
       const cloned = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
+        setHeaders: { Authorization: `Bearer ${token}` }
       });
       return next(cloned);
     }

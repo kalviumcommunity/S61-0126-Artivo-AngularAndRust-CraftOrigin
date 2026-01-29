@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { BuyerService } from '../buyer.service';
 import { Profile } from '../models';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -17,7 +17,11 @@ export class BuyerProfileComponent implements OnInit {
   error = '';
   success = '';
 
-  constructor(private buyerService: BuyerService, private fb: FormBuilder) {
+  constructor(
+    private buyerService: BuyerService, 
+    private fb: FormBuilder,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
     this.profileForm = this.fb.group({
       name: [''],
       email: [''],
@@ -26,16 +30,20 @@ export class BuyerProfileComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.buyerService.getProfile().subscribe({
-      next: (profile: Profile) => {
-        this.profileForm.patchValue(profile);
-        this.loading = false;
-      },
-      error: (err: any) => {
-        this.error = 'Failed to load profile.';
-        this.loading = false;
-      }
-    });
+    if (isPlatformBrowser(this.platformId)) {
+      this.buyerService.getProfile().subscribe({
+        next: (profile: Profile) => {
+          this.profileForm.patchValue(profile);
+          this.loading = false;
+        },
+        error: (err: any) => {
+          this.error = 'Failed to load profile.';
+          this.loading = false;
+        }
+      });
+    } else {
+      this.loading = false; // SSR: Just stop loading
+    }
   }
 
   save() {

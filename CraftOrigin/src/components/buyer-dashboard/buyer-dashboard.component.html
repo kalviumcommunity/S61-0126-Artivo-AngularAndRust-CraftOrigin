@@ -1,4 +1,4 @@
-<app-dashboard-header [user]="user"></app-dashboard-header>
+<app-dashboard-header></app-dashboard-header>
 <div class="dashboard-container">
   <aside class="sidebar">
     <div class="sidebar-header">
@@ -7,6 +7,7 @@
     </div>
     <nav>
       <ul>
+        <li routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="./"><span class="icon">🏠</span> Marketplace</a></li>
         <li routerLinkActive="active"><a routerLink="profile"><span class="icon">👤</span> Profile</a></li>
         <li routerLinkActive="active"><a routerLink="orders"><span class="icon">📦</span> Orders</a></li>
         <li routerLinkActive="active"><a routerLink="wishlist"><span class="icon">❤️</span> Wishlist</a></li>

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
 import { HomeComponent } from '../components/LandingPage/Home/home';
 import { AboutUsComponent } from '../components/LandingPage/AboutUs/aboutUs';
 import { SellArtComponent } from '../components/LandingPage/SellArt/sellArt';
@@ -36,7 +37,13 @@ export const routes: Routes = [
     component: LoginComponent
   },
   {
+    path: 'marketplace',
+    canActivate: [authGuard],
+    loadComponent: () => import('../components/buyer-dashboard/marketplace-feed/marketplace-feed.component').then(m => m.MarketplaceFeedComponent)
+  },
+  {
     path: 'dashboard',
+    canActivate: [authGuard],
     loadComponent: () => import('../components/buyer-dashboard/buyer-dashboard.component').then(m => m.BuyerDashboardComponent),
     children: [
       { path: '', redirectTo: 'profile', pathMatch: 'full' },
