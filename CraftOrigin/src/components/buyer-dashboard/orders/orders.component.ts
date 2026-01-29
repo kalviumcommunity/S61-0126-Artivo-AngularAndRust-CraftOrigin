@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { BuyerService } from '../buyer.service';
 import { Order } from '../models';
 
@@ -15,18 +15,25 @@ export class OrdersComponent implements OnInit {
   loading = true;
   error = '';
 
-  constructor(private buyerService: BuyerService) {}
+  constructor(
+    private buyerService: BuyerService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   ngOnInit() {
-    this.buyerService.getOrders().subscribe({
-      next: (orders) => {
-        this.orders = orders;
-        this.loading = false;
-      },
-      error: () => {
-        this.error = 'Failed to load orders.';
-        this.loading = false;
-      }
-    });
+    if (isPlatformBrowser(this.platformId)) {
+      this.buyerService.getOrders().subscribe({
+        next: (orders) => {
+          this.orders = orders;
+          this.loading = false;
+        },
+        error: () => {
+          this.error = 'Failed to load orders.';
+          this.loading = false;
+        }
+      });
+    } else {
+      this.loading = false;
+    }
   }
 }

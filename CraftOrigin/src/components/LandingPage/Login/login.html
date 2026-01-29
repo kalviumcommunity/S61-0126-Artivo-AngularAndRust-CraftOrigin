@@ -1,4 +1,10 @@
 <div class="login-container">
+  <div *ngIf="toastVisible" class="toast-container">
+    <div class="toast">
+      <span class="toast-icon">⚠️</span>
+      <span class="toast-text">{{ toastMessage }}</span>
+    </div>
+  </div>
   <div class="login-card">
     <!-- Header -->
     <div class="login-header">

@@ -1,0 +1,19 @@
+:host {
+    display: block;
+}
+
+.text-primary {
+    color: #F97316; /* Etsy-like orange or your theme primary */
+}
+
+.bg-primary {
+    background-color: #F97316;
+}
+
+.hover\:bg-primary\/90:hover {
+    background-color: rgba(249, 115, 22, 0.9);
+}
+
+.border-primary {
+    border-color: #F97316;
+}

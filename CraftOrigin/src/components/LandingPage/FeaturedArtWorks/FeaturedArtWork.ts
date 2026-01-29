@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
@@ -33,16 +33,22 @@ export class ProductGalleryComponent implements OnInit {
   selectedCategory = 'All';
   products: Product[] = [];
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private router: Router,
+    private artworkService: ArtworkService
+  ) {}
+
+  ngOnInit(): void {
     this.isBrowser = isPlatformBrowser(this.platformId);
+
+    if (this.isBrowser) {
+      this.loadFeaturedArtworks();
+    }
+  }
 
   goToDashboard() {
     this.router.navigate(['/dashboard']);
-  }
-
-  onImgError(event: Event) {
-    const img = event.target as HTMLImageElement;
-    img.src = 'https://via.placeholder.com/300';
   }
 
   selectCategory(category: string): void {

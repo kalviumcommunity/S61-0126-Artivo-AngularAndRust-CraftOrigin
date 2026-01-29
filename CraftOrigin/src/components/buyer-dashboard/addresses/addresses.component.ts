@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { BuyerService } from '../buyer.service';
 import { Address } from '../models';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -18,7 +18,11 @@ export class BuyerAddressesComponent implements OnInit {
   addMode = false;
   addressForm: any;
 
-  constructor(private buyerService: BuyerService, private fb: FormBuilder) {
+  constructor(
+    private buyerService: BuyerService, 
+    private fb: FormBuilder,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
     this.addressForm = this.fb.group({
       line1: [''],
       line2: [''],
@@ -30,16 +34,20 @@ export class BuyerAddressesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.buyerService.getAddresses().subscribe({
-      next: (addresses: Address[]) => {
-        this.addresses = addresses;
-        this.loading = false;
-      },
-      error: () => {
-        this.error = 'Failed to load addresses.';
-        this.loading = false;
-      }
-    });
+    if (isPlatformBrowser(this.platformId)) {
+      this.buyerService.getAddresses().subscribe({
+        next: (addresses: Address[]) => {
+          this.addresses = addresses;
+          this.loading = false;
+        },
+        error: () => {
+          this.error = 'Failed to load addresses.';
+          this.loading = false;
+        }
+      });
+    } else {
+      this.loading = false;
+    }
   }
 
   showAddForm() {

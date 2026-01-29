@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { BuyerService } from '../buyer.service';
 import { WishlistItem } from '../models';
 
@@ -15,18 +15,25 @@ export class WishlistComponent implements OnInit {
   loading = true;
   error = '';
 
-  constructor(private buyerService: BuyerService) {}
+  constructor(
+    private buyerService: BuyerService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   ngOnInit() {
-    this.buyerService.getWishlist().subscribe({
-      next: (wishlist) => {
-        this.wishlist = wishlist;
-        this.loading = false;
-      },
-      error: () => {
-        this.error = 'Failed to load wishlist.';
-        this.loading = false;
-      }
-    });
+    if (isPlatformBrowser(this.platformId)) {
+      this.buyerService.getWishlist().subscribe({
+        next: (wishlist) => {
+          this.wishlist = wishlist;
+          this.loading = false;
+        },
+        error: () => {
+          this.error = 'Failed to load wishlist.';
+          this.loading = false;
+        }
+      });
+    } else {
+      this.loading = false;
+    }
   }
 }

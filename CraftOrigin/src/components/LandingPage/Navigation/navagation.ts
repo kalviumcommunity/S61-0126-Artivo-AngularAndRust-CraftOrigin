@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectorRef, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -36,8 +36,9 @@ interface LoginResponse {
   styleUrl: './navigation.css'
 })
 
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   isOpen = false;
+  isLoggedIn = false;
   showAuthModal = false;
   authMode: 'signin' | 'signup' = 'signin';
   loginForm: FormGroup;
@@ -51,6 +52,8 @@ export class NavbarComponent {
   registerSuccess: string = '';
   showRegisterPassword: boolean = false;
   showRegisterConfirmPassword: boolean = false;
+  toastMessage: string = '';
+  toastVisible: boolean = false;
 
   private apiUrl: string = 'http://localhost:8080/api/auth/login';
   private registerApiUrl: string = 'http://localhost:8080/api/auth/register';
@@ -58,7 +61,9 @@ export class NavbarComponent {
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private http: HttpClient
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -70,6 +75,13 @@ export class NavbarComponent {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
+  }
+
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem('authToken');
+      this.isLoggedIn = !!token;
+    }
   }
 
   toggleMenu() {
@@ -145,6 +157,7 @@ export class NavbarComponent {
           if (res.user) {
             localStorage.setItem('user', JSON.stringify(res.user));
           }
+          this.isLoggedIn = true;
           this.registerSuccess = 'Account created! You can now sign in.';
           setTimeout(() => {
             this.authMode = 'signin';
@@ -164,6 +177,7 @@ export class NavbarComponent {
         } else {
           this.registerError = error.error?.message || 'Registration failed. Please try again.';
         }
+        this.cdr.detectChanges();
       }
     });
   }
@@ -214,13 +228,13 @@ export class NavbarComponent {
           localStorage.setItem('user', JSON.stringify(response.user));
         }
 
+        this.isLoggedIn = true;
         // Close modal and navigate
         this.closeAuthModal();
+        this.showToast('Login successful!');
         
-        // Navigate to dashboard or home
-        this.router.navigate(['/dashboard']).catch(() => {
-          this.router.navigate(['/']); // Fallback to home if dashboard route doesn't exist
-        });
+        // Redirect to marketplace instead of dashboard
+        this.router.navigate(['/marketplace']);
       },
       error: (error) => {
         this.isLoading = false;
@@ -228,12 +242,14 @@ export class NavbarComponent {
         
         // Handle different error scenarios
         if (error.status === 401) {
-          this.errorMessage = 'Invalid email or password. Please try again.';
+          this.errorMessage = 'You are not registered. Please click “Sign Up” to register.';
+          this.showToast('You are not registered. Please click “Sign Up” to register.');
         } else if (error.status === 0) {
           this.errorMessage = 'Unable to connect to server. Please check your connection.';
         } else {
           this.errorMessage = error.error?.message || 'Login failed. Please try again.';
         }
+        this.cdr.detectChanges();
       }
     });
   }
@@ -305,5 +321,35 @@ export class NavbarComponent {
   navigateToSellArt(): void {
     this.router.navigate(['/sell-art']);
     this.isOpen = false;
+  }
+
+  logout(): void {
+    // Clear auth data
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    
+    // Reset state
+    this.isLoggedIn = false;
+    this.loginForm.reset();
+    this.registerForm.reset();
+    
+    // Close any open modals/menus
+    this.isOpen = false;
+    this.showAuthModal = false;
+    
+    // Show success message
+    this.showToast('Logged out successfully');
+    
+    // Navigate to home
+    this.router.navigate(['/']);
+  }
+
+  private showToast(message: string): void {
+    this.toastMessage = message;
+    this.toastVisible = true;
+    setTimeout(() => {
+      this.toastVisible = false;
+      this.toastMessage = '';
+    }, 3000);
   }
 }
