@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { LucideAngularModule } from 'lucide-angular';
+import { CartService } from '../../../app/services/cart.service';
 
 // Login request interface
 interface LoginRequest {
@@ -63,6 +64,7 @@ export class NavbarComponent implements OnInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
+    private cartService: CartService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.loginForm = this.fb.group({
@@ -328,6 +330,9 @@ export class NavbarComponent implements OnInit {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
     
+    // Clear cart data
+    this.cartService.clearCart();
+
     // Reset state
     this.isLoggedIn = false;
     this.loginForm.reset();

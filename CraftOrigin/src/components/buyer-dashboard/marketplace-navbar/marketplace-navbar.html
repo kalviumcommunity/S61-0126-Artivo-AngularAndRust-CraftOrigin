@@ -1,69 +1,125 @@
 <nav class="sticky top-0 z-50 w-full bg-white border-b border-gray-200 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16 gap-4">
-        
-        <!-- Logo -->
-        <div class="flex-shrink-0 cursor-pointer" (click)="navigateToHome()">
-          <span class="text-2xl font-serif font-bold text-primary">CraftOrigin</span>
-        </div>
-  
-        <!-- Search Bar (Desktop) -->
-        <div class="hidden md:flex flex-1 max-w-2xl mx-4">
-          <div class="relative w-full group">
-            <input 
-              type="text" 
-              placeholder="Search for anything" 
-              class="w-full h-10 pl-4 pr-12 rounded-full border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent focus:bg-white transition-all shadow-sm group-hover:bg-white"
-            >
-            <button class="absolute right-0 top-0 h-10 w-12 bg-primary rounded-r-full flex items-center justify-center text-white hover:bg-primary/90 transition-colors border border-primary">
-              <lucide-icon name="search" class="w-5 h-5"></lucide-icon>
-            </button>
-          </div>
-        </div>
-  
-        <!-- Right Actions -->
-        <div class="flex items-center gap-2 sm:gap-4">
-          
-            <!-- Mobile Search Toggle (Visible on small screens) -->
-            <button class="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-full">
-                <lucide-icon name="search" class="w-6 h-6"></lucide-icon>
-            </button>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 gap-4">
 
-          <!-- Sell Art Link -->
-           <a (click)="navigateToSellArt()" class="hidden sm:flex items-center gap-1 text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-full font-medium text-sm transition-colors cursor-pointer">
-             <lucide-icon name="store" class="w-5 h-5"></lucide-icon>
-             <span>Sell on CraftOrigin</span>
-           </a>
-  
-          <!-- Favorites / Wishlist (Optional, but Etsy has it) -->
-          <!-- <button class="p-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors relative" title="Favorites">
-            <lucide-icon name="heart" class="w-6 h-6"></lucide-icon>
-          </button> -->
+      <!-- Logo -->
+      <div class="flex-shrink-0 cursor-pointer">
+        <span class="text-2xl font-serif font-bold text-primary">
+          CraftOrigin
+        </span>
+      </div>
 
-          <!-- User Profile -->
-          <div class="relative group">
-            <button class="flex items-center gap-1 p-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors" [routerLink]="'/dashboard/profile'">
-               <lucide-icon name="user" class="w-6 h-6"></lucide-icon>
-               <lucide-icon name="chevron-down" class="w-4 h-4 hidden sm:block"></lucide-icon>
-            </button>
-            <!-- Dropdown (Simple implementation) -->
-            <div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-100 hidden group-hover:block">
-                <a [routerLink]="'/dashboard/profile'" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profile</a>
-                <a [routerLink]="'/dashboard/orders'" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Purchases</a>
-                <div class="border-t border-gray-100 my-1"></div>
-                <button (click)="logout()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">Sign out</button>
-            </div>
-          </div>
-  
-          <!-- Cart -->
-          <a [routerLink]="'/cart'" class="p-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors relative" title="Cart">
-            <lucide-icon name="shopping-cart" class="w-6 h-6"></lucide-icon>
-            <!-- Badge -->
-            <span *ngIf="(cartCount$ | async) as count" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full">
-              {{ count }}
-            </span>
-          </a>
+      <!-- Search Bar (Desktop) -->
+      <div class="hidden md:flex flex-1 max-w-2xl mx-4">
+        <div class="relative w-full group">
+          <input
+            type="text"
+            placeholder="Search for anything"
+            class="w-full h-10 pl-4 pr-12 rounded-full border border-gray-300 bg-gray-50
+                   focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
+                   focus:bg-white transition-all shadow-sm group-hover:bg-white"
+          />
+          <button
+            class="absolute right-0 top-0 h-10 w-12 bg-primary rounded-r-full
+                   flex items-center justify-center text-white
+                   hover:bg-primary/90 transition-colors border border-primary"
+          >
+            <lucide-icon name="search" class="w-5 h-5"></lucide-icon>
+          </button>
         </div>
       </div>
+
+      <!-- Right Actions -->
+      <div class="flex items-center gap-2 sm:gap-4">
+
+        <!-- Mobile Search -->
+        <button class="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-full">
+          <lucide-icon name="search" class="w-6 h-6"></lucide-icon>
+        </button>
+
+        <!-- Sell Art -->
+        <a
+          (click)="navigateToSellArt()"
+          class="hidden sm:flex items-center gap-1 text-gray-700
+                 hover:bg-gray-100 px-3 py-2 rounded-full
+                 font-medium text-sm transition-colors cursor-pointer"
+        >
+          <lucide-icon name="store" class="w-5 h-5"></lucide-icon>
+          <span>Sell on CraftOrigin</span>
+        </a>
+
+        <!-- User Profile -->
+        <div
+          class="relative"
+          (click)="$event.stopPropagation()"
+          (document:click)="closeProfile()"
+        >
+          <button
+            class="flex items-center gap-1 p-2 text-gray-700
+                   hover:bg-gray-100 rounded-full transition-colors"
+            (click)="toggleProfile()"
+          >
+            <lucide-icon name="user" class="w-6 h-6"></lucide-icon>
+            <span class="text-gray-500">▼</span>
+
+          </button>
+
+          <!-- Dropdown -->
+          <div
+            *ngIf="isProfileOpen"
+            class="absolute right-0 top-full mt-2 w-48 bg-white
+                   rounded-md shadow-lg py-1 border border-gray-100 z-50"
+          >
+            <a
+              [routerLink]="'/dashboard/profile'"
+              (click)="closeProfile()"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+            >
+              Profile
+            </a>
+
+            <a
+              [routerLink]="'/dashboard/orders'"
+              (click)="closeProfile()"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+            >
+              Purchases
+            </a>
+
+            <div class="border-t border-gray-100 my-1"></div>
+
+            <button
+              (click)="logout(); closeProfile()"
+              class="block w-full text-left px-4 py-2
+                     text-sm text-red-600 hover:bg-red-50"
+            >
+              Sign out
+            </button>
+          </div>
+        </div>
+
+        <!-- Cart -->
+        <button
+          (click)="toggleCart()"
+          class="p-2 text-gray-700 hover:bg-gray-100
+                 rounded-full transition-colors relative cursor-pointer"
+        >
+          <lucide-icon name="shopping-cart" class="w-6 h-6"></lucide-icon>
+
+          <span
+            *ngIf="(cartCount$ | async) as count"
+            class="absolute top-0 right-0 inline-flex items-center justify-center
+                   px-2 py-1 text-xs font-bold leading-none text-white
+                   transform translate-x-1/4 -translate-y-1/4
+                   bg-red-600 rounded-full"
+          >
+            {{ count }}
+          </span>
+        </button>
+
+      </div>
     </div>
-  </nav>
+  </div>
+</nav>
+
+<app-cart-sidebar></app-cart-sidebar>

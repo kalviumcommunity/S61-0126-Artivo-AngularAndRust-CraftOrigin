@@ -51,6 +51,8 @@ pub async fn register(
     let name = payload.name.clone().unwrap_or_else(|| "User".to_string());
     let email = payload.email.clone().to_lowercase().trim().to_string();
 
+    println!("Registering user: {}", email);
+
     if !email.contains('@') {
         return HttpResponse::BadRequest().json(serde_json::json!({
             "message": "Invalid email format"
@@ -65,6 +67,7 @@ pub async fn register(
 
     match user_exists {
         Ok(Some(_)) => {
+            println!("Email {} already registered", email);
             return HttpResponse::Conflict().json(serde_json::json!({
                 "message": "Email already registered"
             }));
@@ -150,32 +153,40 @@ pub async fn login(
     {
         Ok(Some(row)) => {
             let password_hash: String = row.get("password_hash");
+            
             let parsed_hash = match PasswordHash::new(&password_hash) {
                 Ok(h) => h,
-                Err(_) => return HttpResponse::InternalServerError().json(serde_json::json!({"message": "Login failed"}))
+                Err(e) => {
+                    eprintln!("Failed to parse hash: {}", e);
+                    return HttpResponse::InternalServerError().json(serde_json::json!({"message": "Login failed (hash error)"}));
+                }
             };
 
-            if Argon2::default().verify_password(payload.password.as_bytes(), &parsed_hash).is_ok() {
-                let id: Uuid = row.get("id");
-                let name: String = row.get("name");
-                let role: String = row.get("role");
-                
-                let user = UserResponse { id, name, email: email.clone() };
+            match Argon2::default().verify_password(payload.password.as_bytes(), &parsed_hash) {
+                Ok(_) => {
+                    let id: Uuid = row.get("id");
+                    let name: String = row.get("name");
+                    let role: String = row.get("role");
+                    
+                    let user = UserResponse { id, name, email: email.clone() };
 
-                match generate_token(id, &email, &role) {
-                    Ok(token) => HttpResponse::Ok().json(AuthResponse {
-                        token,
-                        user,
-                        message: "Login successful".into(),
-                    }),
-                    Err(_) => HttpResponse::InternalServerError().json(serde_json::json!({
-                        "message": "Login failed"
+                    match generate_token(id, &email, &role) {
+                        Ok(token) => HttpResponse::Ok().json(AuthResponse {
+                            token,
+                            user,
+                            message: "Login successful".into(),
+                        }),
+                        Err(_) => HttpResponse::InternalServerError().json(serde_json::json!({
+                            "message": "Login failed"
+                        }))
+                    }
+                },
+                Err(e) => {
+                    eprintln!("Password verification failed for {}: {}", email, e);
+                    HttpResponse::Unauthorized().json(serde_json::json!({
+                        "message": "Invalid email or password"
                     }))
                 }
-            } else {
-                HttpResponse::Unauthorized().json(serde_json::json!({
-                    "message": "Invalid email or password"
-                }))
             }
         }
         Ok(None) => HttpResponse::Unauthorized().json(serde_json::json!({

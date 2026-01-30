@@ -1,62 +1,70 @@
 <app-marketplace-navbar></app-marketplace-navbar>
-<div class="container mx-auto px-4 py-8">
-  <h1 class="text-3xl font-display font-bold mb-8">Marketplace</h1>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="flex items-center justify-between mb-10">
+    <div>
+      <h1 class="text-3xl font-serif font-bold text-gray-900">Marketplace</h1>
+      <p class="mt-2 text-gray-600">Discover unique handcrafted treasures</p>
+    </div>
+  </div>
 
   <div *ngIf="isLoading" class="flex justify-center items-center h-64">
     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
   </div>
 
-  <div *ngIf="error" class="text-red-500 text-center py-8">
+  <div *ngIf="error" class="bg-red-50 text-red-600 p-4 rounded-lg text-center mb-8 border border-red-100">
     {{ error }}
   </div>
 
-  <div *ngIf="!isLoading && !error">
+  <div *ngIf="!isLoading && !error" class="space-y-16">
     <ng-container *ngFor="let category of categories">
-      <div *ngIf="artworksByCategory[category]?.length" class="mb-12">
-        <div class="flex justify-between items-end mb-4">
-          <h2 class="text-2xl font-semibold">{{ category }}</h2>
-          <!-- Future: Add 'View all' link -->
+      <div *ngIf="artworksByCategory[category]?.length">
+        <div class="flex justify-between items-end mb-6 px-1">
+          <h2 class="text-2xl font-serif font-semibold text-gray-900">{{ category }}</h2>
+          <a class="text-primary hover:text-primary/80 text-sm font-medium cursor-pointer transition-colors">View all</a>
         </div>
 
-        <div class="relative">
+        <div class="relative group/section">
           <!-- Horizontal Scroll Container -->
-          <div class="flex overflow-x-auto gap-6 pb-4 -mx-4 px-4 scrollbar-hide snap-x">
-            <div *ngFor="let artwork of artworksByCategory[category]" class="flex-none w-64 snap-start">
-              <div class="group bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col cursor-pointer">
+          <div class="flex overflow-x-auto gap-6 pb-6 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 scrollbar-hide snap-x">
+            <div *ngFor="let artwork of artworksByCategory[category]" class="flex-none w-72 snap-start">
+              <div class="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 h-full flex flex-col cursor-pointer">
                 <!-- Image -->
-                <div class="aspect-square bg-muted relative overflow-hidden">
+                <div class="aspect-[4/3] bg-gray-50 relative overflow-hidden">
                   <img 
                     [src]="artwork.image_url || 'assets/placeholder-art.jpg'" 
                     [alt]="artwork.title"
-                    class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                    class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
                     onerror="this.src='assets/placeholder-art.jpg'"
                   >
-                  <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   
                   <!-- Stock Status -->
-                  <div *ngIf="artwork.quantity_available === 0" class="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <span class="bg-red-600 text-white px-3 py-1 text-sm font-bold rounded">SOLD OUT</span>
+                  <div *ngIf="artwork.quantity_available === 0" class="absolute inset-0 bg-white/80 backdrop-blur-[2px] flex items-center justify-center z-10">
+                    <span class="bg-gray-900 text-white px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full">Sold Out</span>
                   </div>
-                  <div *ngIf="artwork.quantity_available > 0 && artwork.quantity_available < 5" class="absolute top-2 right-2">
-                     <span class="bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full font-medium">Only {{artwork.quantity_available}} left</span>
+                  <div *ngIf="artwork.quantity_available > 0 && artwork.quantity_available < 5" class="absolute top-3 right-3 z-10">
+                     <span class="bg-amber-100 text-amber-800 border border-amber-200 text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wide">
+                       Only {{artwork.quantity_available}} left
+                     </span>
                   </div>
                 </div>
                 
                 <!-- Content -->
-                <div class="p-4 flex flex-col flex-grow">
-                  <h3 class="font-medium text-lg truncate" [title]="artwork.title">{{ artwork.title }}</h3>
-                  <p class="text-muted-foreground text-sm truncate mb-2">{{ artwork.description || 'No description' }}</p>
+                <div class="p-5 flex flex-col flex-grow">
+                  <div class="mb-3">
+                    <h3 class="font-medium text-gray-900 text-lg truncate leading-tight" [title]="artwork.title">{{ artwork.title }}</h3>
+                    <p class="text-gray-500 text-sm truncate mt-1">{{ artwork.description || 'No description' }}</p>
+                  </div>
                   
-                  <div class="mt-auto flex justify-between items-center">
-                    <span class="font-bold text-lg">${{ artwork.price }}</span>
+                  <div class="mt-auto flex justify-between items-center pt-3 border-t border-gray-50">
+                    <span class="font-serif font-semibold text-xl text-gray-900">${{ artwork.price }}</span>
                     <button 
                       (click)="$event.stopPropagation(); addToCart(artwork)"
-                      class="px-3 py-1.5 bg-black text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors flex items-center gap-1"
+                      class="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-primary transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-95 duration-200"
                       [disabled]="artwork.quantity_available === 0"
-                      [class.opacity-50]="artwork.quantity_available === 0"
                     >
                       <lucide-icon name="shopping-cart" class="w-4 h-4"></lucide-icon>
-                      Add
+                      <span>Add</span>
                     </button>
                   </div>
                 </div>
@@ -67,10 +75,13 @@
       </div>
     </ng-container>
 
-    <!-- Empty State if no categories have items -->
-    <div *ngIf="!hasArtworks()" class="text-center py-12 text-muted-foreground">
-      <p>No artworks found yet.</p>
-      <p class="mt-2 text-sm">Check back later or start selling!</p>
+    <!-- Empty State -->
+    <div *ngIf="!hasArtworks()" class="flex flex-col items-center justify-center py-20 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+      <div class="bg-white p-4 rounded-full shadow-sm mb-4">
+        <lucide-icon name="search" class="w-8 h-8 text-gray-400"></lucide-icon>
+      </div>
+      <h3 class="text-lg font-medium text-gray-900">No artworks found</h3>
+      <p class="mt-1 text-gray-500 max-w-sm mx-auto">It looks like there aren't any artworks available in the marketplace right now.</p>
     </div>
   </div>
 </div>

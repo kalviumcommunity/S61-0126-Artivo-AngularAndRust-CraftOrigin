@@ -18,8 +18,23 @@ export class CartService {
   private cartCount = new BehaviorSubject<number>(0);
   public cartCount$ = this.cartCount.asObservable();
 
+  private isCartOpen = new BehaviorSubject<boolean>(false);
+  public isCartOpen$ = this.isCartOpen.asObservable();
+
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.loadCart();
+  }
+
+  toggleCart() {
+    this.isCartOpen.next(!this.isCartOpen.value);
+  }
+
+  openCart() {
+    this.isCartOpen.next(true);
+  }
+
+  closeCart() {
+    this.isCartOpen.next(false);
   }
 
   private loadCart() {
@@ -68,8 +83,21 @@ export class CartService {
     this.saveCart(currentItems);
   }
 
+  updateQuantity(artworkId: string, quantity: number) {
+    const currentItems = this.cartItems.value;
+    const item = currentItems.find(item => item.artwork.id === artworkId);
+    if (item) {
+      item.quantity = quantity;
+      this.saveCart([...currentItems]);
+    }
+  }
+
   clearCart() {
-    this.saveCart([]);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('cart');
+    }
+    this.cartItems.next([]);
+    this.cartCount.next(0);
   }
 
   getCartItems(): CartItem[] {

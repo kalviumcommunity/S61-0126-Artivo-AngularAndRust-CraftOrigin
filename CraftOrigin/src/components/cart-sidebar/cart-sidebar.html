@@ -1,0 +1,137 @@
+<div *ngIf="isOpen" class="relative z-[100]" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+  <!-- Backdrop -->
+  <div 
+    class="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+    (click)="close()"
+  ></div>
+
+  <!-- Sidebar -->
+  <div class="fixed inset-0 overflow-hidden">
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+        <div class="pointer-events-auto w-screen max-w-md transform transition ease-in-out duration-500 sm:duration-700 translate-x-0">
+          <div class="flex h-full flex-col bg-white shadow-xl">
+            
+            <!-- Header -->
+            <div class="flex items-center justify-between px-4 py-6 sm:px-6 border-b border-gray-100">
+              <h2 class="text-xl font-serif font-medium text-gray-900" id="slide-over-title">Shopping Cart</h2>
+              <div class="flex items-center ml-3 h-7">
+                <button 
+                  type="button" 
+                  class="relative -m-2 p-2 text-gray-400 hover:text-gray-500 transition-colors rounded-full hover:bg-gray-100"
+                  (click)="close()"
+                >
+                  <span class="absolute -inset-0.5"></span>
+                  <span class="sr-only">Close panel</span>
+                  <lucide-icon name="x" class="w-6 h-6"></lucide-icon>
+                </button>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+              
+              <!-- Empty State -->
+              <div *ngIf="(cartItems$ | async)?.length === 0" class="flex flex-col items-center justify-center h-full text-center space-y-4">
+                <div class="bg-gray-50 p-4 rounded-full">
+                  <lucide-icon name="shopping-cart" class="w-12 h-12 text-gray-400"></lucide-icon>
+                </div>
+                <div>
+                  <h3 class="text-lg font-medium text-gray-900">Your cart is empty</h3>
+                  <p class="mt-1 text-sm text-gray-500">Looks like you haven't added any art yet.</p>
+                </div>
+                <button 
+                  (click)="close()" 
+                  class="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary bg-primary/10 hover:bg-primary/20 transition-colors"
+                >
+                  Start Shopping
+                </button>
+              </div>
+
+              <!-- Cart Items -->
+              <div *ngIf="(cartItems$ | async)?.length !== 0" class="flow-root">
+                <ul role="list" class="-my-6 divide-y divide-gray-200">
+                  <li *ngFor="let item of cartItems$ | async" class="flex py-6">
+                    <!-- Image -->
+                    <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                      <img 
+                        [src]="item.artwork.image_url || 'assets/placeholder-art.jpg'" 
+                        [alt]="item.artwork.title" 
+                        class="h-full w-full object-cover object-center"
+                      >
+                    </div>
+
+                    <!-- Details -->
+                    <div class="ml-4 flex flex-1 flex-col">
+                      <div>
+                        <div class="flex justify-between text-base font-medium text-gray-900">
+                          <h3 class="font-serif">
+                            <a href="#">{{ item.artwork.title }}</a>
+                          </h3>
+                          <p class="ml-4">${{ item.artwork.price * item.quantity | number:'1.2-2' }}</p>
+                        </div>
+                        <p class="mt-1 text-sm text-gray-500">{{ item.artwork.category }}</p>
+                      </div>
+                      
+                      <div class="flex flex-1 items-end justify-between text-sm">
+                        <!-- Quantity Controls -->
+                        <div class="flex items-center border border-gray-300 rounded-md">
+                          <button 
+                            class="p-1 hover:bg-gray-100 text-gray-500 disabled:opacity-50"
+                            [disabled]="item.quantity <= 1"
+                            (click)="updateQuantity(item, -1)"
+                          >
+                            <lucide-icon name="minus" class="w-4 h-4"></lucide-icon>
+                          </button>
+                          <span class="px-2 font-medium text-gray-900 min-w-[20px] text-center">{{ item.quantity }}</span>
+                          <button 
+                            class="p-1 hover:bg-gray-100 text-gray-500"
+                            (click)="updateQuantity(item, 1)"
+                          >
+                            <lucide-icon name="plus" class="w-4 h-4"></lucide-icon>
+                          </button>
+                        </div>
+
+                        <button 
+                          type="button" 
+                          class="font-medium text-red-600 hover:text-red-500 flex items-center gap-1 transition-colors"
+                          (click)="removeItem(item)"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Footer -->
+            <div *ngIf="(cartItems$ | async)?.length !== 0" class="border-t border-gray-200 px-4 py-6 sm:px-6 bg-gray-50">
+              <div class="flex justify-between text-base font-medium text-gray-900 mb-4">
+                <p>Subtotal</p>
+                <p>${{ subtotal$ | async | number:'1.2-2' }}</p>
+              </div>
+              <p class="mt-0.5 text-sm text-gray-500 mb-6">Shipping and taxes calculated at checkout.</p>
+              <div class="space-y-3">
+                <button
+                  (click)="checkout()"
+                  class="flex w-full items-center justify-center rounded-full border border-transparent bg-primary px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                >
+                  Checkout
+                </button>
+                <button 
+                  (click)="close()"
+                  class="flex w-full items-center justify-center rounded-full border border-gray-300 bg-white px-6 py-3 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+                >
+                  Continue Shopping
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
