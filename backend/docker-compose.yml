@@ -39,6 +39,8 @@ services:
     environment:
       # Ensure the server binds to all interfaces in the container
       HOST: "0.0.0.0"
+      # Override DATABASE_URL for Docker internal networking
+      DATABASE_URL: "postgres://postgres:postgres@postgres:5432/my_app_db"
     ports:
       - "8080:8080"
     volumes:

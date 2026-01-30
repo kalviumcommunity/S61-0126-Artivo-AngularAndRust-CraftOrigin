@@ -20,7 +20,9 @@ import {
   MapPin,
   Store,
   ShoppingCart,
-  LogOut
+  LogOut,
+  Plus,
+  Minus
 } from 'lucide-angular';
 import { SharedModule } from './shared/shared.module';
 
@@ -52,7 +54,9 @@ export const appConfig: ApplicationConfig = {
         MapPin,
         Store,
         ShoppingCart,
-        LogOut
+        LogOut,
+        Plus,
+        Minus
       })
     ),
     importProvidersFrom(
