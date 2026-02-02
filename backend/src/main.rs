@@ -76,6 +76,8 @@ sqlx::migrate!("./migrations")
                     .configure(routes::user_routes::user_routes)
                     .configure(routes::artwork_routes::protected_artwork_routes)
                     .configure(routes::upload_routes::upload_routes)
+                    .configure(routes::cart_routes::cart_routes)
+                    .configure(routes::order_routes::order_routes)
             )
     })
     
