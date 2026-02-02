@@ -1,7 +1,8 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 import { BuyerService } from '../buyer.service';
-import { Profile } from '../models';
+import { Profile, Order } from '../models';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
@@ -14,11 +15,17 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 export class BuyerProfileComponent implements OnInit {
   profileForm: any;
   loading = true;
+  saving = false;
   error = '';
   success = '';
+  orders: Order[] = [];
+  ordersLoading = true;
+  /** true = show profile, false = show orders */
+  showProfile = true;
 
   constructor(
-    private buyerService: BuyerService, 
+    private buyerService: BuyerService,
+    private router: Router,
     private fb: FormBuilder,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
@@ -31,25 +38,55 @@ export class BuyerProfileComponent implements OnInit {
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        try {
+          const user = JSON.parse(stored) as { name?: string; email?: string };
+          this.profileForm.patchValue({ name: user.name ?? '', email: user.email ?? '' });
+          this.loading = false;
+        } catch {}
+      }
       this.buyerService.getProfile().subscribe({
         next: (profile: Profile) => {
           this.profileForm.patchValue(profile);
           this.loading = false;
         },
-        error: (err: any) => {
-          this.error = 'Failed to load profile.';
+        error: () => {
           this.loading = false;
         }
       });
+      this.buyerService.getOrders().subscribe({
+        next: (list) => {
+          this.orders = list ?? [];
+          this.ordersLoading = false;
+        },
+        error: () => {
+          this.orders = [];
+          this.ordersLoading = false;
+        }
+      });
     } else {
-      this.loading = false; // SSR: Just stop loading
+      this.loading = false;
+      this.ordersLoading = false;
     }
+  }
+
+  back() {
+    this.router.navigate(['/marketplace']);
+  }
+
+  showOrdersView() {
+    this.showProfile = false;
+  }
+
+  showProfileView() {
+    this.showProfile = true;
   }
 
   save() {
     this.success = '';
     this.error = '';
-    this.loading = true;
+    this.saving = true;
     // Fix type error: cast value to Profile, filter out nulls
     const value = this.profileForm.value;
     const cleanValue = {
@@ -59,13 +96,13 @@ export class BuyerProfileComponent implements OnInit {
     };
     this.buyerService.updateProfile(cleanValue).subscribe({
       next: () => {
-        this.success = 'Profile updated!';
-        this.loading = false;
+        this.success = 'Profile updated.';
+        this.saving = false;
       },
       error: () => {
         this.error = 'Failed to update profile.';
-        this.loading = false;
+        this.saving = false;
       }
     });
   }
-  }
+}

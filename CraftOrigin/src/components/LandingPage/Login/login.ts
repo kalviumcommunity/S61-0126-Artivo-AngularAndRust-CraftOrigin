@@ -97,7 +97,7 @@ export class LoginComponent {
         localStorage.setItem('authToken', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
         this.cartService.loadCart();
-        this.router.navigate(['/marketplace']).catch(() => {
+        this.router.navigate(['/dashboard']).catch(() => {
           this.router.navigate(['/']);
         });
       },

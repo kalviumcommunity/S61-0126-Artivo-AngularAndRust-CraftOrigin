@@ -4,17 +4,9 @@
       <span class="logo-circle">CO</span>
       <span class="logo-text">CraftOrigin</span>
     </div>
-    <form class="dashboard-header__search">
-      <input type="text" placeholder="Search for anything..." />
-      <button type="submit"><span class="icon-search"></span></button>
-    </form>
     <div class="dashboard-header__actions">
-      <button class="icon-btn" title="Cart">
-        <span class="icon-cart"></span>
-      </button>
-      <div class="dashboard-header__user">
-        <span class="profile-name">{{ user?.name || 'User' }}</span>
-      </div>
+      <span class="profile-name">{{ displayName }}</span>
+      <button type="button" class="btn-logout" (click)="logout()">Logout</button>
     </div>
   </div>
 </header>
