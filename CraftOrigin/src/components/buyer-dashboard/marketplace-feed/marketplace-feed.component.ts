@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ArtworkService } from '../../../app/services/artwork.service';
@@ -7,19 +7,25 @@ import { LucideAngularModule } from 'lucide-angular';
 import { MarketplaceNavbarComponent } from '../marketplace-navbar/marketplace-navbar.component';
 import { CartService } from '../../../app/services/cart.service';
 import { ToastService } from '../../../app/services/toast.service';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Subject, debounceTime, distinctUntilChanged, throttleTime, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-marketplace-feed',
   standalone: true,
-  imports: [CommonModule, RouterModule, LucideAngularModule, MarketplaceNavbarComponent],
+  imports: [CommonModule, RouterModule, LucideAngularModule, MarketplaceNavbarComponent, ReactiveFormsModule],
   templateUrl: './marketplace-feed.html',
   styleUrls: ['./marketplace-feed.css']
 })
-export class MarketplaceFeedComponent implements OnInit {
+export class MarketplaceFeedComponent implements OnInit, OnDestroy {
   categories = [...ARTWORK_CATEGORIES]; // Create a mutable copy
   artworksByCategory: { [key: string]: Artwork[] } = {};
   isLoading = true;
   error: string | null = null;
+  searchControl = new FormControl('', { nonNullable: true });
+  private allArtworks: Artwork[] = [];
+  private addToCartClicks$ = new Subject<Artwork>();
+  private destroy$ = new Subject<void>();
 
   constructor(
     private artworkService: ArtworkService,
@@ -31,6 +37,14 @@ export class MarketplaceFeedComponent implements OnInit {
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
+      this.searchControl.valueChanges
+        .pipe(debounceTime(350), distinctUntilChanged(), takeUntil(this.destroy$))
+        .subscribe((term) => this.applyFilter(term));
+
+      this.addToCartClicks$
+        .pipe(throttleTime(1000), takeUntil(this.destroy$))
+        .subscribe((artwork) => this.addToCart(artwork));
+
       this.loadArtworks();
     } else {
       // SSR: Stop loading to render empty state or just keep loading spinner
@@ -60,7 +74,8 @@ export class MarketplaceFeedComponent implements OnInit {
         }
         
         console.log('Parsed artworks:', artworks);
-        this.groupArtworks(artworks);
+        this.allArtworks = artworks;
+        this.applyFilter(this.searchControl.value);
         this.isLoading = false;
         this.cdr.detectChanges(); // Force change detection
       },
@@ -115,9 +130,35 @@ export class MarketplaceFeedComponent implements OnInit {
     return Object.values(this.artworksByCategory).some(arr => arr.length > 0);
   }
 
+  queueAddToCart(artwork: Artwork) {
+    this.addToCartClicks$.next(artwork);
+  }
+
   addToCart(artwork: Artwork) {
     this.cartService.addToCart(artwork);
     console.log('Added to cart:', artwork);
     this.toastService.show(`Added "${artwork.title}" to cart!`, 'success');
+  }
+
+  applyFilter(term: string) {
+    const query = term.trim().toLowerCase();
+    if (!query) {
+      this.groupArtworks(this.allArtworks);
+      return;
+    }
+
+    const filtered = this.allArtworks.filter((art) => {
+      const title = art.title?.toLowerCase() ?? '';
+      const description = art.description?.toLowerCase() ?? '';
+      const category = art.category?.toLowerCase() ?? '';
+      return title.includes(query) || description.includes(query) || category.includes(query);
+    });
+
+    this.groupArtworks(filtered);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

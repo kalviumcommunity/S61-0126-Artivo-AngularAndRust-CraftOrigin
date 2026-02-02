@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, of, catchError } from 'rxjs';
+import { Observable, of, catchError, tap } from 'rxjs';
 import { Artwork } from '../models/artwork.model';
 
 @Injectable({
@@ -8,6 +8,8 @@ import { Artwork } from '../models/artwork.model';
 })
 export class ArtworkService {
   private apiUrl: string = 'http://localhost:8080/api/artworks';
+  private artworksCache = new Map<string, { timestamp: number; data: { data: Artwork[]; total?: number; page?: number; total_pages?: number } | Artwork[] }>();
+  private readonly defaultCacheTtlMs = 5 * 60 * 1000;
 
   constructor(private http: HttpClient) {}
 
@@ -42,7 +44,7 @@ export class ArtworkService {
     min_price?: number;
     max_price?: number;
     artist_id?: string;
-  } = {}): Observable<{ data: Artwork[]; total?: number; page?: number; total_pages?: number } | Artwork[]> {
+  } = {}, options?: { forceRefresh?: boolean; cacheTtlMs?: number }): Observable<{ data: Artwork[]; total?: number; page?: number; total_pages?: number } | Artwork[]> {
     let httpParams = new HttpParams();
     if (params.page !== undefined) httpParams = httpParams.set('page', String(params.page));
     if (params.limit !== undefined) httpParams = httpParams.set('limit', String(params.limit));
@@ -51,7 +53,19 @@ export class ArtworkService {
     if (params.max_price !== undefined) httpParams = httpParams.set('max_price', String(params.max_price));
     if (params.artist_id) httpParams = httpParams.set('artist_id', params.artist_id);
 
+    const cacheKey = httpParams.toString() || 'default';
+    const cacheTtlMs = options?.cacheTtlMs ?? this.defaultCacheTtlMs;
+    const cached = this.artworksCache.get(cacheKey);
+    const isFresh = cached && (Date.now() - cached.timestamp) < cacheTtlMs;
+
+    if (isFresh && !options?.forceRefresh) {
+      return of(cached.data);
+    }
+
     return this.http.get<{ data: Artwork[]; total?: number; page?: number; total_pages?: number } | Artwork[]>(this.apiUrl, { params: httpParams }).pipe(
+      tap((data) => {
+        this.artworksCache.set(cacheKey, { timestamp: Date.now(), data });
+      }),
       catchError((error) => {
         console.error('Error fetching artworks:', error);
         return of({ data: [], total: 0, page: 1, total_pages: 0 });
