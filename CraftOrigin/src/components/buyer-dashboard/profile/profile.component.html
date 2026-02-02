@@ -1,20 +1,71 @@
-<h2>Profile</h2>
-<div class="profile-info">
-  <form [formGroup]="profileForm" (ngSubmit)="save()">
-    <div *ngIf="loading">Loading...</div>
-    <div *ngIf="error" class="error">{{ error }}</div>
-    <div *ngIf="success" class="success">{{ success }}</div>
-    <div *ngIf="!loading">
-      <label>Name:<br>
-        <input formControlName="name" type="text" />
-      </label><br><br>
-      <label>Email:<br>
-        <input formControlName="email" type="email" />
-      </label><br><br>
-      <label>Phone:<br>
-        <input formControlName="phone" type="text" />
-      </label><br><br>
-      <button type="submit" [disabled]="profileForm.invalid || loading">Save</button>
+<div class="profile-page">
+  <div class="page-actions" [class.orders-view]="!showProfile">
+    <button *ngIf="showProfile" type="button" class="btn-back" (click)="back()">
+      <span class="btn-back-icon">←</span> Back
+    </button>
+    <button *ngIf="!showProfile" type="button" class="btn-profile" (click)="showProfileView()">View profile</button>
+  </div>
+
+  <section *ngIf="showProfile" class="profile-section">
+    <div class="profile-section-header">
+      <div>
+        <h2 class="section-title">Profile</h2>
+        <p class="section-subtitle">Your account details</p>
+      </div>
+      <button type="button" class="btn-view-orders" (click)="showOrdersView()">View orders</button>
     </div>
-  </form>
+    <div class="profile-card">
+      <form [formGroup]="profileForm" (ngSubmit)="save()" class="profile-form">
+        <div *ngIf="loading" class="loading">Loading...</div>
+        <div *ngIf="error" class="message error">{{ error }}</div>
+        <div *ngIf="success" class="message success">{{ success }}</div>
+        <div *ngIf="!loading" class="form-fields">
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" formControlName="name" type="text" placeholder="Your name" />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" formControlName="email" type="email" placeholder="your@email.com" />
+          </div>
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input id="phone" formControlName="phone" type="text" placeholder="Optional" />
+          </div>
+          <div class="profile-buttons">
+            <button type="submit" class="btn-save" [disabled]="profileForm.invalid || saving">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section *ngIf="!showProfile" class="orders-section">
+    <div class="orders-section-header">
+      <div>
+        <h2 class="section-title">Orders</h2>
+        <p class="section-subtitle">Your order history</p>
+      </div>
+    </div>
+    <div class="orders-divider" aria-hidden="true"></div>
+    <div class="orders-card">
+      <div *ngIf="ordersLoading" class="loading">Loading orders...</div>
+      <div *ngIf="!ordersLoading && orders.length === 0" class="empty-orders">No orders yet.</div>
+      <div *ngIf="!ordersLoading && orders.length > 0" class="orders-list">
+        <div *ngFor="let order of orders" class="order-item">
+          <div class="order-row">
+            <span class="order-id">Order #{{ order.id | slice:0:8 }}</span>
+            <span class="order-status" [class]="'status-' + order.status">{{ order.status }}</span>
+          </div>
+          <div class="order-meta">
+            <span class="order-date">{{ order.placed_at | date:'mediumDate' }}</span>
+            <span class="order-total">${{ order.total_amount | number:'1.2-2' }}</span>
+          </div>
+          <ul *ngIf="order.items?.length" class="order-items">
+            <li *ngFor="let item of order.items">{{ item.title }} × {{ item.quantity }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

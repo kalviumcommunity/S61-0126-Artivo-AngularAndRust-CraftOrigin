@@ -64,31 +64,25 @@
 .dashboard-header__actions {
   display: flex;
   align-items: center;
-  gap: 1.2rem;
-}
-.icon-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.3rem;
-  color: #f97316;
-  display: flex;
-  align-items: center;
-}
-.dashboard-header__profile {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.profile-avatar {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #f97316;
+  gap: 1rem;
 }
 .profile-name {
   font-size: 1rem;
   font-weight: 500;
   color: #1a1a1a;
+}
+.btn-logout {
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid #f97316;
+  background: #fff;
+  color: #f97316;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-logout:hover {
+  background: #f97316;
+  color: #fff;
 }
