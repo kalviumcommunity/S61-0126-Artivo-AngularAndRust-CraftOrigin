@@ -1,9 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CartService, CartItem } from '../../app/services/cart.service';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CartService } from '../../app/services/cart.service';
+import { CartItem } from '../../app/models/cart.model';
 import { LucideAngularModule } from 'lucide-angular';
 import { Observable, Subscription, map } from 'rxjs';
 import { Router } from '@angular/router';
+import { ToastService } from '../../app/services/toast.service';
 
 @Component({
   selector: 'app-cart-sidebar',
@@ -20,25 +22,25 @@ export class CartSidebarComponent implements OnInit, OnDestroy {
 
   constructor(
     private cartService: CartService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.cartItems$ = this.cartService.cartItems$;
-    
-    // Calculate subtotal
-    this.subtotal$ = this.cartItems$.pipe(
-      map(items => items.reduce((sum, item) => sum + (item.artwork.price * item.quantity), 0))
-    );
+    this.subtotal$ = this.cartService.cartTotal$;
   }
 
   ngOnInit() {
     this.sub.add(
       this.cartService.isCartOpen$.subscribe(isOpen => {
         this.isOpen = isOpen;
-        if (isOpen) {
-          // Prevent body scroll when cart is open
-          document.body.style.overflow = 'hidden';
-        } else {
-          document.body.style.overflow = 'auto';
+        if (isPlatformBrowser(this.platformId)) {
+          if (isOpen) {
+            // Prevent body scroll when cart is open
+            document.body.style.overflow = 'hidden';
+          } else {
+            document.body.style.overflow = 'auto';
+          }
         }
       })
     );
@@ -46,7 +48,9 @@ export class CartSidebarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sub.unsubscribe();
-    document.body.style.overflow = 'auto';
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.style.overflow = 'auto';
+    }
   }
 
   close() {
@@ -57,31 +61,33 @@ export class CartSidebarComponent implements OnInit, OnDestroy {
     const newQuantity = item.quantity + change;
     if (newQuantity < 1) return;
     
-    // We need a way to update quantity in CartService without adding/removing one by one?
-    // Current CartService only has addToCart (adds 1) and removeFromCart (removes all).
-    // Let's assume we can loop or we might need to update CartService to support setQuantity.
-    // For now, if change is +1, call addToCart.
-    // If change is -1, we need to handle it.
-    // Ideally CartService should have updateQuantity method.
-    
-    if (change > 0) {
-      this.cartService.addToCart(item.artwork);
-    } else {
-      if (item.artwork.id) {
-        this.cartService.updateQuantity(item.artwork.id, newQuantity);
-      }
+    // Check if we have artwork_id (from backend model) or artwork.id (if using full artwork object)
+    // The new CartItem interface uses flat structure with artwork_id
+    const id = item.artwork_id; 
+    if (id) {
+        this.cartService.updateQuantity(id, newQuantity);
     }
   }
 
   removeItem(item: CartItem) {
-    if (item.artwork.id) {
-      this.cartService.removeFromCart(item.artwork.id);
+    const id = item.artwork_id;
+    if (id) {
+      this.cartService.removeFromCart(id);
     }
   }
 
-  checkout() {
-    this.close();
-    // Navigate to checkout or process order
-    this.router.navigate(['/checkout']);
+  placeOrder() {
+    this.cartService.checkout().subscribe({
+        next: (res) => {
+            console.log('Order placed:', res);
+            this.close();
+            this.router.navigate(['/dashboard/orders']);
+            this.toastService.show('Order placed successfully!', 'success');
+        },
+        error: (err) => {
+            console.error('Order failed:', err);
+            this.toastService.show('Failed to place order. ' + (err.error || ''), 'error');
+        }
+    });
   }
 }

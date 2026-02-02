@@ -1,17 +1,15 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Artwork } from '../models/artwork.model';
-
-export interface CartItem {
-  artwork: Artwork;
-  quantity: number;
-}
+import { Cart, CartItem } from '../models/cart.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
+  private apiUrl = 'http://localhost:8080/api/cart';
   private cartItems = new BehaviorSubject<CartItem[]>([]);
   public cartItems$ = this.cartItems.asObservable();
   
@@ -20,8 +18,14 @@ export class CartService {
 
   private isCartOpen = new BehaviorSubject<boolean>(false);
   public isCartOpen$ = this.isCartOpen.asObservable();
+  
+  private cartTotal = new BehaviorSubject<number>(0);
+  public cartTotal$ = this.cartTotal.asObservable();
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
     this.loadCart();
   }
 
@@ -37,70 +41,82 @@ export class CartService {
     this.isCartOpen.next(false);
   }
 
-  private loadCart() {
+  loadCart() {
     if (isPlatformBrowser(this.platformId)) {
-      const savedCart = localStorage.getItem('cart');
-      if (savedCart) {
-        try {
-          const items: CartItem[] = JSON.parse(savedCart);
-          this.cartItems.next(items);
-          this.updateCount(items);
-        } catch (e) {
-          console.error('Failed to parse cart from local storage', e);
-          this.cartItems.next([]);
-        }
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        console.warn('CartService: No auth token found, skipping loadCart');
+        return;
       }
+
+      console.log('CartService: Loading cart...');
+      this.http.get<Cart>(this.apiUrl).subscribe({
+        next: (cart) => {
+            console.log('CartService: Cart loaded successfully', cart);
+            this.cartItems.next(cart.items);
+            this.updateState(cart.items, cart.total_amount);
+        },
+        error: (err) => {
+            console.error('CartService: Failed to load cart', err);
+            // If 404 or empty, reset
+            this.cartItems.next([]);
+            this.cartCount.next(0);
+            this.cartTotal.next(0);
+        }
+      });
     }
   }
 
-  private saveCart(items: CartItem[]) {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('cart', JSON.stringify(items));
-    }
-    this.cartItems.next(items);
-    this.updateCount(items);
+  private updateState(items: CartItem[], total: number) {
+      const count = items.reduce((acc, item) => acc + item.quantity, 0);
+      console.log('CartService: Updating state. Count:', count, 'Total:', total);
+      this.cartCount.next(count);
+      this.cartTotal.next(total);
   }
 
-  private updateCount(items: CartItem[]) {
-    const count = items.reduce((acc, item) => acc + item.quantity, 0);
-    this.cartCount.next(count);
-  }
-
-  addToCart(artwork: Artwork) {
-    const currentItems = this.cartItems.value;
-    const existingItem = currentItems.find(item => item.artwork.id === artwork.id);
-
-    if (existingItem) {
-      existingItem.quantity += 1;
-      this.saveCart([...currentItems]);
-    } else {
-      this.saveCart([...currentItems, { artwork, quantity: 1 }]);
-    }
-  }
-
-  removeFromCart(artworkId: string) {
-    const currentItems = this.cartItems.value.filter(item => item.artwork.id !== artworkId);
-    this.saveCart(currentItems);
+  addToCart(artwork: Artwork, quantity: number = 1) {
+    console.log('CartService: Adding to cart...', artwork.id);
+    this.http.post(this.apiUrl, { artwork_id: artwork.id, quantity }, { responseType: 'text' }).subscribe({
+        next: () => {
+            console.log('CartService: Added to cart successfully. Reloading cart...');
+            this.loadCart();
+            this.openCart();
+        },
+        error: (err) => console.error('CartService: Failed to add to cart', err)
+    });
   }
 
   updateQuantity(artworkId: string, quantity: number) {
-    const currentItems = this.cartItems.value;
-    const item = currentItems.find(item => item.artwork.id === artworkId);
-    if (item) {
-      item.quantity = quantity;
-      this.saveCart([...currentItems]);
-    }
+    if (quantity < 1) return;
+    this.http.put(`${this.apiUrl}/${artworkId}`, { quantity }, { responseType: 'text' }).subscribe({
+        next: () => this.loadCart(),
+        error: (err) => console.error('Failed to update quantity', err)
+    });
+  }
+
+  removeFromCart(artworkId: string) {
+    this.http.delete(`${this.apiUrl}/${artworkId}`, { responseType: 'text' }).subscribe({
+        next: () => this.loadCart(),
+        error: (err) => console.error('Failed to remove item', err)
+    });
   }
 
   clearCart() {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('cart');
-    }
-    this.cartItems.next([]);
-    this.cartCount.next(0);
+    this.http.delete(this.apiUrl, { responseType: 'text' }).subscribe({
+        next: () => {
+            this.resetLocalState();
+        },
+        error: (err) => console.error('Failed to clear cart', err)
+    });
   }
 
-  getCartItems(): CartItem[] {
-    return this.cartItems.value;
+  resetLocalState() {
+    this.cartItems.next([]);
+    this.cartCount.next(0);
+    this.cartTotal.next(0);
+  }
+
+  checkout(): Observable<any> {
+      return this.http.post('http://localhost:8080/api/orders', {});
   }
 }

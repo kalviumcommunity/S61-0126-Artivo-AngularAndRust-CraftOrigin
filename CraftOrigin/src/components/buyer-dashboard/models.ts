@@ -4,12 +4,26 @@ export interface Profile {
   phone?: string;
 }
 
+export interface OrderItem {
+    id: string;
+    order_id: string;
+    artwork_id: string;
+    artist_id: string;
+    quantity: number;
+    unit_price: number;
+    status: string;
+    title: string;
+    image_url?: string;
+    artist_name: string;
+}
+
 export interface Order {
   id: string;
-  date: string;
-  total: number;
+  buyer_id: string;
+  total_amount: number;
   status: string;
-  items: Array<{ name: string; price: number; quantity: number }>;
+  placed_at: string;
+  items: OrderItem[];
 }
 
 export interface WishlistItem {

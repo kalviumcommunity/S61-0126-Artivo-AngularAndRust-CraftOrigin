@@ -50,7 +50,7 @@ export class MarketplaceNavbarComponent {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
-      this.cartService.clearCart();
+      this.cartService.resetLocalState();
     }
 
     this.closeProfile(); // close dropdown on logout

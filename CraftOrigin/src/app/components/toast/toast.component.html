@@ -1,0 +1,22 @@
+<div class="toast-container">
+  <div *ngFor="let toast of toasts$ | async" 
+       class="toast" 
+       [ngClass]="toast.type"
+       (click)="remove(toast.id)">
+    
+    <!-- Success Icon -->
+    <lucide-icon *ngIf="toast.type === 'success'" name="check-circle" class="icon"></lucide-icon>
+    
+    <!-- Error Icon -->
+    <lucide-icon *ngIf="toast.type === 'error'" name="alert-circle" class="icon"></lucide-icon>
+    
+    <!-- Info Icon -->
+    <lucide-icon *ngIf="toast.type === 'info'" name="info" class="icon"></lucide-icon>
+
+    <span class="message">{{ toast.message }}</span>
+    
+    <button class="close-btn" (click)="$event.stopPropagation(); remove(toast.id)">
+      <lucide-icon name="x" class="close-icon"></lucide-icon>
+    </button>
+  </div>
+</div>

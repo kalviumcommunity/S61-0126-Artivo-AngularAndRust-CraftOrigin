@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { CartService } from '../../../app/services/cart.service';
 interface LoginRequest {
   email: string;
   password: string;
@@ -46,7 +47,8 @@ export class LoginComponent {
     private fb: FormBuilder,
     private http: HttpClient,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private cartService: CartService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -94,6 +96,7 @@ export class LoginComponent {
         }
         localStorage.setItem('authToken', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
+        this.cartService.loadCart();
         this.router.navigate(['/marketplace']).catch(() => {
           this.router.navigate(['/']);
         });

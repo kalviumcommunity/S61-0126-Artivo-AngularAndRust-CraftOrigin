@@ -1,13 +1,14 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd, Event } from '@angular/router';
 import { NavbarComponent } from '../components/LandingPage/Navigation/navagation';
+import { ToastComponent } from './components/toast/toast.component';
 import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, CommonModule],
+  imports: [RouterOutlet, NavbarComponent, CommonModule, ToastComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
