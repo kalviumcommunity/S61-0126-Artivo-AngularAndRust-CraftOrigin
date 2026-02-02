@@ -2486,3 +2486,24 @@ Middleware configuration and CORS handling
 Authentication and database integration
 
 Now, it’s time to make the frontend and backend talk to each other.
+
+---
+
+## Frontend Optimization Summary (Caching, Debounce, Throttle)
+
+### What I learned today
+- **Why UI optimization matters**: unnecessary API calls slow down the UI and waste backend resources.
+- **Caching**: reuse previously fetched data to avoid repeat requests for the same parameters.
+- **Debounce**: wait for the user to stop typing before running a search.
+- **Throttle**: limit how frequently rapid actions (like clicks) can trigger logic.
+- **Best practice**: put caching in services, not components, to keep UI clean and consistent.
+
+### What I implemented today
+- **Caching**: added an in‑memory cache with a TTL so repeated artwork requests reuse data.
+- **Debounced search**: typing in the marketplace now waits briefly before filtering to prevent rapid updates.
+- **Throttled actions**: rapid add‑to‑cart clicks are rate‑limited to prevent spam.
+
+### Result
+- Smoother UI interactions during typing and clicking.
+- Fewer redundant backend calls.
+- Better scalability and user experience.
