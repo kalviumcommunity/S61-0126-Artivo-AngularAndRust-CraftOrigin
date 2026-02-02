@@ -6,6 +6,7 @@ import { Artwork, ARTWORK_CATEGORIES } from '../../../app/models/artwork.model';
 import { LucideAngularModule } from 'lucide-angular';
 import { MarketplaceNavbarComponent } from '../marketplace-navbar/marketplace-navbar.component';
 import { CartService } from '../../../app/services/cart.service';
+import { ToastService } from '../../../app/services/toast.service';
 
 @Component({
   selector: 'app-marketplace-feed',
@@ -23,6 +24,7 @@ export class MarketplaceFeedComponent implements OnInit {
   constructor(
     private artworkService: ArtworkService,
     private cartService: CartService,
+    private toastService: ToastService,
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -116,7 +118,6 @@ export class MarketplaceFeedComponent implements OnInit {
   addToCart(artwork: Artwork) {
     this.cartService.addToCart(artwork);
     console.log('Added to cart:', artwork);
-    // TODO: Replace with a nicer toast notification
-    alert(`Added "${artwork.title}" to cart!`);
+    this.toastService.show(`Added "${artwork.title}" to cart!`, 'success');
   }
 }

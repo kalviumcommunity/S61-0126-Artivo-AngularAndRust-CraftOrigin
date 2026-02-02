@@ -18,7 +18,7 @@ export class BuyerService {
   }
 
   getOrders(): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.api}/orders`);
+    return this.http.get<Order[]>('http://localhost:8080/api/orders');
   }
 
   getWishlist(): Observable<WishlistItem[]> {
