@@ -1,0 +1,30 @@
+<div class="activity-logs">
+  <h2 class="page-title">Activity logs</h2>
+  <p class="page-desc">Admin actions and entity changes.</p>
+  <div *ngIf="loading" class="loading">Loading...</div>
+  <div *ngIf="!loading && logs.length === 0" class="empty">No activity logs yet.</div>
+  <div *ngIf="!loading && logs.length > 0" class="logs-table-wrap">
+    <table class="logs-table">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Action</th>
+          <th>Entity</th>
+          <th>Entity ID</th>
+          <th>Details</th>
+          <th>IP</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let log of logs">
+          <td>{{ log.created_at | date:'short' }}</td>
+          <td><span class="action-badge">{{ log.action }}</span></td>
+          <td>{{ log.entity_type }}</td>
+          <td><code>{{ log.entity_id | slice:0:8 }}…</code></td>
+          <td>{{ log.details | json }}</td>
+          <td>{{ log.ip_address || '—' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

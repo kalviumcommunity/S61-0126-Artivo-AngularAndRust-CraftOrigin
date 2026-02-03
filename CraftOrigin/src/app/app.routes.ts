@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
 import { HomeComponent } from '../components/LandingPage/Home/home';
 import { AboutUsComponent } from '../components/LandingPage/AboutUs/aboutUs';
 import { SellArtComponent } from '../components/LandingPage/SellArt/sellArt';
@@ -67,6 +68,18 @@ export const routes: Routes = [
       { path: 'wishlist', loadComponent: () => import('../components/buyer-dashboard/wishlist/wishlist.component').then(m => m.WishlistComponent) },
       { path: 'addresses', loadComponent: () => import('../components/buyer-dashboard/addresses/addresses.component').then(m => m.BuyerAddressesComponent) },
       { path: 'settings', loadComponent: () => import('../components/buyer-dashboard/settings/settings.component').then(m => m.BuyerSettingsComponent) }
+    ]
+  },
+  {
+    path: 'admin',
+    canActivate: [adminGuard],
+    loadComponent: () => import('../components/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
+    children: [
+      { path: '', redirectTo: 'logs', pathMatch: 'full' },
+      { path: 'logs', loadComponent: () => import('../components/admin-dashboard/activity-logs/activity-logs.component').then(m => m.ActivityLogsComponent) },
+      { path: 'permissions', loadComponent: () => import('../components/admin-dashboard/permissions/permissions.component').then(m => m.PermissionsComponent) },
+      { path: 'verification', loadComponent: () => import('../components/admin-dashboard/verification-requests/verification-requests.component').then(m => m.VerificationRequestsComponent) },
+      { path: 'settings', loadComponent: () => import('../components/admin-dashboard/system-settings/system-settings.component').then(m => m.SystemSettingsComponent) }
     ]
   },
   {

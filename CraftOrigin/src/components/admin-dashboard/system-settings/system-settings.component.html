@@ -1,0 +1,31 @@
+<div class="settings-page">
+  <h2 class="page-title">System settings</h2>
+  <p class="page-desc">Key-value configuration (mock updates).</p>
+  <div *ngIf="loading" class="loading">Loading...</div>
+  <div *ngIf="!loading && settings.length === 0" class="empty">No settings.</div>
+  <div *ngIf="!loading && settings.length > 0" class="settings-list">
+    <div *ngFor="let s of settings" class="setting-row">
+      <div class="setting-info">
+        <strong class="setting-key">{{ s.key }}</strong>
+        <span *ngIf="s.description" class="setting-desc">{{ s.description }}</span>
+        <span class="setting-meta">Updated {{ s.updated_at | date:'short' }}</span>
+      </div>
+      <div class="setting-edit">
+        <input
+          type="text"
+          [(ngModel)]="editValue[s.key]"
+          class="value-input"
+          placeholder="Value"
+        />
+        <button
+          type="button"
+          class="btn-save"
+          [disabled]="savingKey === s.key"
+          (click)="save(s)"
+        >
+          {{ savingKey === s.key ? 'Saving…' : 'Save' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,148 @@
+.verification-page {
+  max-width: 100%;
+}
+
+.page-title {
+  margin: 0 0 0.25rem;
+  font-size: 1.35rem;
+  color: #1e293b;
+}
+
+.page-desc {
+  margin: 0 0 1.25rem;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.loading {
+  padding: 1.5rem;
+  color: #64748b;
+}
+
+.requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.request-card {
+  padding: 1rem 1.25rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.request-card.pending {
+  border-left: 4px solid #f59e0b;
+  background: #fffbeb;
+}
+
+.request-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.artist-name {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.status-badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-PENDING {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.status-APPROVED {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.status-REJECTED {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.request-meta {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.request-meta span + span {
+  margin-left: 1rem;
+}
+
+.documents, .review-notes {
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.documents ul {
+  margin: 0.25rem 0 0 1rem;
+  padding: 0;
+}
+
+.actions {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notes-input {
+  flex: 1;
+  min-width: 180px;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.btn-approve {
+  padding: 0.4rem 0.75rem;
+  background: #059669;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.btn-approve:hover:not(:disabled) {
+  background: #047857;
+}
+
+.btn-reject {
+  padding: 0.4rem 0.75rem;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.btn-reject:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.btn-approve:disabled,
+.btn-reject:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.empty {
+  padding: 1.5rem;
+  color: #64748b;
+}
