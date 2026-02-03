@@ -157,6 +157,15 @@
               placeholder="e.g., Traditional patterns, Modern fusion" />
           </div>
         </div>
+        
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Bio / Artist Statement <span class="text-red-500">*</span>
+            </label>
+            <textarea [(ngModel)]="formData.bio"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              rows="4" placeholder="Tell us about yourself, your journey as an artist, and your inspiration..."></textarea>
+        </div>
       </div>
 
       <!-- Step 4: Upload Documents -->
@@ -248,10 +257,10 @@
         </div>
         <h2 class="text-3xl font-bold text-gray-900 mb-4">Application Submitted!</h2>
         <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-          Thank you for applying to join CraftOrigin. Our team will review your application and verify your documents within 2-3 business days.
+          Thank you for applying to join CraftOrigin. You can now access your artist dashboard to manage your profile and portfolio while we verify your details.
         </p>
-        <button (click)="goToHome()" class="px-8 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600">
-          Back to Home
+        <button (click)="goToDashboard()" class="px-8 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600">
+          Go to Artist Dashboard
         </button>
       </div>
 

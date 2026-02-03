@@ -26,6 +26,7 @@ export const routes: Routes = [
   },
   {
     path: 'artist-onboarding',
+    canActivate: [authGuard],
     component: ArtistOnboardingComponent
   },
   {
@@ -40,6 +41,20 @@ export const routes: Routes = [
     path: 'marketplace',
     canActivate: [authGuard],
     loadComponent: () => import('../components/buyer-dashboard/marketplace-feed/marketplace-feed.component').then(m => m.MarketplaceFeedComponent)
+  },
+  {
+    path: 'artist/dashboard',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/artist-dashboard/artist-dashboard.component').then(m => m.ArtistDashboardComponent),
+    children: [
+      { path: '', redirectTo: 'overview', pathMatch: 'full' },
+      { path: 'overview', loadComponent: () => import('./components/artist-dashboard/overview/overview.component').then(m => m.ArtistOverviewComponent) },
+      { path: 'artworks', loadComponent: () => import('./components/artist-dashboard/artworks/artworks.component').then(m => m.ArtistArtworksComponent) },
+      { path: 'artworks/new', loadComponent: () => import('./components/artist-dashboard/artworks/add-artwork/add-artwork.component').then(m => m.AddArtworkComponent) },
+      { path: 'orders', loadComponent: () => import('./components/artist-dashboard/orders/orders.component').then(m => m.ArtistOrdersComponent) },
+      { path: 'profile', loadComponent: () => import('./components/artist-dashboard/profile/profile.component').then(m => m.ArtistProfileComponent) },
+      { path: 'settings', loadComponent: () => import('./components/artist-dashboard/settings/settings.component').then(m => m.ArtistSettingsComponent) }
+    ]
   },
   {
     path: 'dashboard',

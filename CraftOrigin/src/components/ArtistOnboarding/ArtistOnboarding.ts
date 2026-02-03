@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ArtistService } from '../../app/services/artist.service';
 
 @Component({
   selector: 'app-artist-onboarding',
@@ -12,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class ArtistOnboardingComponent {
   currentStep = 1;
+  isSubmitting = false;
   
   formData: any = {
     fullName: '',
@@ -27,6 +29,7 @@ export class ArtistOnboardingComponent {
     tribe: '',
     yearsOfExperience: '',
     specialization: '',
+    bio: '', // Added bio
     photo: null,
     idProof: null,
     artSamples: [],
@@ -54,7 +57,10 @@ export class ArtistOnboardingComponent {
     'Gujarat', 'Telangana', 'Andhra Pradesh', 'Tamil Nadu', 'Kerala'
   ];
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private artistService: ArtistService
+  ) {}
 
   onFileSelect(event: any, field: string) {
     const files = event.target.files;
@@ -80,7 +86,7 @@ export class ArtistOnboardingComponent {
       case 2:
         return !!(this.formData.address && this.formData.state && this.formData.pincode);
       case 3:
-        return !!(this.formData.artForm && this.formData.yearsOfExperience);
+        return !!(this.formData.artForm && this.formData.yearsOfExperience && this.formData.bio); // Added bio validation
       case 4:
         return !!(this.formData.photo && this.formData.idProof && 
                  this.formData.artSamples.length >= 3);
@@ -106,19 +112,56 @@ export class ArtistOnboardingComponent {
 
   submitApplication() {
     if (this.validateStep(5)) {
-      // Here you would typically send the data to your backend API
-      console.log('Submitting application:', this.formData);
+      this.isSubmitting = true;
       
-      this.currentStep = 6;
-      this.verificationStatus = {
-        personalInfo: 'verified',
-        documents: 'pending',
-        artSamples: 'pending',
-        bankDetails: 'verified',
+      const payload = {
+        tribe_name: this.formData.tribe || this.formData.artForm, // Fallback if tribe empty
+        region: this.formData.state,
+        bio: this.formData.bio
       };
+
+      this.artistService.registerArtist(payload).subscribe({
+        next: (response) => {
+          console.log('Application submitted:', response);
+          
+          // Force update user role in local storage
+          const user = JSON.parse(localStorage.getItem('user') || '{}');
+          if (user) {
+            user.role = 'ARTIST';
+            localStorage.setItem('user', JSON.stringify(user));
+          }
+
+          this.currentStep = 6;
+          this.verificationStatus = {
+            personalInfo: 'verified',
+            documents: 'pending',
+            artSamples: 'pending',
+            bankDetails: 'verified',
+          };
+          this.isSubmitting = false;
+        },
+        error: (err) => {
+          console.error('Submission error:', err);
+          if (err.status === 409) {
+             // Handle "Artist profile already exists"
+             // Assuming success if already exists for now, or could show specific error
+             alert('You are already registered as an artist.');
+             this.goToDashboard();
+          } else {
+             alert('Failed to submit application: ' + (err.error?.message || 'Unknown error'));
+          }
+          this.isSubmitting = false;
+        }
+      });
     } else {
       alert('Please complete all required bank details');
     }
+  }
+
+  goToDashboard() {
+    this.router.navigate(['/artist/dashboard']).then(() => {
+      window.location.reload(); // Reload to ensure auth state is fresh
+    });
   }
 
   goToHome() {

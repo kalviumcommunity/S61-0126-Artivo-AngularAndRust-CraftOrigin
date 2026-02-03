@@ -22,7 +22,17 @@ import {
   ShoppingCart,
   LogOut,
   Plus,
-  Minus
+  Minus,
+  LayoutDashboard,
+  Palette,
+  Settings,
+  Truck,
+  Image,
+  Edit2,
+  Trash2,
+  Eye,
+  EyeOff,
+  Loader
 } from 'lucide-angular';
 import { SharedModule } from './shared/shared.module';
 
@@ -56,7 +66,17 @@ export const appConfig: ApplicationConfig = {
         ShoppingCart,
         LogOut,
         Plus,
-        Minus
+        Minus,
+        LayoutDashboard,
+        Palette,
+        Settings,
+        Truck,
+        Image,
+        Edit2,
+        Trash2,
+        Eye,
+        EyeOff,
+        Loader
       })
     ),
     importProvidersFrom(
