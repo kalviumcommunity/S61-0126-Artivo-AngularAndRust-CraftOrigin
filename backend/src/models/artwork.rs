@@ -11,6 +11,9 @@ pub struct ArtworkListQuery {
     pub artist_id: Option<Uuid>,
     pub min_price: Option<Decimal>,
     pub max_price: Option<Decimal>,
+    pub search: Option<String>,
+    pub sort: Option<String>,
+    pub active: Option<bool>,
 }
 
 #[derive(Deserialize)]
@@ -22,6 +25,21 @@ pub struct CreateArtworkRequest {
     pub price: Decimal,
     pub quantity_available: i32,
     pub authenticity_ref: Option<String>,
+    pub image_url: Option<String>,
+}
+
+// Payload from client (no artist_id)
+#[derive(Deserialize)]
+pub struct CreateArtworkDto {
+    pub title: String,
+    #[serde(default)]
+    pub description: Option<String>,
+    pub category: String,
+    pub price: Decimal,
+    pub quantity_available: i32,
+    #[serde(default)]
+    pub authenticity_ref: Option<String>,
+    #[serde(default)]
     pub image_url: Option<String>,
 }
 

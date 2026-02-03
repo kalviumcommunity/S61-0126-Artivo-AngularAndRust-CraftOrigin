@@ -19,6 +19,7 @@ pub struct UserResponse {
     pub id: Uuid,
     pub name: String,
     pub email: String,
+    pub role: String,
 }
 
 #[derive(Deserialize)]

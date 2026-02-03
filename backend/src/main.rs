@@ -78,6 +78,8 @@ sqlx::migrate!("./migrations")
                     .configure(routes::upload_routes::upload_routes)
                     .configure(routes::cart_routes::cart_routes)
                     .configure(routes::order_routes::order_routes)
+                    .configure(routes::buyer_routes::buyer_routes)
+                    .configure(routes::artist_routes::config)
             )
     })
     

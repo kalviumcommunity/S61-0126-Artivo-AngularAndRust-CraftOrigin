@@ -5,3 +5,5 @@ pub mod artwork_handlers;
 pub mod upload_handler;
 pub mod cart_handlers;
 pub mod order_handlers;
+pub mod buyer_handlers;
+pub mod artist_handlers;
