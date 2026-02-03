@@ -1,0 +1,12 @@
+<div class="permissions-page">
+  <h2 class="page-title">Admin permissions</h2>
+  <p class="page-desc">Granular access control for admin users.</p>
+  <div *ngIf="loading" class="loading">Loading...</div>
+  <div *ngIf="!loading && permissions.length === 0" class="empty">No permissions configured.</div>
+  <div *ngIf="!loading && permissions.length > 0" class="perms-grid">
+    <div *ngFor="let p of permissions" class="perm-card">
+      <span class="perm-name">{{ p.permission }}</span>
+      <span class="perm-meta">Granted {{ p.created_at | date:'shortDate' }}</span>
+    </div>
+  </div>
+</div>

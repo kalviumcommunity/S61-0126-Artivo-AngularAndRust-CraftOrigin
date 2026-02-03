@@ -1,0 +1,45 @@
+.permissions-page {
+  max-width: 100%;
+}
+
+.page-title {
+  margin: 0 0 0.25rem;
+  font-size: 1.35rem;
+  color: #1e293b;
+}
+
+.page-desc {
+  margin: 0 0 1.25rem;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.loading, .empty {
+  padding: 1.5rem;
+  color: #64748b;
+}
+
+.perms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.perm-card {
+  padding: 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.perm-name {
+  display: block;
+  font-weight: 500;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.perm-meta {
+  font-size: 0.8rem;
+  color: #64748b;
+}
