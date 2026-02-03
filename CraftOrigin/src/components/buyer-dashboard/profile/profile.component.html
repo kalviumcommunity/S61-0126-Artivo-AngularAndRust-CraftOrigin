@@ -61,7 +61,7 @@
             <span class="order-date">{{ order.placed_at | date:'mediumDate' }}</span>
             <span class="order-total">${{ order.total_amount | number:'1.2-2' }}</span>
           </div>
-          <ul *ngIf="order.items?.length" class="order-items">
+          <ul *ngIf="order.items.length" class="order-items">
             <li *ngFor="let item of order.items">{{ item.title }} × {{ item.quantity }}</li>
           </ul>
         </div>

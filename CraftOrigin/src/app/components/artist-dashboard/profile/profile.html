@@ -1,0 +1,107 @@
+<div class="max-w-3xl mx-auto">
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-2xl font-bold text-gray-900">Artist Profile</h1>
+    <button *ngIf="!isEditing && profile" (click)="startEditing()" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium flex items-center">
+      <lucide-icon name="edit-2" class="h-4 w-4 mr-2"></lucide-icon>
+      Edit Profile
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="flex justify-center py-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+  </div>
+
+  <div *ngIf="!isLoading && profile" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <!-- Header / Cover -->
+    <div class="h-32 bg-gradient-to-r from-orange-400 to-pink-500 relative"></div>
+    
+    <div class="px-8 pb-8">
+      <!-- Avatar & Info -->
+      <div class="relative -mt-12 mb-6 flex items-end">
+        <div class="h-24 w-24 rounded-xl bg-white p-1 shadow-lg">
+          <div class="h-full w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
+            <lucide-icon name="user" class="h-10 w-10"></lucide-icon>
+          </div>
+        </div>
+        <div class="ml-4 mb-1">
+          <div class="flex items-center space-x-2">
+            <h2 class="text-2xl font-bold text-gray-900">{{ profile.tribe_name }}</h2>
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium"
+              [ngClass]="{
+                'bg-green-100 text-green-800': profile.verification_status === 'VERIFIED',
+                'bg-yellow-100 text-yellow-800': profile.verification_status === 'PENDING',
+                'bg-red-100 text-red-800': profile.verification_status === 'REJECTED'
+              }">
+              {{ profile.verification_status }}
+            </span>
+          </div>
+          <p class="text-gray-500">{{ profile.region }}</p>
+        </div>
+      </div>
+
+      <!-- View Mode -->
+      <div *ngIf="!isEditing" class="space-y-6">
+        <div>
+          <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">About</h3>
+          <p class="text-gray-900 whitespace-pre-line">{{ profile.bio || 'No bio provided.' }}</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-gray-100">
+          <div>
+            <h3 class="text-sm font-medium text-gray-500 mb-1">Tribe / Community</h3>
+            <p class="text-gray-900 font-medium">{{ profile.tribe_name }}</p>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-gray-500 mb-1">Region</h3>
+            <p class="text-gray-900 font-medium">{{ profile.region }}</p>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-gray-500 mb-1">Member Since</h3>
+            <p class="text-gray-900">{{ profile.created_at | date:'longDate' }}</p>
+          </div>
+          <div>
+             <h3 class="text-sm font-medium text-gray-500 mb-1">Account Status</h3>
+             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+               [ngClass]="profile.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'">
+               {{ profile.active ? 'Active' : 'Inactive' }}
+             </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Mode -->
+      <form *ngIf="isEditing" (ngSubmit)="saveProfile()" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Tribe / Community Name</label>
+            <input type="text" [(ngModel)]="editForm.tribe_name" name="tribe_name" required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Region</label>
+            <input type="text" [(ngModel)]="editForm.region" name="region" required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+          <textarea [(ngModel)]="editForm.bio" name="bio" rows="4"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"></textarea>
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100">
+          <button type="button" (click)="cancelEditing()" class="px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
+            Cancel
+          </button>
+          <button type="submit" [disabled]="isSaving" 
+            class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 font-medium flex items-center disabled:opacity-50">
+            <lucide-icon *ngIf="isSaving" name="loader" class="animate-spin h-4 w-4 mr-2"></lucide-icon>
+            {{ isSaving ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

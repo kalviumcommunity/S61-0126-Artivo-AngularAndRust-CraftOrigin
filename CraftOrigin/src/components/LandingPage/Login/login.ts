@@ -17,6 +17,7 @@ interface LoginResponse {
     id: string;
     name: string;
     email: string;
+    role: string;
   };
   message?: string;
 }
@@ -97,9 +98,16 @@ export class LoginComponent {
         localStorage.setItem('authToken', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
         this.cartService.loadCart();
-        this.router.navigate(['/dashboard']).catch(() => {
-          this.router.navigate(['/']);
-        });
+        
+        console.log('Login successful. User Role:', response.user?.role); // Debug log
+
+        if (response.user?.role === 'ARTIST') {
+          console.log('Redirecting to Artist Dashboard');
+          this.router.navigate(['/artist/dashboard']);
+        } else {
+          console.log('Redirecting to Marketplace');
+          this.router.navigate(['/marketplace']);
+        }
       },
       error: (error) => {
         this.isLoading = false;
