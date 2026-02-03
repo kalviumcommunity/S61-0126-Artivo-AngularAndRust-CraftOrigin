@@ -44,8 +44,19 @@ pub async fn list_artworks(pool: &Pool<sqlx::Postgres>, q: ArtworkListQuery) -> 
     let offset = (page - 1) * limit;
 
     let mut builder = QueryBuilder::new(
-        "SELECT id, artist_id, title, description, category, price, quantity_available, authenticity_ref, image_url, active, created_at, updated_at FROM artworks WHERE active = TRUE"
+        "SELECT id, artist_id, title, description, category, price, quantity_available, authenticity_ref, image_url, active, created_at, updated_at FROM artworks WHERE 1=1"
     );
+
+    // Default to active=TRUE if not specified, unless it's an artist-specific query where they might want all.
+    // However, for public safety, we should default to active=TRUE.
+    // If the caller wants inactive, they must explicitly pass active=false or we need a way to say "all".
+    // For now, let's say if `active` is provided, we filter by it.
+    // If not provided, we default to TRUE.
+    if let Some(active) = q.active {
+        builder.push(" AND active = ").push_bind(active);
+    } else {
+        builder.push(" AND active = TRUE");
+    }
 
     if let Some(category) = q.category {
         builder.push(" AND category = ").push_bind(category);
@@ -59,8 +70,28 @@ pub async fn list_artworks(pool: &Pool<sqlx::Postgres>, q: ArtworkListQuery) -> 
     if let Some(max_price) = q.max_price {
         builder.push(" AND price <= ").push_bind(max_price);
     }
+    if let Some(search) = q.search {
+        let pattern = format!("%{}%", search);
+        builder.push(" AND title ILIKE ").push_bind(pattern);
+    }
 
-    builder.push(" ORDER BY created_at DESC");
+    // Sort
+    match q.sort.as_deref() {
+        Some("price_asc") => builder.push(" ORDER BY price ASC"),
+        Some("price_desc") => builder.push(" ORDER BY price DESC"),
+        Some("sales") => {
+            // Sorting by sales requires joining with order_items or having a sales_count column.
+            // Since we don't have a cached sales_count in artworks, we'd need a subquery or join.
+            // For simplicity/performance, if we can't easily join here without changing the select structure significantly,
+            // we might skip or use a different approach.
+            // But let's try a subquery sort if possible, or just ignore for now if too complex for this builder.
+            // A simple way: add a subquery in ORDER BY.
+            // "ORDER BY (SELECT COUNT(*) FROM order_items WHERE artwork_id = artworks.id) DESC"
+            builder.push(" ORDER BY (SELECT COUNT(*) FROM order_items WHERE artwork_id = artworks.id) DESC")
+        },
+        _ => builder.push(" ORDER BY created_at DESC"), // Default "recent"
+    };
+
     builder.push(" LIMIT ").push_bind(limit);
     builder.push(" OFFSET ").push_bind(offset);
 

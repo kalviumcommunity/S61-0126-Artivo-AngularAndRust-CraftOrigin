@@ -72,8 +72,9 @@ where
                                 Ok(res.map_into_left_body())
                             });
                         }
-                        Err(_) => {
+                        Err(e) => {
                             // Invalid token
+                            println!("AuthMiddleware: Invalid token: {:?}", e);
                             return Box::pin(async move {
                                 let res = req.into_response(HttpResponse::Unauthorized().finish());
                                 Ok(res.map_into_right_body())
@@ -82,6 +83,8 @@ where
                     }
                 }
             }
+        } else {
+             println!("AuthMiddleware: No Authorization header found for path: {}", req.path());
         }
 
         Box::pin(async move {

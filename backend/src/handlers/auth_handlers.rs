@@ -108,7 +108,7 @@ pub async fn register(
             let email: String = row.get("email");
             let role: String = row.get("role");
 
-            let user = UserResponse { id, name, email: email.clone() };
+            let user = UserResponse { id, name, email: email.clone(), role: role.clone() };
             
             match generate_token(id, &email, &role) {
                 Ok(token) => HttpResponse::Created().json(AuthResponse {
@@ -168,7 +168,7 @@ pub async fn login(
                     let name: String = row.get("name");
                     let role: String = row.get("role");
                     
-                    let user = UserResponse { id, name, email: email.clone() };
+                    let user = UserResponse { id, name, email: email.clone(), role: role.clone() };
 
                     match generate_token(id, &email, &role) {
                         Ok(token) => HttpResponse::Ok().json(AuthResponse {

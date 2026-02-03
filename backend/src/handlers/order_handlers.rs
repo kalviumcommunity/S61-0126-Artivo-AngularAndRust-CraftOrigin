@@ -140,7 +140,7 @@ pub async fn get_orders(
 
     let orders = match sqlx::query_as!(
         Order,
-        "SELECT * FROM orders WHERE buyer_id = $1 ORDER BY placed_at DESC",
+        "SELECT id, buyer_id, total_amount, status, placed_at, updated_at FROM orders WHERE buyer_id = $1 ORDER BY placed_at DESC",
         buyer_id
     )
     .fetch_all(pool.get_ref())
@@ -202,7 +202,7 @@ pub async fn get_order_details(
 
     let order = match sqlx::query_as!(
         Order,
-        "SELECT * FROM orders WHERE id = $1",
+        "SELECT id, buyer_id, total_amount, status, placed_at, updated_at FROM orders WHERE id = $1",
         order_id
     )
     .fetch_one(pool.get_ref())
