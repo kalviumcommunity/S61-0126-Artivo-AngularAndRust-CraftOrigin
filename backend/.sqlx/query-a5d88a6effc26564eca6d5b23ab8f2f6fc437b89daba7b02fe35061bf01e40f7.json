@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE cart_items \n        SET quantity = $3\n        WHERE cart_id = (SELECT id FROM carts WHERE buyer_id = $1)\n        AND artwork_id = $2\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "a5d88a6effc26564eca6d5b23ab8f2f6fc437b89daba7b02fe35061bf01e40f7"
+}

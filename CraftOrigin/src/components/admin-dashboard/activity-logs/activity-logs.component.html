@@ -1,120 +1,277 @@
-<div class="activity-logs">
-  <h2 class="page-title">Admin Dashboard</h2>
-  <p class="page-desc">Overview of platform performance and activity.</p>
-  
-  <div *ngIf="loading" class="loading">Loading dashboard data...</div>
-  
-  <div *ngIf="!loading && dashboardData" class="dashboard-content">
-    <!-- Stats Cards -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <h3>Total Revenue</h3>
-        <div class="value">${{ dashboardData.stats.total_revenue }}</div>
-      </div>
-      <div class="stat-card">
-        <h3>Total Users</h3>
-        <div class="value">{{ dashboardData.stats.total_users }}</div>
-      </div>
-      <div class="stat-card">
-        <h3>Total Orders</h3>
-        <div class="value">{{ dashboardData.stats.total_orders }}</div>
-      </div>
-      <div class="stat-card">
-        <h3>Active Artworks</h3>
-        <div class="value">{{ dashboardData.stats.active_artworks }}</div>
-      </div>
-      <div class="stat-card">
-        <h3>Pending Artists</h3>
-        <div class="value">{{ dashboardData.stats.pending_verifications }}</div>
-      </div>
-    </div>
-
-    <!-- Recent Sections -->
-    <div class="recent-sections">
-      <div class="section">
-        <h3>Recent Orders</h3>
-        <table class="simple-table" *ngIf="dashboardData.recent_orders.length > 0; else noOrders">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Amount</th>
-              <th>Status</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let order of dashboardData.recent_orders">
-              <td>{{ order.id | slice:0:8 }}...</td>
-              <td>${{ order.total_amount }}</td>
-              <td>{{ order.status }}</td>
-              <td>{{ order.placed_at | date:'shortDate' }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <ng-template #noOrders><p>No recent orders.</p></ng-template>
-      </div>
-
-      <div class="section">
-        <h3>New Artists</h3>
-        <ul class="simple-list" *ngIf="dashboardData.new_artists.length > 0; else noArtists">
-          <li *ngFor="let artist of dashboardData.new_artists">
-            <strong>{{ artist.tribe_name }}</strong> ({{ artist.verification_status }})
-          </li>
-        </ul>
-        <ng-template #noArtists><p>No new artists.</p></ng-template>
-      </div>
-    </div>
-    
-    <!-- Revenue Trend -->
-    <div class="section full-width">
-      <h3>Revenue Trend (Last 12 Months)</h3>
-      <div class="trend-bars" *ngIf="dashboardData.revenue_trend.length > 0">
-        <div *ngFor="let item of dashboardData.revenue_trend" class="trend-item">
-          <span class="period">{{ item.period }}</span>
-          <span class="amount">${{ item.revenue }}</span>
+<div class="space-y-6">
+  <!-- Page Header with enhanced gradient -->
+  <div class="relative bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-8 text-slate-900 shadow-lg overflow-hidden border border-indigo-100">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
+    <div class="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -ml-24 -mb-24"></div>
+    <div class="relative z-10">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-4xl font-bold mb-2 flex items-center">
+            <i class="fa-solid fa-chart-pie mr-4 text-5xl text-indigo-600"></i>
+            Dashboard Overview
+          </h2>
+          <p class="text-slate-600 text-lg">Monitor platform performance and key metrics in real-time</p>
+        </div>
+        <div class="hidden md:flex items-center space-x-2 bg-white rounded-lg px-4 py-2 border border-indigo-100">
+          <i class="fa-solid fa-clock text-2xl text-indigo-600"></i>
+          <div class="text-left">
+            <p class="text-xs text-slate-500">Last Updated</p>
+            <p class="text-sm font-semibold text-slate-800">Just now</p>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex items-center justify-center py-12">
+    <div class="text-center">
+      <i class="fa-solid fa-spinner fa-spin text-4xl text-slate-500 mb-3"></i>
+      <p class="text-gray-600">Loading dashboard data...</p>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && dashboardData" class="space-y-6">
+    <!-- Stats Cards Grid with enhanced styling -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <!-- Revenue Card -->
+      <div class="bg-gradient-to-br from-emerald-50 to-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border-l-4 border-emerald-400 transform hover:-translate-y-1">
+        <div class="flex items-center justify-between mb-4">
+          <div class="bg-emerald-50 p-4 rounded-xl shadow-sm">
+            <i class="fa-solid fa-dollar-sign text-2xl text-emerald-600"></i>
+          </div>
+          <div class="bg-emerald-50 rounded-full p-2">
+            <i class="fa-solid fa-arrow-up text-emerald-600 text-sm"></i>
+          </div>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Total Revenue</h3>
+        <div class="text-4xl font-bold text-emerald-700">
+          {{ dashboardData.stats.total_revenue | currency:'USD':'symbol':'1.0-0' }}
+        </div>
+        <p class="text-xs text-emerald-600 mt-2 flex items-center">
+          <i class="fa-solid fa-chart-line mr-1"></i>
+          <span>All-time earnings</span>
+        </p>
+      </div>
+
+      <!-- Users Card -->
+      <div class="bg-gradient-to-br from-sky-50 to-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border-l-4 border-sky-400 transform hover:-translate-y-1">
+        <div class="flex items-center justify-between mb-4">
+          <div class="bg-sky-50 p-4 rounded-xl shadow-sm">
+            <i class="fa-solid fa-users text-2xl text-sky-600"></i>
+          </div>
+          <div class="bg-sky-50 rounded-full p-2">
+            <i class="fa-solid fa-arrow-up text-sky-600 text-sm"></i>
+          </div>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Total Users</h3>
+        <div class="text-4xl font-bold text-sky-700">{{ dashboardData.stats.total_users }}</div>
+        <p class="text-xs text-sky-600 mt-2 flex items-center">
+          <i class="fa-solid fa-user-plus mr-1"></i>
+          <span>Registered members</span>
+        </p>
+      </div>
+
+      <!-- Orders Card -->
+      <div class="bg-gradient-to-br from-indigo-50 to-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border-l-4 border-indigo-400 transform hover:-translate-y-1">
+        <div class="flex items-center justify-between mb-4">
+          <div class="bg-indigo-50 p-4 rounded-xl shadow-sm">
+            <i class="fa-solid fa-shopping-cart text-2xl text-indigo-600"></i>
+          </div>
+          <div class="bg-indigo-50 rounded-full p-2">
+            <i class="fa-solid fa-arrow-up text-indigo-600 text-sm"></i>
+          </div>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Total Orders</h3>
+        <div class="text-4xl font-bold text-indigo-700">{{ dashboardData.stats.total_orders }}</div>
+        <p class="text-xs text-indigo-600 mt-2 flex items-center">
+          <i class="fa-solid fa-box mr-1"></i>
+          <span>Completed purchases</span>
+        </p>
+      </div>
+
+      <!-- Artworks Card -->
+      <div class="bg-gradient-to-br from-amber-50 to-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border-l-4 border-amber-400 transform hover:-translate-y-1">
+        <div class="flex items-center justify-between mb-4">
+          <div class="bg-amber-50 p-4 rounded-xl shadow-sm">
+            <i class="fa-solid fa-palette text-2xl text-amber-600"></i>
+          </div>
+          <div class="bg-amber-50 rounded-full p-2">
+            <i class="fa-solid fa-fire text-amber-600 text-sm"></i>
+          </div>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Active Artworks</h3>
+        <div class="text-4xl font-bold text-amber-700">{{ dashboardData.stats.active_artworks }}</div>
+        <p class="text-xs text-amber-600 mt-2 flex items-center">
+          <i class="fa-solid fa-image mr-1"></i>
+          <span>Listed items</span>
+        </p>
+      </div>
+
+      <!-- Pending Artists Card -->
+      <div class="bg-gradient-to-br from-yellow-50 to-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border-l-4 border-yellow-400 transform hover:-translate-y-1">
+        <div class="flex items-center justify-between mb-4">
+          <div class="bg-yellow-50 p-4 rounded-xl shadow-sm">
+            <i class="fa-solid fa-clock text-2xl text-yellow-600"></i>
+          </div>
+          <div class="bg-yellow-50 rounded-full p-2">
+            <i class="fa-solid fa-hourglass-half text-yellow-600 text-sm"></i>
+          </div>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Pending Artists</h3>
+        <div class="text-4xl font-bold text-yellow-700">{{ dashboardData.stats.pending_verifications }}</div>
+        <p class="text-xs text-yellow-600 mt-2 flex items-center">
+          <i class="fa-solid fa-user-check mr-1"></i>
+          <span>Awaiting review</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Recent Activity Grid with enhanced design -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Recent Orders -->
+      <div class="bg-gradient-to-br from-indigo-50 to-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300 border border-indigo-100">
+        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 flex items-center justify-between border-b border-indigo-100">
+          <div class="flex items-center">
+            <div class="bg-white p-3 rounded-lg mr-4 border border-indigo-100">
+              <i class="fa-solid fa-shopping-bag text-2xl text-indigo-600"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-slate-800">Recent Orders</h3>
+              <p class="text-slate-500 text-sm">Latest transactions</p>
+            </div>
+          </div>
+          <div class="bg-white px-4 py-2 rounded-full border border-indigo-100">
+            <span class="text-indigo-700 font-bold">{{ dashboardData.recent_orders.length }}</span>
+          </div>
+        </div>
+        <div *ngIf="dashboardData.recent_orders.length > 0; else noOrders" class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Order ID</th>
+                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Amount</th>
+                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Date</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr *ngFor="let order of dashboardData.recent_orders" class="hover:bg-purple-50 transition-colors">
+                <td class="px-6 py-4 text-sm text-gray-900 font-mono bg-gray-50 rounded-l-lg">{{ order.id | slice:0:8 }}...</td>
+                <td class="px-6 py-4 text-lg font-bold text-green-600">
+                  {{ order.total_amount | currency:'USD':'symbol':'1.0-0' }}
+                </td>
+                <td class="px-6 py-4">
+                  <span class="px-3 py-1 text-xs font-bold rounded-full shadow-sm"
+                    [ngClass]="{
+                      'bg-green-100 text-green-800 ring-2 ring-green-300': order.status === 'COMPLETED',
+                      'bg-yellow-100 text-yellow-800 ring-2 ring-yellow-300': order.status === 'PENDING',
+                      'bg-blue-100 text-blue-800 ring-2 ring-blue-300': order.status === 'PROCESSING',
+                      'bg-gray-100 text-gray-800 ring-2 ring-gray-300': order.status === 'CANCELLED'
+                    }">
+                    {{ order.status }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ order.placed_at | date:'short' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ng-template #noOrders>
+          <div class="text-center py-12 text-gray-500">
+            <i class="fa-solid fa-inbox text-6xl mb-4 text-gray-300"></i>
+            <p class="text-lg font-medium">No recent orders</p>
+            <p class="text-sm text-gray-400">Orders will appear here</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- New Artists -->
+      <div class="bg-gradient-to-br from-sky-50 to-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300 border border-sky-100">
+        <div class="bg-gradient-to-r from-sky-50 to-blue-50 p-6 flex items-center justify-between border-b border-sky-100">
+          <div class="flex items-center">
+            <div class="bg-white p-3 rounded-lg mr-4 border border-sky-100">
+              <i class="fa-solid fa-user-plus text-2xl text-sky-600"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-slate-800">New Artists</h3>
+              <p class="text-slate-500 text-sm">Recent registrations</p>
+            </div>
+          </div>
+          <div class="bg-white px-4 py-2 rounded-full border border-sky-100">
+            <span class="text-sky-700 font-bold">{{ dashboardData.new_artists.length }}</span>
+          </div>
+        </div>
+        <div *ngIf="dashboardData.new_artists.length > 0; else noArtists" class="p-4 space-y-3 max-h-96 overflow-y-auto">
+          <div *ngFor="let artist of dashboardData.new_artists"
+            class="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl hover:from-slate-100 hover:to-slate-200 transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105">
+            <div class="flex items-center">
+              <div class="w-14 h-14 bg-slate-700 rounded-full flex items-center justify-center text-white font-bold text-xl mr-4 shadow-sm">
+                {{ artist.tribe_name.charAt(0).toUpperCase() }}
+              </div>
+              <div>
+                <p class="font-bold text-gray-900 text-lg">{{ artist.tribe_name }}</p>
+                <p class="text-xs text-gray-500 flex items-center">
+                  <i class="fa-solid fa-calendar-alt mr-1"></i>
+                  {{ artist.created_at | date:'shortDate' }}
+                </p>
+              </div>
+            </div>
+            <span class="px-4 py-2 text-xs font-bold rounded-full shadow-md"
+              [ngClass]="{
+                'bg-yellow-100 text-yellow-800 ring-2 ring-yellow-300': artist.verification_status === 'PENDING',
+                'bg-green-100 text-green-800 ring-2 ring-green-300': artist.verification_status === 'VERIFIED',
+                'bg-red-100 text-red-800 ring-2 ring-red-300': artist.verification_status === 'REJECTED'
+              }">
+              {{ artist.verification_status }}
+            </span>
+          </div>
+        </div>
+        <ng-template #noArtists>
+          <div class="text-center py-12 text-gray-500">
+            <i class="fa-solid fa-user-slash text-6xl mb-4 text-gray-300"></i>
+            <p class="text-lg font-medium">No new artists</p>
+            <p class="text-sm text-gray-400">Artist registrations will appear here</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Revenue Trend with enhanced visualization -->
+      <div class="bg-gradient-to-br from-emerald-50 to-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300 border border-emerald-100">
+      <div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 border-b border-emerald-100">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <div class="bg-white p-3 rounded-lg mr-4 border border-emerald-100">
+              <i class="fa-solid fa-chart-line text-2xl text-emerald-600"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-slate-800">Revenue Trend</h3>
+              <p class="text-slate-500 text-sm">Last 12 Months Performance</p>
+            </div>
+          </div>
+          <div class="bg-white px-4 py-2 rounded-full border border-emerald-100">
+            <span class="text-emerald-700 font-bold"><i class="fa-solid fa-calendar-alt mr-2"></i>12M</span>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="dashboardData.revenue_trend.length > 0" class="p-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <div *ngFor="let item of dashboardData.revenue_trend"
+            class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-5 hover:shadow-lg transition-all duration-200 transform hover:scale-105 border border-slate-200">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-sm font-bold text-slate-700">{{ item.period }}</p>
+              <i class="fa-solid fa-chart-bar text-slate-500"></i>
+            </div>
+            <p class="text-2xl font-bold text-slate-700">
+              {{ item.revenue | currency:'USD':'symbol':'1.0-0' }}
+            </p>
+            <div class="mt-2 h-1 bg-slate-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-slate-400 to-slate-600 rounded-full" [style.width]="'75%'"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-
-<style>
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-  .stat-card {
-    background: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    text-align: center;
-  }
-  .stat-card h3 { margin: 0 0 0.5rem; font-size: 0.9rem; color: #666; }
-  .stat-card .value { font-size: 1.5rem; font-weight: bold; color: #333; }
-  
-  .recent-sections {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 2rem;
-  }
-  .section {
-    background: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  .simple-table { width: 100%; border-collapse: collapse; }
-  .simple-table th, .simple-table td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #eee; }
-  .simple-list { list-style: none; padding: 0; }
-  .simple-list li { padding: 0.5rem 0; border-bottom: 1px solid #eee; }
-  
-  .trend-bars { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; }
-  .trend-item { display: flex; flex-direction: column; align-items: center; min-width: 80px; }
-  .trend-item .amount { font-weight: bold; }
-  .full-width { grid-column: 1 / -1; }
-</style>

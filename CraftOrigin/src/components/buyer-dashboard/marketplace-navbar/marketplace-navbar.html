@@ -24,7 +24,7 @@
                    flex items-center justify-center text-white
                    hover:bg-primary/90 transition-colors border border-primary"
           >
-            <lucide-icon name="search" class="w-5 h-5"></lucide-icon>
+            <i class="fa-solid fa-magnifying-glass text-base leading-none"></i>
           </button>
         </div>
       </div>
@@ -34,17 +34,17 @@
 
         <!-- Mobile Search -->
         <button class="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-full">
-          <lucide-icon name="search" class="w-6 h-6"></lucide-icon>
+          <i class="fa-solid fa-magnifying-glass text-lg leading-none"></i>
         </button>
 
         <!-- Sell Art -->
         <a
           (click)="navigateToSellArt()"
-          class="hidden sm:flex items-center gap-1 text-gray-700
+          class="hidden sm:flex items-center gap-2 text-gray-700
                  hover:bg-gray-100 px-3 py-2 rounded-full
                  font-medium text-sm transition-colors cursor-pointer"
         >
-          <lucide-icon name="store" class="w-5 h-5"></lucide-icon>
+          <i class="fa-solid fa-store text-base leading-none"></i>
           <span>Sell on CraftOrigin</span>
         </a>
 
@@ -55,12 +55,12 @@
           (document:click)="closeProfile()"
         >
           <button
-            class="flex items-center gap-1 p-2 text-gray-700
+            class="flex items-center gap-2 p-2 text-gray-700
                    hover:bg-gray-100 rounded-full transition-colors"
             (click)="toggleProfile()"
           >
-            <lucide-icon name="user" class="w-6 h-6"></lucide-icon>
-            <span class="text-gray-500">▼</span>
+            <i class="fa-regular fa-user text-lg leading-none"></i>
+            <i class="fa-solid fa-caret-down text-xs text-gray-500"></i>
 
           </button>
 
@@ -104,7 +104,7 @@
           class="p-2 text-gray-700 hover:bg-gray-100
                  rounded-full transition-colors relative cursor-pointer"
         >
-          <lucide-icon name="shopping-cart" class="w-6 h-6"></lucide-icon>
+          <i class="fa-solid fa-cart-shopping text-lg leading-none"></i>
 
           <span
             *ngIf="(cartCount$ | async) as count"
