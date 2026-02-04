@@ -5,8 +5,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
     const token = localStorage.getItem('authToken');
 
-    // Check if the request is for our API
-    const isApiUrl = req.url.includes('/api/');
+    // Check if the request is for our API or Admin routes
+    const isApiUrl = req.url.includes('/api/') || req.url.includes('/admin/');
 
     if (token && isApiUrl) {
       const cloned = req.clone({

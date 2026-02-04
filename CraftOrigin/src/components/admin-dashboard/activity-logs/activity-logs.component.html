@@ -1,30 +1,120 @@
 <div class="activity-logs">
-  <h2 class="page-title">Activity logs</h2>
-  <p class="page-desc">Admin actions and entity changes.</p>
-  <div *ngIf="loading" class="loading">Loading...</div>
-  <div *ngIf="!loading && logs.length === 0" class="empty">No activity logs yet.</div>
-  <div *ngIf="!loading && logs.length > 0" class="logs-table-wrap">
-    <table class="logs-table">
-      <thead>
-        <tr>
-          <th>Time</th>
-          <th>Action</th>
-          <th>Entity</th>
-          <th>Entity ID</th>
-          <th>Details</th>
-          <th>IP</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let log of logs">
-          <td>{{ log.created_at | date:'short' }}</td>
-          <td><span class="action-badge">{{ log.action }}</span></td>
-          <td>{{ log.entity_type }}</td>
-          <td><code>{{ log.entity_id | slice:0:8 }}…</code></td>
-          <td>{{ log.details | json }}</td>
-          <td>{{ log.ip_address || '—' }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <h2 class="page-title">Admin Dashboard</h2>
+  <p class="page-desc">Overview of platform performance and activity.</p>
+  
+  <div *ngIf="loading" class="loading">Loading dashboard data...</div>
+  
+  <div *ngIf="!loading && dashboardData" class="dashboard-content">
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total Revenue</h3>
+        <div class="value">${{ dashboardData.stats.total_revenue }}</div>
+      </div>
+      <div class="stat-card">
+        <h3>Total Users</h3>
+        <div class="value">{{ dashboardData.stats.total_users }}</div>
+      </div>
+      <div class="stat-card">
+        <h3>Total Orders</h3>
+        <div class="value">{{ dashboardData.stats.total_orders }}</div>
+      </div>
+      <div class="stat-card">
+        <h3>Active Artworks</h3>
+        <div class="value">{{ dashboardData.stats.active_artworks }}</div>
+      </div>
+      <div class="stat-card">
+        <h3>Pending Artists</h3>
+        <div class="value">{{ dashboardData.stats.pending_verifications }}</div>
+      </div>
+    </div>
+
+    <!-- Recent Sections -->
+    <div class="recent-sections">
+      <div class="section">
+        <h3>Recent Orders</h3>
+        <table class="simple-table" *ngIf="dashboardData.recent_orders.length > 0; else noOrders">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of dashboardData.recent_orders">
+              <td>{{ order.id | slice:0:8 }}...</td>
+              <td>${{ order.total_amount }}</td>
+              <td>{{ order.status }}</td>
+              <td>{{ order.placed_at | date:'shortDate' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #noOrders><p>No recent orders.</p></ng-template>
+      </div>
+
+      <div class="section">
+        <h3>New Artists</h3>
+        <ul class="simple-list" *ngIf="dashboardData.new_artists.length > 0; else noArtists">
+          <li *ngFor="let artist of dashboardData.new_artists">
+            <strong>{{ artist.tribe_name }}</strong> ({{ artist.verification_status }})
+          </li>
+        </ul>
+        <ng-template #noArtists><p>No new artists.</p></ng-template>
+      </div>
+    </div>
+    
+    <!-- Revenue Trend -->
+    <div class="section full-width">
+      <h3>Revenue Trend (Last 12 Months)</h3>
+      <div class="trend-bars" *ngIf="dashboardData.revenue_trend.length > 0">
+        <div *ngFor="let item of dashboardData.revenue_trend" class="trend-item">
+          <span class="period">{{ item.period }}</span>
+          <span class="amount">${{ item.revenue }}</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
+
+<style>
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .stat-card {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+  .stat-card h3 { margin: 0 0 0.5rem; font-size: 0.9rem; color: #666; }
+  .stat-card .value { font-size: 1.5rem; font-weight: bold; color: #333; }
+  
+  .recent-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  .section {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .simple-table { width: 100%; border-collapse: collapse; }
+  .simple-table th, .simple-table td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #eee; }
+  .simple-list { list-style: none; padding: 0; }
+  .simple-list li { padding: 0.5rem 0; border-bottom: 1px solid #eee; }
+  
+  .trend-bars { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; }
+  .trend-item { display: flex; flex-direction: column; align-items: center; min-width: 80px; }
+  .trend-item .amount { font-weight: bold; }
+  .full-width { grid-column: 1 / -1; }
+</style>

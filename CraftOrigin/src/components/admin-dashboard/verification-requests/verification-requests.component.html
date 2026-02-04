@@ -3,36 +3,31 @@
   <p class="page-desc">Review and approve or reject artist verification submissions.</p>
   <div *ngIf="loading" class="loading">Loading...</div>
   <div *ngIf="!loading" class="requests-list">
-    <div *ngFor="let req of requests" class="request-card" [class.pending]="req.status === 'PENDING'">
+    <div *ngFor="let req of requests" class="request-card">
       <div class="request-header">
-        <span class="artist-name">{{ req.artist_name || 'Artist ' + req.artist_id }}</span>
-        <span class="status-badge" [class]="'status-' + req.status">{{ req.status }}</span>
+        <span class="artist-name">{{ req.tribe_name || 'Artist ' + req.id }}</span>
+        <span class="status-badge" [class]="'status-' + req.verification_status">{{ req.verification_status }}</span>
       </div>
       <div class="request-meta">
-        <span>Submitted {{ req.submitted_at | date:'medium' }}</span>
-        <span *ngIf="req.reviewed_at">Reviewed {{ req.reviewed_at | date:'medium' }}</span>
+        <span>Created: {{ req.created_at | date:'medium' }}</span>
+        <span *ngIf="req.user_id">User ID: {{ req.user_id }}</span>
       </div>
-      <div *ngIf="req.documents_url?.length" class="documents">
-        <strong>Documents:</strong>
-        <ul>
-          <li *ngFor="let url of req.documents_url">{{ url }}</li>
-        </ul>
+      
+      <div class="artist-details">
+        <div *ngIf="req.bio" class="bio">
+          <strong>Bio:</strong> {{ req.bio }}
+        </div>
+        <div *ngIf="req.profile_image_url" class="images">
+          <img [src]="req.profile_image_url" alt="Profile" class="profile-thumb">
+        </div>
       </div>
-      <div *ngIf="req.review_notes" class="review-notes">
-        <strong>Review notes:</strong> {{ req.review_notes }}
-      </div>
-      <div *ngIf="req.status === 'PENDING'" class="actions">
-        <input
-          type="text"
-          placeholder="Review notes (optional)"
-          [(ngModel)]="reviewNotes[req.id]"
-          class="notes-input"
-        />
+
+      <div *ngIf="req.verification_status === 'PENDING'" class="actions">
         <button
           type="button"
           class="btn-approve"
           [disabled]="processingId === req.id"
-          (click)="approve(req)"
+          (click)="verify(req, 'VERIFIED')"
         >
           {{ processingId === req.id ? 'Processing…' : 'Approve' }}
         </button>
@@ -40,12 +35,12 @@
           type="button"
           class="btn-reject"
           [disabled]="processingId === req.id"
-          (click)="reject(req)"
+          (click)="verify(req, 'REJECTED')"
         >
           Reject
         </button>
       </div>
     </div>
-    <div *ngIf="!loading && requests.length === 0" class="empty">No verification requests.</div>
+    <div *ngIf="!loading && requests.length === 0" class="empty">No pending verification requests.</div>
   </div>
 </div>

@@ -104,6 +104,9 @@ export class LoginComponent {
         if (response.user?.role === 'ARTIST') {
           console.log('Redirecting to Artist Dashboard');
           this.router.navigate(['/artist/dashboard']);
+        } else if (response.user?.role === 'ADMIN') {
+          console.log('Redirecting to Admin Dashboard');
+          this.router.navigate(['/admin']);
         } else {
           console.log('Redirecting to Marketplace');
           this.router.navigate(['/marketplace']);
