@@ -80,6 +80,7 @@ sqlx::migrate!("./migrations")
                     .configure(routes::order_routes::order_routes)
                     .configure(routes::buyer_routes::buyer_routes)
                     .configure(routes::artist_routes::config)
+                    .configure(routes::admin_routes::config)
             )
     })
     

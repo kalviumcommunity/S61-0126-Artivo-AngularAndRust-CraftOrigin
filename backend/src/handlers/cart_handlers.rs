@@ -57,7 +57,7 @@ pub async fn get_cart(
     .fetch_all(pool.get_ref())
     .await;
 
-    let items = match items_result {
+    let items: Vec<CartItemDetail> = match items_result {
         Ok(i) => i,
         Err(e) => return HttpResponse::InternalServerError().body(format!("DB Error items: {}", e)),
     };
