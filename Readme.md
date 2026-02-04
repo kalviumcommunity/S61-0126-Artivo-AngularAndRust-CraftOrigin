@@ -2507,3 +2507,29 @@ Now, it’s time to make the frontend and backend talk to each other.
 - Smoother UI interactions during typing and clicking.
 - Fewer redundant backend calls.
 - Better scalability and user experience.
+
+
+🚀 Setup Instructions:
+
+Prerequisites and installation steps
+Running in development mode
+Production builds
+Backend integration setup
+🐳 Docker Instructions:
+
+Dockerfile configuration
+Nginx setup
+Docker Compose for full stack
+Complete deployment workflow
+🎯 Feature Documentation:
+
+Artist, Buyer, and Admin features
+Authentication flow
+Route protection with guards
+API integration details
+🛠️ Development Guide:
+
+Testing commands
+Code formatting
+Build optimization
+Troubleshooting common issues
