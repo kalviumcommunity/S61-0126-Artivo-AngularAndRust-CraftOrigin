@@ -1,0 +1,76 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT \n            oi.id, oi.order_id, oi.artwork_id, oi.artist_id, oi.quantity, oi.unit_price, oi.status,\n            a.title, a.image_url, ar.tribe_name as artist_name\n        FROM order_items oi\n        JOIN artworks a ON oi.artwork_id = a.id\n        JOIN artists ar ON oi.artist_id = ar.id\n        WHERE oi.order_id = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "order_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "artwork_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 3,
+        "name": "artist_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 4,
+        "name": "quantity",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 5,
+        "name": "unit_price",
+        "type_info": "Numeric"
+      },
+      {
+        "ordinal": 6,
+        "name": "status",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
+        "name": "image_url",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "artist_name",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "64c364e709a9bcfe8112307429d2e4ca86a305d132f4acf3334de4f3f5fd4ab9"
+}

@@ -1,74 +1,126 @@
-<div class="permissions-page">
-  <h2 class="page-title">User Management</h2>
-  <p class="page-desc">Manage platform users and their account status.</p>
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white shadow-md">
+    <h2 class="text-3xl font-bold mb-2">User Management</h2>
+    <p class="text-blue-100">Manage platform users and their account status</p>
+  </div>
   
-  <div *ngIf="loading" class="loading">Loading users...</div>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex items-center justify-center py-12">
+    <div class="text-center">
+      <i class="fa-solid fa-spinner fa-spin text-4xl text-blue-600 mb-3"></i>
+      <p class="text-gray-600">Loading users...</p>
+    </div>
+  </div>
   
-  <div *ngIf="errorMsg" class="error-msg">
-    {{ errorMsg }}
-    <button (click)="loadUsers()" class="btn-retry">Retry</button>
+  <!-- Error Message -->
+  <div *ngIf="errorMsg" class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg flex items-center justify-between">
+    <div class="flex items-center">
+      <i class="fa-solid fa-exclamation-triangle text-red-500 text-xl mr-3"></i>
+      <p class="text-red-700">{{ errorMsg }}</p>
+    </div>
+    <button (click)="loadUsers()" class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors">
+      <i class="fa-solid fa-refresh mr-2"></i>Retry
+    </button>
   </div>
 
-  <div *ngIf="!loading && !errorMsg && users.length === 0" class="empty">No users found.</div>
+  <!-- Empty State -->
+  <div *ngIf="!loading && !errorMsg && users.length === 0" class="bg-white rounded-lg shadow-md p-12 text-center">
+    <i class="fa-solid fa-users-slash text-6xl text-gray-300 mb-4"></i>
+    <p class="text-gray-500 text-lg">No users found</p>
+  </div>
   
-  <div *ngIf="!loading && !errorMsg && users.length > 0" class="table-wrap">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Role</th>
-          <th>Status</th>
-          <th>Joined</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of users">
-          <td>{{ user.name }}</td>
-          <td>{{ user.email }}</td>
-          <td><span class="role-badge">{{ user.role }}</span></td>
-          <td>
-            <span class="status-badge" [class.active]="user.active" [class.inactive]="!user.active">
-              {{ user.active ? 'Active' : 'Inactive' }}
-            </span>
-          </td>
-          <td>{{ user.created_at | date:'mediumDate' }}</td>
-          <td>
-            <button 
-              *ngIf="user.role !== 'ADMIN'"
-              class="btn-toggle"
-              [class.btn-activate]="!user.active"
-              [class.btn-deactivate]="user.active"
-              [disabled]="processingId === user.id"
-              (click)="toggleStatus(user)"
-            >
-              {{ user.active ? 'Deactivate' : 'Activate' }}
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Users Table -->
+  <div *ngIf="!loading && !errorMsg && users.length > 0" class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <i class="fa-solid fa-user mr-2"></i>Name
+            </th>
+            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <i class="fa-solid fa-envelope mr-2"></i>Email
+            </th>
+            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <i class="fa-solid fa-shield mr-2"></i>Role
+            </th>
+            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <i class="fa-solid fa-circle-check mr-2"></i>Status
+            </th>
+            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <i class="fa-solid fa-calendar mr-2"></i>Joined
+            </th>
+            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <i class="fa-solid fa-cog mr-2"></i>Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let user of users" class="hover:bg-gray-50 transition-colors">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="w-10 h-10 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold mr-3">
+                  {{ user.name.charAt(0).toUpperCase() }}
+                </div>
+                <span class="text-sm font-medium text-gray-900">{{ user.name }}</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ user.email }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-3 py-1 text-xs font-medium rounded-full" 
+                [ngClass]="{
+                  'bg-purple-100 text-purple-800': user.role === 'ADMIN',
+                  'bg-blue-100 text-blue-800': user.role === 'ARTIST',
+                  'bg-gray-100 text-gray-800': user.role === 'BUYER'
+                }">
+                <i class="fa-solid" [ngClass]="{
+                  'fa-crown': user.role === 'ADMIN',
+                  'fa-palette': user.role === 'ARTIST',
+                  'fa-shopping-bag': user.role === 'BUYER'
+                }" class="mr-1"></i>
+                {{ user.role }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-3 py-1 text-xs font-medium rounded-full inline-flex items-center"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': user.active,
+                  'bg-red-100 text-red-800': !user.active
+                }">
+                <i class="fa-solid" [ngClass]="{
+                  'fa-check-circle': user.active,
+                  'fa-times-circle': !user.active
+                }" class="mr-1"></i>
+                {{ user.active ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ user.created_at | date:'mediumDate' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+              <button 
+                *ngIf="user.role !== 'ADMIN'"
+                class="px-4 py-2 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                [ngClass]="{
+                  'bg-green-100 hover:bg-green-200 text-green-700': !user.active,
+                  'bg-red-100 hover:bg-red-200 text-red-700': user.active
+                }"
+                [disabled]="processingId === user.id"
+                (click)="toggleStatus(user)"
+              >
+                <i class="fa-solid" [ngClass]="{
+                  'fa-spinner fa-spin': processingId === user.id,
+                  'fa-toggle-on': user.active && processingId !== user.id,
+                  'fa-toggle-off': !user.active && processingId !== user.id
+                }" class="mr-2"></i>
+                {{ processingId === user.id ? 'Processing...' : (user.active ? 'Deactivate' : 'Activate') }}
+              </button>
+              <span *ngIf="user.role === 'ADMIN'" class="text-gray-400 text-xs">
+                <i class="fa-solid fa-lock mr-1"></i>Protected
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
-
-<style>
-  .table-wrap { overflow-x: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-  .data-table { width: 100%; border-collapse: collapse; }
-  .data-table th, .data-table td { padding: 1rem; text-align: left; border-bottom: 1px solid #eee; }
-  .data-table th { background: #f9f9f9; font-weight: 600; }
-  
-  .role-badge { background: #e0e7ff; color: #3730a3; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem; }
-  .status-badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem; font-weight: 500; }
-  .status-badge.active { background: #dcfce7; color: #166534; }
-  .status-badge.inactive { background: #fee2e2; color: #991b1b; }
-  
-  .btn-toggle { padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; }
-  .btn-activate { background: #22c55e; color: white; }
-  .btn-deactivate { background: #ef4444; color: white; }
-  .btn-toggle:disabled { opacity: 0.7; cursor: not-allowed; }
-
-  .error-msg { color: #dc2626; padding: 1rem; background: #fee2e2; border-radius: 8px; margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem; }
-  .btn-retry { padding: 0.4rem 0.8rem; background: #fff; border: 1px solid #dc2626; color: #dc2626; border-radius: 4px; cursor: pointer; }
-  .btn-retry:hover { background: #fee2e2; }
-</style>

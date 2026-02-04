@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { LucideAngularModule, LayoutDashboard, Users, FileCheck, Settings, LogOut, Menu } from 'lucide-angular';
 import { AuthService } from '../../app/services/auth.service';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, LucideAngularModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css']
 })
@@ -15,13 +14,11 @@ export class AdminDashboardComponent {
   isSidebarOpen = false;
   
   menuItems = [
-    { label: 'Dashboard', route: '/admin/logs', icon: LayoutDashboard },
-    { label: 'Users', route: '/admin/permissions', icon: Users },
-    { label: 'Verification', route: '/admin/verification', icon: FileCheck },
-    { label: 'Settings', route: '/admin/settings', icon: Settings }
+    { label: 'Dashboard', route: '/admin/logs', icon: 'fa-chart-line' },
+    { label: 'Users', route: '/admin/permissions', icon: 'fa-users' },
+    { label: 'Verification', route: '/admin/verification', icon: 'fa-check-circle' },
+    { label: 'Settings', route: '/admin/settings', icon: 'fa-cog' }
   ];
-
-  readonly icons = { LogOut, Menu };
 
   constructor(private authService: AuthService, private router: Router) {}
 

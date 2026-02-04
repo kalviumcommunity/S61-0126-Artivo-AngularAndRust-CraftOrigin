@@ -19,11 +19,9 @@
            'text-gray-600 hover:bg-gray-50 hover:text-gray-900': !isActive(item.route)
          }"
       >
-        <lucide-icon 
-          [name]="item.icon" 
-          [class]="isActive(item.route) ? 'text-orange-600' : 'text-gray-400 group-hover:text-gray-500'"
-          class="mr-3 h-5 w-5"
-        ></lucide-icon>
+        <i 
+          [class]="'fa-solid ' + item.icon + ' mr-3 w-5 ' + (isActive(item.route) ? 'text-orange-600' : 'text-gray-400 group-hover:text-gray-500')"
+        ></i>
         {{ item.label }}
       </a>
     </nav>
@@ -34,7 +32,7 @@
         (click)="logout()"
         class="flex items-center w-full px-4 py-3 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors"
       >
-        <lucide-icon [name]="icons.LogOut" class="mr-3 h-5 w-5 text-gray-400"></lucide-icon>
+        <i class="fa-solid fa-sign-out-alt mr-3 w-5 text-gray-400"></i>
         Sign Out
       </button>
     </div>
@@ -45,7 +43,7 @@
     <!-- Header -->
     <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-8">
       <button (click)="toggleSidebar()" class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
-        <lucide-icon [name]="icons.Menu" class="h-6 w-6"></lucide-icon>
+        <i class="fa-solid fa-bars text-xl"></i>
       </button>
       
       <div class="flex items-center space-x-4 ml-auto">

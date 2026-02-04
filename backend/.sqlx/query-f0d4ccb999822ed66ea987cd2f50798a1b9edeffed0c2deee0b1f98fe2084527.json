@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO order_items (order_id, artwork_id, artist_id, quantity, unit_price, status)\n            VALUES ($1, $2, $3, $4, $5, 'PLACED')\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Uuid",
+        "Int4",
+        "Numeric"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "f0d4ccb999822ed66ea987cd2f50798a1b9edeffed0c2deee0b1f98fe2084527"
+}

@@ -1,0 +1,46 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT ci.artwork_id, ci.quantity, ci.unit_price, a.artist_id, a.quantity_available\n        FROM cart_items ci\n        JOIN artworks a ON ci.artwork_id = a.id\n        WHERE ci.cart_id = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "artwork_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "quantity",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "unit_price",
+        "type_info": "Numeric"
+      },
+      {
+        "ordinal": 3,
+        "name": "artist_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 4,
+        "name": "quantity_available",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "6c5945710b0f3f0bb318f0a1ad081eddb790755f1d555b4620d49231e8fdc79f"
+}
