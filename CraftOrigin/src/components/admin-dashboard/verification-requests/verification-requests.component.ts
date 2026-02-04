@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../admin.service';
-import type { ArtistVerificationRequest } from '../models';
+import type { ArtistProfile } from '../models';
 
 @Component({
   selector: 'app-admin-verification-requests',
@@ -12,12 +12,11 @@ import type { ArtistVerificationRequest } from '../models';
   styleUrls: ['./verification-requests.component.css']
 })
 export class VerificationRequestsComponent implements OnInit {
-  requests: ArtistVerificationRequest[] = [];
+  requests: ArtistProfile[] = [];
   loading = true;
   processingId: string | null = null;
-  reviewNotes: Record<string, string> = {};
-
-  constructor(private admin: AdminService) {}
+  
+  constructor(private admin: AdminService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.load();
@@ -25,40 +24,30 @@ export class VerificationRequestsComponent implements OnInit {
 
   load(): void {
     this.loading = true;
-    this.admin.getVerificationRequests().subscribe({
+    this.admin.getPendingArtists().subscribe({
       next: (list) => {
         this.requests = list;
         this.loading = false;
+        this.cdr.detectChanges();
       },
-      error: () => (this.loading = false)
+      error: () => {
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
-  approve(req: ArtistVerificationRequest): void {
-    this.processingId = req.id;
-    const notes = this.reviewNotes[req.id];
-    this.admin.approveVerification(req.id, notes || undefined).subscribe({
+  verify(artist: ArtistProfile, status: 'VERIFIED' | 'REJECTED'): void {
+    this.processingId = artist.id;
+    this.admin.verifyArtist(artist.id, status).subscribe({
       next: () => {
         this.processingId = null;
         this.load();
       },
-      error: () => (this.processingId = null)
-    });
-  }
-
-  reject(req: ArtistVerificationRequest): void {
-    this.processingId = req.id;
-    const notes = this.reviewNotes[req.id];
-    this.admin.rejectVerification(req.id, notes || undefined).subscribe({
-      next: () => {
+      error: () => {
         this.processingId = null;
-        this.load();
-      },
-      error: () => (this.processingId = null)
+        this.cdr.detectChanges();
+      }
     });
-  }
-
-  pendingOnly(): ArtistVerificationRequest[] {
-    return this.requests.filter(r => r.status === 'PENDING');
   }
 }

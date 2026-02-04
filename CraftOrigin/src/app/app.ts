@@ -22,8 +22,10 @@ export class App implements OnInit {
     this.router.events.pipe(
       filter((event: Event): event is NavigationEnd => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
-      // Hide navbar if the URL starts with /dashboard or /marketplace
-      this.showNavbar = !event.urlAfterRedirects.includes('/dashboard') && !event.urlAfterRedirects.includes('/marketplace');
+      // Hide navbar if the URL starts with /dashboard, /marketplace, or /admin
+      this.showNavbar = !event.urlAfterRedirects.includes('/dashboard') && 
+                        !event.urlAfterRedirects.includes('/marketplace') && 
+                        !event.urlAfterRedirects.includes('/admin');
     });
   }
 }
