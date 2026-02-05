@@ -165,6 +165,14 @@ Open your browser and go to:
    - **Email:** admin@example.com
    - **Password:** password
 
+## ✅ Step 11: Test the Artist Login
+
+1. Go to http://localhost:4200
+2. Click "Sign In"
+3. Use these credentials:
+   - **Email:** artist@test.com
+   - **Password:** password
+
 ---
 
 ## 🔧 Common Commands

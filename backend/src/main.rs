@@ -53,10 +53,10 @@ sqlx::migrate!("./migrations")
     HttpServer::new(move|| {
         // CORS configuration
         let cors = Cors::default()
-            .allowed_origin("http://localhost:4200") // Allow Angular frontend
-            .allowed_origin("http://localhost:4000") // Allow SSR/Other frontend
+            .allow_any_origin()
             .allow_any_method()
             .allow_any_header()
+            .supports_credentials()
             .max_age(3600);
 
         App::new()

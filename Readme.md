@@ -2641,3 +2641,10 @@ All data is **mock only**; switching to real APIs later means replacing `AdminSe
 - Refined the admin dashboard UI with a softer pastel palette and improved icon visibility.
 - Standardized Admin Dashboard visuals (stat cards, section headers) for a clearer, modern layout.
 
+---
+
+## Default Accounts (Local Dev)
+
+- **Admin**: admin@example.com / password
+- **Artist**: artist@example.com / password
+
