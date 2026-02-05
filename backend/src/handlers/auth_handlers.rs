@@ -165,8 +165,16 @@ pub async fn login(
             match Argon2::default().verify_password(payload.password.as_bytes(), &parsed_hash) {
                 Ok(_) => {
                     let id: Uuid = row.get("id");
-                    let name: String = row.get("name");
                     let role: String = row.get("role");
+                    
+                    // Check if account is inactive
+                    if role.starts_with("INACTIVE_") {
+                        return HttpResponse::Forbidden().json(serde_json::json!({
+                            "message": "Account is deactivated. Please contact support."
+                        }));
+                    }
+
+                    let name: String = row.get("name");
                     
                     let user = UserResponse { id, name, email: email.clone(), role: role.clone() };
 

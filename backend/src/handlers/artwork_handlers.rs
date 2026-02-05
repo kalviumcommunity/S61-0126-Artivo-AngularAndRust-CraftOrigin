@@ -105,22 +105,8 @@ pub async fn get_my_artworks(
     // We can reuse list_artworks service but force artist_id
     let mut q = query.into_inner();
     q.artist_id = Some(artist_id);
-
-    // Note: list_artworks service currently filters `active = TRUE`.
-    // Artist might want to see inactive ones.
-    // I need to update `artwork_service::list_artworks` or create `list_artist_artworks`.
-    // Let's create `list_artist_artworks` in service later. For now, I'll use what I have.
-    // Wait, the requirement says "List artworks with... Filter (active/inactive)".
-    // So I definitely need a way to see inactive ones.
-    
-    // I'll modify the service query to allow filtering by status if provided, defaulting to active only for public.
-    // For now, let's call a new service method or just query directly here.
-    // Better to keep logic in service.
-    // I will add `include_inactive` to `ArtworkListQuery` or handle it in service.
-    // But `ArtworkListQuery` is used for public API too.
-    
-    // Let's implement a custom query here for "My Artworks" or extend the service.
-    // I'll extend the service.
+    // Artist wants to see all their artworks (active and inactive)
+    q.include_all = true;
     
     match artwork_service::list_artworks(pool.get_ref(), q).await {
         Ok(rows) => HttpResponse::Ok().json(rows),

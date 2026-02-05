@@ -1,5 +1,5 @@
 use actix_web::{web, HttpResponse, Responder, HttpRequest, HttpMessage};
-use sqlx::PgPool;
+use sqlx::{PgPool, Row};
 use crate::models::admin::*;
 use crate::models::user::Claims;
 use crate::models::artist::ArtistProfile;
@@ -154,10 +154,13 @@ pub async fn get_users(req: HttpRequest, pool: web::Data<PgPool>, query: web::Qu
     let search = format!("%{}%", query.search.clone().unwrap_or_default());
     
     let users = sqlx::query_as::<_, UserListDto>(
-        r#"SELECT id, email as name, email, role, true as active, created_at, updated_at 
+        r#"SELECT id, email as name, email, 
+           CASE WHEN role LIKE 'INACTIVE_%' THEN SUBSTRING(role FROM 10) ELSE role END as role,
+           CASE WHEN role LIKE 'INACTIVE_%' THEN false ELSE true END as active,
+           created_at, updated_at 
            FROM users 
            WHERE ($1 = '%%' OR email ILIKE $1)
-           AND ($2::text IS NULL OR role = $2)
+           AND ($2::text IS NULL OR role = $2 OR role = 'INACTIVE_' || $2)
            ORDER BY created_at DESC 
            LIMIT $3 OFFSET $4"#
     )
@@ -179,34 +182,68 @@ pub async fn get_users(req: HttpRequest, pool: web::Data<PgPool>, query: web::Qu
 
 pub async fn update_user_status(
     req: HttpRequest, 
-    _pool: web::Data<PgPool>,
+    pool: web::Data<PgPool>,
     path: web::Path<Uuid>,
     body: web::Json<serde_json::Value>
 ) -> impl Responder {
     if let Err(res) = check_admin(&req) { return res; }
     
-    let _user_id = path.into_inner();
+    let user_id = path.into_inner();
     let active = body.get("active").and_then(|v| v.as_bool());
 
-    if let Some(_active_val) = active {
-        // NOTE: The 'active' column does not exist in the users table yet.
-        // This is a placeholder implementation that returns success but does nothing.
-        // To implement real deactivation, we need to add the column via migration.
-        /*
+    if let Some(active_val) = active {
+        println!("Updating user {} status to {}", user_id, active_val);
+        // Fetch current role
+        let current_role_row = sqlx::query("SELECT role FROM users WHERE id = $1")
+            .bind(user_id)
+            .fetch_optional(pool.get_ref())
+            .await;
+
+        let current_role = match current_role_row {
+            Ok(Some(row)) => row.get::<String, _>("role"),
+            Ok(None) => return HttpResponse::NotFound().body("User not found"),
+            Err(e) => {
+                println!("Error fetching user role: {:?}", e);
+                return HttpResponse::InternalServerError().finish();
+            }
+        };
+
+        println!("Current role: {}", current_role);
+
+        // Determine new role
+        let new_role = if active_val {
+            // Activating: Remove "INACTIVE_" prefix if present
+            if current_role.starts_with("INACTIVE_") {
+                current_role.replace("INACTIVE_", "")
+            } else {
+                current_role // Already active
+            }
+        } else {
+            // Deactivating: Add "INACTIVE_" prefix if not present
+            if !current_role.starts_with("INACTIVE_") {
+                format!("INACTIVE_{}", current_role)
+            } else {
+                current_role // Already inactive
+            }
+        };
+
+        println!("New role: {}", new_role);
+
         let result = sqlx::query(
-            "UPDATE users SET active = $1 WHERE id = $2"
+            "UPDATE users SET role = $1 WHERE id = $2"
         )
-        .bind(active_val)
+        .bind(new_role)
         .bind(user_id)
         .execute(pool.get_ref())
         .await;
-        */
-        
-        // Mock success
-        return HttpResponse::Ok().finish();
+
+        match result {
+            Ok(_) => HttpResponse::Ok().finish(),
+            Err(_) => HttpResponse::InternalServerError().finish(),
+        }
+    } else {
+        HttpResponse::BadRequest().body("Missing 'active' field")
     }
-    
-    HttpResponse::BadRequest().body("Missing 'active' field")
 }
 
 pub async fn get_user_details(req: HttpRequest, pool: web::Data<PgPool>, path: web::Path<Uuid>) -> impl Responder {
@@ -214,7 +251,11 @@ pub async fn get_user_details(req: HttpRequest, pool: web::Data<PgPool>, path: w
     let user_id = path.into_inner();
 
     let user = sqlx::query_as::<_, UserListDto>(
-        "SELECT id, email as name, email, role, true as active, created_at, updated_at FROM users WHERE id = $1"
+        r#"SELECT id, email as name, email, 
+           CASE WHEN role LIKE 'INACTIVE_%' THEN SUBSTRING(role FROM 10) ELSE role END as role,
+           CASE WHEN role LIKE 'INACTIVE_%' THEN false ELSE true END as active,
+           created_at, updated_at 
+           FROM users WHERE id = $1"#
     )
     .bind(user_id)
     .fetch_optional(pool.get_ref())

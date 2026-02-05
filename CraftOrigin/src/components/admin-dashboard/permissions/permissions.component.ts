@@ -53,8 +53,12 @@ export class PermissionsComponent implements OnInit {
       next: () => {
         user.active = newStatus;
         this.processingId = null;
+        this.cdr.detectChanges();
       },
-      error: () => (this.processingId = null)
+      error: () => {
+        this.processingId = null;
+        this.cdr.detectChanges();
+      }
     });
   }
 }
