@@ -179,13 +179,13 @@ pub async fn get_users(req: HttpRequest, pool: web::Data<PgPool>, query: web::Qu
 
 pub async fn update_user_status(
     req: HttpRequest, 
-    pool: web::Data<PgPool>,
+    _pool: web::Data<PgPool>,
     path: web::Path<Uuid>,
     body: web::Json<serde_json::Value>
 ) -> impl Responder {
     if let Err(res) = check_admin(&req) { return res; }
     
-    let user_id = path.into_inner();
+    let _user_id = path.into_inner();
     let active = body.get("active").and_then(|v| v.as_bool());
 
     if let Some(_active_val) = active {
