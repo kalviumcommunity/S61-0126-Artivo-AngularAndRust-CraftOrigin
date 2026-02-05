@@ -5,7 +5,8 @@ COPY src ./src
 COPY migrations ./migrations
 COPY .sqlx ./.sqlx
 ENV SQLX_OFFLINE=1
-RUN cargo build --release
+# Build only the backend binary (exclude utility bins like create_admin)
+RUN cargo build --release --bin backend
 
 FROM debian:bookworm-slim
 WORKDIR /app

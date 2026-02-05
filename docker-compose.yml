@@ -1,0 +1,72 @@
+version: "3.9"
+
+# Full-stack application: Angular Frontend + Rust Backend + PostgreSQL Database
+# How to run:
+#   1) From project root: docker compose up --build
+#   2) Access frontend: http://localhost:4200
+#   3) Access backend API: http://localhost:8080
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    container_name: craftorigin_postgres
+    environment:
+      POSTGRES_DB: my_app_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d my_app_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - craftorigin-network
+
+  # Rust Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: craftorigin_backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "8080"
+      DATABASE_URL: "postgres://postgres:postgres@postgres:5432/my_app_db"
+      JWT_SECRET: "your-super-secret-jwt-key-change-this-in-production"
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads_data:/app/static
+    networks:
+      - craftorigin-network
+
+  # Angular Frontend
+  frontend:
+    build:
+      context: ./CraftOrigin
+      dockerfile: Dockerfile
+    container_name: craftorigin_frontend
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+    networks:
+      - craftorigin-network
+
+volumes:
+  db_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+networks:
+  craftorigin-network:
+    driver: bridge
