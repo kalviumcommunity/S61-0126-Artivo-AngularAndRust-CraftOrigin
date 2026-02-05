@@ -14,6 +14,8 @@ pub struct ArtworkListQuery {
     pub search: Option<String>,
     pub sort: Option<String>,
     pub active: Option<bool>,
+    #[serde(default)]
+    pub include_all: bool,
 }
 
 #[derive(Deserialize)]

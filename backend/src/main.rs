@@ -67,14 +67,14 @@ sqlx::migrate!("./migrations")
             // Public Routes
             .configure(routes::health_routes::health_routes)
             .configure(routes::auth_routes::auth_routes)
-            .configure(routes::artwork_routes::public_artwork_routes)
+            .configure(routes::artwork_routes::artwork_routes)
 
             // Protected Routes (require Authentication)
             .service(
                 web::scope("")
                     .wrap(Auth)
                     .configure(routes::user_routes::user_routes)
-                    .configure(routes::artwork_routes::protected_artwork_routes)
+                    // artwork_routes is now self-contained with auth for protected parts
                     .configure(routes::upload_routes::upload_routes)
                     .configure(routes::cart_routes::cart_routes)
                     .configure(routes::order_routes::order_routes)

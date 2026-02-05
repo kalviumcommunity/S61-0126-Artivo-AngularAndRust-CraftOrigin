@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { AuthService } from '../../services/auth.service';
+import { ArtistService, ArtistProfile } from '../../services/artist.service';
 
 @Component({
   selector: 'app-artist-dashboard',
@@ -11,8 +12,9 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './artist-dashboard.html',
   styleUrl: './artist-dashboard.css'
 })
-export class ArtistDashboardComponent {
+export class ArtistDashboardComponent implements OnInit {
   isSidebarOpen = false;
+  isVerificationPending = false;
 
   menuItems = [
     { label: 'Overview', icon: 'layout-dashboard', route: '/artist/dashboard/overview' },
@@ -24,8 +26,29 @@ export class ArtistDashboardComponent {
 
   constructor(
     public router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private artistService: ArtistService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
+
+  ngOnInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.checkVerificationStatus();
+    }
+  }
+
+  checkVerificationStatus() {
+    this.artistService.getProfile().subscribe({
+      next: (profile: ArtistProfile) => {
+        if (profile.verification_status === 'PENDING' || profile.verification_status === 'REJECTED') {
+          this.isVerificationPending = true;
+        }
+      },
+      error: (err: any) => {
+        console.error('Failed to fetch artist profile', err);
+      }
+    });
+  }
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;

@@ -47,14 +47,12 @@ pub async fn list_artworks(pool: &Pool<sqlx::Postgres>, q: ArtworkListQuery) -> 
         "SELECT id, artist_id, title, description, category, price, quantity_available, authenticity_ref, image_url, active, created_at, updated_at FROM artworks WHERE 1=1"
     );
 
-    // Default to active=TRUE if not specified, unless it's an artist-specific query where they might want all.
-    // However, for public safety, we should default to active=TRUE.
-    // If the caller wants inactive, they must explicitly pass active=false or we need a way to say "all".
-    // For now, let's say if `active` is provided, we filter by it.
-    // If not provided, we default to TRUE.
+    // If active is explicitly provided, filter by it.
+    // If include_all is true, we don't filter by active (shows both).
+    // Otherwise, default to active = TRUE.
     if let Some(active) = q.active {
         builder.push(" AND active = ").push_bind(active);
-    } else {
+    } else if !q.include_all {
         builder.push(" AND active = TRUE");
     }
 

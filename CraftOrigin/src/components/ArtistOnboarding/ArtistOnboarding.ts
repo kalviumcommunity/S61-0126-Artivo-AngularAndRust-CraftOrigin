@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ArtistService } from '../../app/services/artist.service';
+import { forkJoin, of, Observable } from 'rxjs';
+import { switchMap, map, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-artist-onboarding',
@@ -114,13 +116,62 @@ export class ArtistOnboardingComponent {
     if (this.validateStep(5)) {
       this.isSubmitting = true;
       
-      const payload = {
-        tribe_name: this.formData.tribe || this.formData.artForm, // Fallback if tribe empty
-        region: this.formData.state,
-        bio: this.formData.bio
-      };
+      // Upload files first
+      const uploadTasks: Record<string, Observable<any>> = {};
+      
+      if (this.formData.photo) {
+        uploadTasks['photo'] = this.artistService.uploadImage(this.formData.photo);
+      }
+      if (this.formData.idProof) {
+        uploadTasks['idProof'] = this.artistService.uploadImage(this.formData.idProof);
+      }
+      if (this.formData.artSamples && this.formData.artSamples.length > 0) {
+        this.formData.artSamples.forEach((file: File, index: number) => {
+          uploadTasks[`sample_${index}`] = this.artistService.uploadImage(file);
+        });
+      }
 
-      this.artistService.registerArtist(payload).subscribe({
+      const uploadObservable = Object.keys(uploadTasks).length > 0 
+        ? forkJoin(uploadTasks) 
+        : of({});
+
+      uploadObservable.pipe(
+        catchError(err => {
+          console.error('File upload failed', err);
+          // Continue even if upload fails? Or stop? 
+          // Better to stop and warn user, but for now we'll continue with partial data if possible
+          // or just throw to stop submission.
+          alert('Failed to upload some files. Please try again.');
+          throw err;
+        }),
+        switchMap((uploads: any) => {
+          let bioWithLinks = this.formData.bio || '';
+          if (this.formData.tribe) {
+            bioWithLinks += `\n\nTribe: ${this.formData.tribe}`;
+          }
+          
+          bioWithLinks += '\n\n[Attached Documents]';
+          if (uploads['photo']?.url) bioWithLinks += `\nPhoto: ${uploads['photo'].url}`;
+          if (uploads['idProof']?.url) bioWithLinks += `\nID Proof: ${uploads['idProof'].url}`;
+          
+          const samples = Object.keys(uploads)
+            .filter(k => k.startsWith('sample_'))
+            .map(k => uploads[k]?.url)
+            .filter(url => !!url);
+            
+          if (samples.length > 0) {
+            bioWithLinks += `\nArt Samples:\n${samples.join('\n')}`;
+          }
+
+          const payload = {
+            tribe_name: this.formData.fullName, 
+            region: this.formData.state,
+            bio: bioWithLinks
+          };
+
+          return this.artistService.registerArtist(payload);
+        })
+      ).subscribe({
         next: (response) => {
           console.log('Application submitted:', response);
           
@@ -143,8 +194,6 @@ export class ArtistOnboardingComponent {
         error: (err) => {
           console.error('Submission error:', err);
           if (err.status === 409) {
-             // Handle "Artist profile already exists"
-             // Assuming success if already exists for now, or could show specific error
              alert('You are already registered as an artist.');
              this.goToDashboard();
           } else {

@@ -64,19 +64,33 @@ export class ArtistArtworksComponent implements OnInit {
   }
 
   toggleStatus(artwork: any) {
-    this.artistService.toggleArtworkStatus(artwork.id).subscribe({
-      next: (updated) => {
-        artwork.active = updated.active;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Failed to toggle status', err);
-        alert('Failed to update status');
-        this.cdr.detectChanges();
-      }
-    });
+    const newStatus = !artwork.active;
+    const action = newStatus ? 'activate' : 'deactivate';
+    
+    if(confirm(`Are you sure you want to ${action} this artwork?`)) {
+      // Optimistic update
+      const originalStatus = artwork.active;
+      artwork.active = newStatus;
+      
+      this.artistService.toggleArtworkStatus(artwork.id).subscribe({
+        next: (updated: any) => {
+          // If backend returns the new status, sync it. 
+          // If it returns just {active: bool}, use that.
+          if (updated && typeof updated.active !== 'undefined') {
+             artwork.active = updated.active;
+          }
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error(`Failed to ${action} artwork`, err);
+          alert(`Failed to ${action} artwork: ` + (err.error?.message || 'Unknown error'));
+          artwork.active = originalStatus; // Revert
+          this.cdr.detectChanges();
+        }
+      });
+    }
   }
-  
+
   deleteArtwork(id: string) {
       if(confirm('Are you sure you want to delete this artwork?')) {
           this.artistService.deleteArtwork(id).subscribe({

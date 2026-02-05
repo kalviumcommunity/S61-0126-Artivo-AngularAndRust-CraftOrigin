@@ -59,7 +59,7 @@ export class MarketplaceNavbarComponent {
 
   navigateToSellArt() {
     this.closeProfile();
-    this.router.navigate(['/sell-art']);
+    this.router.navigate(['/artist-onboarding']);
   }
 
   navigateToHome() {
