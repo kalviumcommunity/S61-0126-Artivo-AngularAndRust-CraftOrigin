@@ -1,1 +1,87 @@
-/* Styles handled by Tailwind CSS */
+/* Enhanced animations for artworks */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes imageZoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}
+
+/* Header animation */
+:host ::ng-deep .bg-gradient-to-r:first-of-type {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Filter section animation */
+:host ::ng-deep .bg-gradient-to-r + .lg\:grid-cols-4,
+:host ::ng-deep .p-6 {
+  animation: fadeInUp 0.5s ease-out 0.1s backwards;
+}
+
+/* Artwork grid cards staggered animation */
+:host ::ng-deep .lg\:grid-cols-4 > div {
+  animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: both;
+}
+
+:host ::ng-deep .lg\:grid-cols-4 > div:nth-child(1) { animation-delay: 0.1s; }
+:host ::ng-deep .lg\:grid-cols-4 > div:nth-child(2) { animation-delay: 0.15s; }
+:host ::ng-deep .lg\:grid-cols-4 > div:nth-child(3) { animation-delay: 0.2s; }
+:host ::ng-deep .lg\:grid-cols-4 > div:nth-child(4) { animation-delay: 0.25s; }
+:host ::ng-deep .lg\:grid-cols-4 > div:nth-child(5) { animation-delay: 0.3s; }
+:host ::ng-deep .lg\:grid-cols-4 > div:nth-child(6) { animation-delay: 0.35s; }
+:host ::ng-deep .lg\:grid-cols-4 > div:nth-child(7) { animation-delay: 0.4s; }
+:host ::ng-deep .lg\:grid-cols-4 > div:nth-child(8) { animation-delay: 0.45s; }
+
+/* Image zoom on hover */
+:host ::ng-deep .group:hover img {
+  animation: imageZoom 0.5s ease-out forwards;
+}
+
+/* Icon transitions */
+:host ::ng-deep lucide-icon {
+  transition: all 0.3s ease;
+}
+
+/* Button hover effects */
+:host ::ng-deep button {
+  transition: all 0.2s ease;
+}
+
+:host ::ng-deep .border-l-4:hover lucide-icon {
+  transform: scale(1.1);
+}
+
+/* Input focus effects */
+:host ::ng-deep input:focus,
+:host ::ng-deep select:focus {
+  animation: none;
+}
+
+/* Loading spinner */
+:host ::ng-deep .animate-spin {
+  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.4));
+}

@@ -15,6 +15,7 @@ export class ArtistOverviewComponent implements OnInit {
   stats: DashboardStats | null = null;
   isLoading = true;
   error: string | null = null;
+  lastRefreshTime = 'Just now';
 
   constructor(
     private artistService: ArtistService, 
@@ -35,6 +36,7 @@ export class ArtistOverviewComponent implements OnInit {
     this.artistService.getDashboardStats().subscribe({
       next: (data) => {
         this.stats = data;
+        this.lastRefreshTime = 'Just now';
         this.isLoading = false;
         this.cdr.detectChanges();
       },
