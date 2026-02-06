@@ -1,0 +1,71 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  frontend-build:
+    name: Build & Test Frontend (Angular)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./CraftOrigin
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: CraftOrigin/package-lock.json
+
+    - name: Install Dependencies
+      # Using 'npm install' instead of 'npm ci' to be safe if package-lock.json is missing or out of sync
+      run: npm install
+
+    - name: Build Application
+      run: npm run build -- --configuration production
+
+    - name: Run Unit Tests
+      # Headless chrome is required for CI environments
+      run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadless
+
+  backend-build:
+    name: Build & Test Backend (Rust)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Rust Toolchain
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Cache Cargo Registry
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          backend/target/
+        key: ${{ runner.os }}-cargo-${{ hashFiles('backend/Cargo.lock') }}
+
+    - name: Check Code (Lint & Compile Check)
+      run: cargo check --verbose
+
+    - name: Run Tests
+      run: cargo test --verbose
+
+    - name: Build Release Binary
+      run: cargo build --release --verbose
