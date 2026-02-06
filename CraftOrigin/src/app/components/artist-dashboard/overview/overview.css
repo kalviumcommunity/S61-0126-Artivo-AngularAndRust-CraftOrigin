@@ -1,1 +1,118 @@
-/* Styles handled by Tailwind CSS */
+/* Enhanced animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Main container animation */
+:host ::ng-deep .space-y-6 > div:first-child {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Stat cards staggered animation */
+:host ::ng-deep .grid > div {
+  animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: both;
+}
+
+:host ::ng-deep .grid > div:nth-child(1) { animation-delay: 0.1s; }
+:host ::ng-deep .grid > div:nth-child(2) { animation-delay: 0.15s; }
+:host ::ng-deep .grid > div:nth-child(3) { animation-delay: 0.2s; }
+:host ::ng-deep .grid > div:nth-child(4) { animation-delay: 0.25s; }
+
+/* Loading spinner enhancement */
+:host ::ng-deep .animate-spin {
+  filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.4));
+}
+
+/* Text animation - numbers */
+:host ::ng-deep .text-4xl.font-bold {
+  animation: countUp 0.6s ease-out forwards;
+}
+
+/* Hover effects for cards */
+:host ::ng-deep .border-l-4:not(:hover) {
+  transition: all 0.3s ease;
+}
+
+:host ::ng-deep .border-l-4:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* Icon animations */
+:host ::ng-deep lucide-icon {
+  transition: all 0.3s ease;
+}
+
+:host ::ng-deep .border-l-4:hover lucide-icon {
+  transform: scale(1.1);
+}
+
+/* Table row hover effects */
+:host ::ng-deep tbody tr {
+  transition: all 0.2s ease;
+}
+
+:host ::ng-deep tbody tr:hover {
+  transform: translateX(4px);
+}
+
+/* Section header animations */
+:host ::ng-deep .bg-gradient-to-r {
+  animation: slideInRight 0.5s ease-out;
+}
+
+/* Artwork items animation */
+:host ::ng-deep .divide-y > div {
+  animation: fadeInUp 0.4s ease-out;
+  animation-fill-mode: both;
+}
+
+:host ::ng-deep .divide-y > div:nth-child(1) { animation-delay: 0.3s; }
+:host ::ng-deep .divide-y > div:nth-child(2) { animation-delay: 0.35s; }
+:host ::ng-deep .divide-y > div:nth-child(3) { animation-delay: 0.4s; }
+:host ::ng-deep .divide-y > div:nth-child(4) { animation-delay: 0.45s; }
+:host ::ng-deep .divide-y > div:nth-child(5) { animation-delay: 0.5s; }
+
+/* Smooth transitions for all interactive elements */
+:host ::ng-deep button, :host ::ng-deep [role="button"], :host ::ng-deep a {
+  transition: all 0.2s ease;
+}

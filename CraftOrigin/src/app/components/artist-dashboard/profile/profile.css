@@ -1,1 +1,87 @@
-/* Styles handled by Tailwind CSS */
+/* Enhanced animations for profile */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header animation */
+:host ::ng-deep .bg-gradient-to-r:first-of-type {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Profile card animation */
+:host ::ng-deep .rounded-xl.shadow-sm {
+  animation: slideInUp 0.6s ease-out 0.1s backwards;
+}
+
+/* Avatar animation */
+:host ::ng-deep .h-32.w-32 {
+  animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s backwards;
+}
+
+/* Details grid animations */
+:host ::ng-deep .lg\:grid-cols-3 > div {
+  animation: fadeInUp 0.4s ease-out;
+  animation-fill-mode: both;
+}
+
+:host ::ng-deep .lg\:grid-cols-3 > div:nth-child(1) { animation-delay: 0.3s; }
+:host ::ng-deep .lg\:grid-cols-3 > div:nth-child(2) { animation-delay: 0.35s; }
+:host ::ng-deep .lg\:grid-cols-3 > div:nth-child(3) { animation-delay: 0.4s; }
+:host ::ng-deep .lg\:grid-cols-3 > div:nth-child(4) { animation-delay: 0.45s; }
+
+/* Form field animations */
+:host ::ng-deep input, :host ::ng-deep textarea {
+  transition: all 0.3s ease;
+}
+
+:host ::ng-deep input:focus, :host ::ng-deep textarea:focus {
+  transform: translateY(-2px);
+}
+
+/* Button animations */
+:host ::ng-deep button {
+  transition: all 0.2s ease;
+}
+
+/* Icon animations */
+:host ::ng-deep lucide-icon {
+  transition: all 0.3s ease;
+}
+
+:host ::ng-deep .hover\:shadow-md:hover lucide-icon {
+  transform: scale(1.1);
+}
+
+/* Loading spinner */
+:host ::ng-deep .animate-spin {
+  filter: drop-shadow(0 0 10px rgba(217, 70, 239, 0.4));
+}

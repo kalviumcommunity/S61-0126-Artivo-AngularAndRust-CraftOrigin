@@ -1,9 +1,9 @@
 <div class="flex h-screen bg-gray-50 relative">
   <!-- Verification Pending Overlay (Moved to root to cover sidebar) -->
-  <div *ngIf="isVerificationPending" class="fixed inset-0 z-[60] bg-gray-100 bg-opacity-95 flex items-center justify-center backdrop-blur-sm">
-    <div class="bg-white rounded-lg shadow-xl p-8 max-w-md text-center border border-gray-200">
-      <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-orange-100 mb-6">
-        <i-lucide name="lock" class="h-8 w-8 text-orange-600"></i-lucide>
+  <div *ngIf="isVerificationPending" class="fixed inset-0 z-[60] bg-gray-900 bg-opacity-50 flex items-center justify-center backdrop-blur-sm">
+    <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md text-center border border-gray-200">
+      <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-orange-100 mb-6 shadow-lg">
+        <i class="fa-solid fa-lock text-2xl text-orange-600"></i>
       </div>
       <h2 class="text-2xl font-bold text-gray-900 mb-2">Account Verification Pending</h2>
       <p class="text-gray-600 mb-6">
@@ -11,10 +11,10 @@
         Please wait until your profile is approved to access the dashboard and add artworks.
       </p>
       <div class="flex justify-center space-x-4">
-        <button (click)="checkVerificationStatus()" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+        <button (click)="checkVerificationStatus()" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-semibold">
           Check Status
         </button>
-        <button (click)="logout()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+        <button (click)="logout()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold">
           Logout
         </button>
       </div>
@@ -23,40 +23,40 @@
 
   <!-- Sidebar -->
   <aside 
-    class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0"
+    class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 flex flex-col"
     [ngClass]="{'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen}"
   >
     <!-- Logo -->
-    <div class="h-16 flex items-center px-6 border-b border-gray-200">
-      <span class="text-xl font-bold text-orange-600">CraftOrigin Artist</span>
+    <div class="h-16 flex items-center px-6 border-b border-gray-200 bg-gradient-to-r from-orange-50 to-amber-50">
+      <i class="fa-solid fa-palette text-2xl text-orange-600 mr-2"></i>
+      <span class="text-xl font-bold text-orange-600">CraftOrigin</span>
     </div>
 
     <!-- Navigation -->
-    <nav class="p-4 space-y-1">
+    <nav class="p-3 space-y-1 flex-1">
       <a *ngFor="let item of menuItems" 
          [routerLink]="item.route"
-         class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors group"
+         class="flex items-center px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 group"
          [ngClass]="{
-           'bg-orange-50 text-orange-600': isActive(item.route),
-           'text-gray-600 hover:bg-gray-50 hover:text-gray-900': !isActive(item.route)
+           'bg-gradient-to-r from-orange-100 to-amber-100 text-orange-700 shadow-sm': isActive(item.route),
+           'text-gray-700 hover:bg-gray-100 hover:text-orange-600': !isActive(item.route)
          }"
       >
-        <i-lucide 
-          [name]="item.icon" 
-          class="mr-3 w-5 h-5"
-          [class]="isActive(item.route) ? 'text-orange-600' : 'text-gray-400 group-hover:text-gray-500'"
-        ></i-lucide>
-        {{ item.label }}
+        <div [ngClass]="isActive(item.route) ? 'text-orange-600' : 'text-gray-400 group-hover:text-orange-600'" class="text-base w-5 h-5 mr-3 flex items-center">
+          <i [class]="'fa-solid fa-' + item.icon" class="w-5"></i>
+        </div>
+        <span class="flex-1">{{ item.label }}</span>
+        <div *ngIf="isActive(item.route)" class="w-1.5 h-1.5 bg-orange-600 rounded-full ml-2"></div>
       </a>
     </nav>
 
     <!-- Logout -->
-    <div class="absolute bottom-0 w-full p-4 border-t border-gray-200">
+    <div class="p-3 border-t border-gray-200 bg-gray-50">
       <button 
         (click)="logout()"
-        class="flex items-center w-full px-4 py-3 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors"
+        class="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 rounded-lg hover:bg-gray-200 hover:text-orange-600 transition-all duration-200 group"
       >
-        <i-lucide name="log-out" class="mr-3 w-5 h-5 text-gray-400"></i-lucide>
+        <i class="fa-solid fa-arrow-right-from-bracket text-base text-gray-400 group-hover:text-orange-600 w-5 h-5 mr-3\"></i>
         Sign Out
       </button>
     </div>
@@ -65,15 +65,13 @@
   <!-- Main Content -->
   <div class="flex-1 flex flex-col overflow-hidden relative">
     <!-- Header -->
-    <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-8">
-      <button (click)="toggleSidebar()" class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
-        <i-lucide name="menu" class="w-6 h-6"></i-lucide>
+    <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-8 shadow-sm">
+      <button (click)="toggleSidebar()" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-orange-600 hover:bg-orange-50 transition-all">
+        <i class="fa-solid fa-bars text-lg"></i>
       </button>
       
       <div class="flex items-center space-x-4 ml-auto">
-        <div class="relative">
-          <span class="text-sm font-medium text-gray-700">Artist Portal</span>
-        </div>
+        <span class="text-sm font-semibold text-gray-700 bg-orange-50 px-3 py-1.5 rounded-full text-orange-600">Artist Portal</span>
       </div>
     </header>
 

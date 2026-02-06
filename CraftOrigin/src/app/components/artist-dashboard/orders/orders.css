@@ -1,1 +1,93 @@
-/* Styles handled by Tailwind CSS */
+/* Enhanced animations for orders */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Header animation */
+:host ::ng-deep .bg-gradient-to-r:first-of-type {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Order cards staggered animation */
+:host ::ng-deep .space-y-4 > div {
+  animation: slideInRight 0.4s ease-out;
+  animation-fill-mode: both;
+}
+
+:host ::ng-deep .space-y-4 > div:nth-child(1) { animation-delay: 0.1s; }
+:host ::ng-deep .space-y-4 > div:nth-child(2) { animation-delay: 0.15s; }
+:host ::ng-deep .space-y-4 > div:nth-child(3) { animation-delay: 0.2s; }
+:host ::ng-deep .space-y-4 > div:nth-child(4) { animation-delay: 0.25s; }
+:host ::ng-deep .space-y-4 > div:nth-child(5) { animation-delay: 0.3s; }
+
+/* Order items fade in */
+:host ::ng-deep .divide-y > div {
+  animation: fadeInUp 0.3s ease-out;
+  animation-fill-mode: backwards;
+}
+
+:host ::ng-deep .divide-y > div:nth-child(1) { animation-delay: 0.2s; }
+:host ::ng-deep .divide-y > div:nth-child(2) { animation-delay: 0.25s; }
+:host ::ng-deep .divide-y > div:nth-child(3) { animation-delay: 0.3s; }
+
+/* Modal animation */
+:host ::ng-deep .fixed.bg-black {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+:host ::ng-deep .fixed .max-w-md {
+  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Table row hover effects */
+:host ::ng-deep .divide-y > div {
+  transition: all 0.2s ease;
+}
+
+:host ::ng-deep .divide-y > div:hover {
+  transform: translateX(4px);
+}
+
+/* Button transitions */
+:host ::ng-deep button {
+  transition: all 0.2s ease;
+}
+
+/* Icon animations */
+:host ::ng-deep lucide-icon {
+  transition: all 0.3s ease;
+}
+
+/* Loading spinner */
+:host ::ng-deep .animate-spin {
+  filter: drop-shadow(0 0 10px rgba(79, 70, 229, 0.4));
+}
