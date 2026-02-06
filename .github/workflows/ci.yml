@@ -1,5 +1,7 @@
 name: CI Pipeline
 
+# Trigger on push to main/master branches and all pull requests
+# This ensures code is tested before it merges and after it merges
 on:
   push:
     branches: [ "main", "master" ]
@@ -7,71 +9,93 @@ on:
     branches: [ "main", "master" ]
 
 jobs:
-  frontend-build:
-    name: Build & Test Frontend (Angular)
+  # ========================================================================
+  # Frontend Job: Builds and Tests the Angular Application
+  # ========================================================================
+  frontend:
+    name: Frontend (Angular)
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./CraftOrigin
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      # 1. Check out the code from the repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-        cache-dependency-path: CraftOrigin/package-lock.json
+      # 2. Set up Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: CraftOrigin/package-lock.json
 
-    - name: Install Dependencies
-      # Using 'npm install' instead of 'npm ci' to be safe if package-lock.json is missing or out of sync
-      run: npm install
+      # 3. Install dependencies using npm ci (Clean Install)
+      # npm ci is faster and more reliable for CI environments than npm install
+      - name: Install Dependencies
+        run: npm ci
 
-    - name: Build Application
-      run: npm run build -- --configuration production
+      # 4. Install Playwright Browsers (Required for Vitest browser mode)
+      # We explicitly install chromium as it's the default we use for testing
+      - name: Install Playwright Browsers
+        run: npx playwright install chromium
 
-    - name: Run Unit Tests
-      # Headless chrome is required for CI environments
-      run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadless
+      # 5. Run Unit Tests
+      # We use ChromeHeadless or Chromium. Using --no-watch to ensure it runs once and exits.
+      - name: Run Tests
+        run: npm run test -- --no-watch --no-progress --browsers=chromium
 
-  backend-build:
-    name: Build & Test Backend (Rust)
+      # 6. Build the Application
+      # Compiles the Angular app for production
+      - name: Build Application
+        run: npm run build
+
+  # ========================================================================
+  # Backend Job: Builds and Tests the Rust Application
+  # ========================================================================
+  backend:
+    name: Backend (Rust)
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./backend
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      # 1. Check out the code
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Setup Rust Toolchain
-      uses: dtolnay/rust-toolchain@stable
+      # 2. Set up the Rust toolchain
+      # Installs the stable version of Rust and Cargo
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
 
-    - name: Cache Cargo Registry
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cargo/bin/
-          ~/.cargo/registry/index/
-          ~/.cargo/registry/cache/
-          ~/.cargo/git/db/
-          backend/target/
-        key: ${{ runner.os }}-cargo-${{ hashFiles('backend/Cargo.lock') }}
+      # 3. Cache Cargo dependencies
+      # Caches the cargo registry and build artifacts to speed up future runs
+      - name: Cache Cargo Registry & Index
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            backend/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('backend/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
 
-    - name: Check Code (Lint & Compile Check)
-      env:
-        SQLX_OFFLINE: true
-      run: cargo check --verbose
+      # 4. Check Code (Fast compile check)
+      # Checks for compilation errors without generating code
+      - name: Check Code
+        run: cargo check --verbose
 
-    - name: Run Tests
-      env:
-        SQLX_OFFLINE: true
-      run: cargo test --verbose
+      # 5. Run Tests
+      # Executes unit and integration tests
+      - name: Run Tests
+        run: cargo test --verbose
 
-    - name: Build Release Binary
-      env:
-        SQLX_OFFLINE: true
-      run: cargo build --release --verbose
+      # 6. Build Release Binary
+      # Builds the final optimized binary
+      - name: Build Release
+        run: cargo build --verbose --release
