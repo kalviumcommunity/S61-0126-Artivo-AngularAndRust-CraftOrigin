@@ -1,0 +1,25 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO users (name, email, password_hash, role)\n        VALUES ($1, $2, $3, $4)\n        ON CONFLICT (email)\n        DO UPDATE SET name = $1, password_hash = $3, role = $4\n        RETURNING id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "b116b9da13a8e015ae3e74409e1a6f61a27d4c3bca0070c84f785feb8c327a68"
+}
