@@ -1,0 +1,26 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO artists (id, user_id, tribe_name, region, bio, verification_status, active)\n        VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, TRUE)\n        ON CONFLICT (user_id)\n        DO UPDATE SET tribe_name = $2, region = $3, bio = $4, verification_status = $5, active = TRUE, updated_at = now()\n        RETURNING id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "5449790dc4c77cb7a48b9654ef788c3c3792acfcaa33f127ce434820ba536904"
+}

@@ -62,10 +62,16 @@ jobs:
         key: ${{ runner.os }}-cargo-${{ hashFiles('backend/Cargo.lock') }}
 
     - name: Check Code (Lint & Compile Check)
+      env:
+        SQLX_OFFLINE: true
       run: cargo check --verbose
 
     - name: Run Tests
+      env:
+        SQLX_OFFLINE: true
       run: cargo test --verbose
 
     - name: Build Release Binary
+      env:
+        SQLX_OFFLINE: true
       run: cargo build --release --verbose
