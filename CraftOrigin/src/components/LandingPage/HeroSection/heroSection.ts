@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
@@ -7,7 +8,8 @@ import { LucideAngularModule } from 'lucide-angular';
   standalone: true,
   imports: [
     CommonModule,
-    LucideAngularModule
+    LucideAngularModule,
+    RouterLink
   ],
   templateUrl: './heroSection.html',
   styleUrl: './heroSection.css'

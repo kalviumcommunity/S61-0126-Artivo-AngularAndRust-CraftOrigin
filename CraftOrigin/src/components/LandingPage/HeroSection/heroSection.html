@@ -1,13 +1,13 @@
 <section class="relative min-h-screen pt-20 lg:pt-24 overflow-hidden bg-hero-gradient">
 
     <!-- Background Pattern -->
-    <div class="absolute inset-0 opacity-5">
-      <div class="absolute top-20 left-10 w-72 h-72 bg-primary rounded-full blur-3xl"></div>
-      <div class="absolute bottom-20 right-10 w-96 h-96 bg-accent rounded-full blur-3xl"></div>
-    </div>
-  
-    <div class="container mx-auto px-4 py-12 lg:py-20">
-      <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+    <div class="absolute inset-0 opacity-5 pointer-events-none">
+    <div class="absolute top-20 left-10 w-72 h-72 bg-primary rounded-full blur-3xl"></div>
+    <div class="absolute bottom-20 right-10 w-96 h-96 bg-accent rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="container mx-auto px-4 py-12 lg:py-20 relative z-10">
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
   
         <!-- Content -->
         <div class="space-y-8 animate-fade-up">
@@ -31,15 +31,15 @@
           </p>
   
           <div class="flex flex-col sm:flex-row gap-4">
-            <button (click)="scrollToSection('featuredArtWorks')" class="btn-hero flex items-center gap-2">
-              Explore Collection
-              <span>→</span>
-            </button>
+          <a routerLink="/register" class="btn-hero flex items-center gap-2 no-underline cursor-pointer">
+            Explore Collection
+            <span>→</span>
+          </a>
 
-            <button (click)="scrollToSection('featuredArtists')" class="btn-hero-outline">
-              Meet Our Artists
-            </button>
-          </div>
+          <a routerLink="/register" class="btn-hero-outline no-underline cursor-pointer">
+            Meet Our Artists
+          </a>
+        </div>
   
           <!-- Trust Badges -->
           <div class="grid grid-cols-3 gap-6 pt-8 border-t border-border/50">
