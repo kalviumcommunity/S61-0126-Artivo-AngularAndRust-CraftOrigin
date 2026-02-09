@@ -2648,3 +2648,44 @@ All data is **mock only**; switching to real APIs later means replacing `AdminSe
 - **Admin**: admin@example.com / password
 - **Artist**: artist@example.com / password
 
+# Integration Testing for Rust APIs (Actix / Axum)
+
+## Overview
+Integration tests ensure that Rust API endpoints work correctly as a complete system by sending real HTTP requests and validating responses.
+
+---
+
+## Key Concepts
+
+### Unit Tests
+- Test logic in isolation
+- No HTTP or routing involved
+- Very fast
+
+### Integration Tests
+- Test API behavior end-to-end
+- Use real HTTP requests
+- Validate routes, handlers, middleware, and responses
+
+---
+
+## Why Integration Testing Matters
+- Catches routing and configuration issues early
+- Ensures correct status codes and JSON responses
+- Makes refactoring safer
+- Improves backend reliability
+
+---
+
+## What Integration Tests Verify
+- HTTP methods and routes
+- Status codes
+- Response body structure
+- Error handling
+
+---
+
+## Running Tests
+Run all integration tests using:
+```bash
+cargo test
