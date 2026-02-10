@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, Inject, PLATFORM_ID, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ArtworkService } from '../../../app/services/artwork.service';
@@ -15,14 +15,17 @@ import { Subject, debounceTime, distinctUntilChanged, throttleTime, takeUntil } 
   standalone: true,
   imports: [CommonModule, RouterModule, LucideAngularModule, MarketplaceNavbarComponent, ReactiveFormsModule],
   templateUrl: './marketplace-feed.html',
-  styleUrls: ['./marketplace-feed.css']
+  styleUrls: ['./marketplace-feed.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MarketplaceFeedComponent implements OnInit, OnDestroy {
-  categories = [...ARTWORK_CATEGORIES]; // Create a mutable copy
+  categories: string[] = [...ARTWORK_CATEGORIES]; // Create a mutable copy with string[] type
   artworksByCategory: { [key: string]: Artwork[] } = {};
+  selectedCategory: string | null = null;
   isLoading = true;
   error: string | null = null;
   searchControl = new FormControl('', { nonNullable: true });
+  currentLimit = 12;
   private allArtworks: Artwork[] = [];
   private addToCartClicks$ = new Subject<Artwork>();
   private destroy$ = new Subject<void>();
@@ -34,6 +37,24 @@ export class MarketplaceFeedComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
+
+  onSearch(term: string) {
+    this.searchControl.setValue(term);
+  }
+
+  trackByArtwork(index: number, artwork: Artwork): string {
+    return artwork.id || index.toString();
+  }
+
+  trackByCategory(index: number, category: string): string {
+    return category;
+  }
+
+  getImageUrl(url: string | undefined): string {
+    if (!url) return 'assets/placeholder-art.jpg';
+    if (url.startsWith('http') || url.startsWith('assets/')) return url;
+    return `http://localhost:8080${url.startsWith('/') ? '' : '/'}${url}`;
+  }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -90,40 +111,47 @@ export class MarketplaceFeedComponent implements OnInit, OnDestroy {
 
   groupArtworks(artworks: Artwork[]) {
     this.artworksByCategory = {};
-    // Initialize categories
+    
+    // Initialize standard categories
     this.categories.forEach(cat => {
       this.artworksByCategory[cat] = [];
     });
-    // Add "Other" category explicitly if not present
+    
+    // Ensure 'Other' exists
     if (!this.artworksByCategory['Other']) {
         this.artworksByCategory['Other'] = [];
     }
 
     // Distribute artworks
     artworks.forEach(art => {
-      // Normalize category checking if needed, or just use direct match
-      // Trim and ensure we match the category string exactly
-      const category = art.category ? art.category.trim() : 'Other';
+      const categoryRaw = art.category ? art.category.trim() : 'Other';
       
-      if (this.artworksByCategory[category]) {
-        this.artworksByCategory[category].push(art);
-      } else {
-        // Try to find a matching category if case differs
-        const matchingCat = this.categories.find(c => c.toLowerCase() === category.toLowerCase());
-        if (matchingCat) {
-            this.artworksByCategory[matchingCat].push(art);
-        } else {
-            // Fallback to 'Other'
-            this.artworksByCategory['Other'].push(art);
-        }
+      // 1. Try exact match (case-sensitive)
+      if (this.artworksByCategory[categoryRaw]) {
+        this.artworksByCategory[categoryRaw].push(art);
+        return;
       }
+      
+      // 2. Try case-insensitive match against existing categories
+      const matchingCat = this.categories.find(c => c.toLowerCase() === categoryRaw.toLowerCase());
+      if (matchingCat) {
+        this.artworksByCategory[matchingCat].push(art);
+        return;
+      }
+
+      // 3. If no match, check if it's a known variation or partial match? 
+      // Actually, if it's a valid category from backend that isn't in our static list, 
+      // we should probably add it dynamically so it gets its own section.
+      
+      // Add new category dynamically
+      this.categories.push(categoryRaw);
+      this.artworksByCategory[categoryRaw] = [art];
     });
     
-    console.log('Grouped artworks:', this.artworksByCategory);
+    // Clean up empty categories to avoid clutter (optional, but good for UI)
+    // this.categories = this.categories.filter(c => this.artworksByCategory[c]?.length > 0);
     
-    // Debug: Check if we have any data to show
-    const totalItems = Object.values(this.artworksByCategory).reduce((acc, arr) => acc + arr.length, 0);
-    console.log('Total items ready to render:', totalItems);
+    console.log('Grouped artworks:', this.artworksByCategory);
   }
 
   hasArtworks(): boolean {
@@ -142,6 +170,12 @@ export class MarketplaceFeedComponent implements OnInit, OnDestroy {
 
   applyFilter(term: string) {
     const query = term.trim().toLowerCase();
+    
+    // Reset selected category when searching to show all results
+    if (this.selectedCategory) {
+      this.selectedCategory = null;
+    }
+
     if (!query) {
       this.groupArtworks(this.allArtworks);
       return;
@@ -155,6 +189,32 @@ export class MarketplaceFeedComponent implements OnInit, OnDestroy {
     });
 
     this.groupArtworks(filtered);
+  }
+
+  viewCategory(category: string) {
+    this.selectedCategory = category;
+    this.currentLimit = 12;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  backToOverview() {
+    this.selectedCategory = null;
+    this.currentLimit = 12;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  loadMore() {
+    this.currentLimit += 12;
+  }
+
+  scrollContainer(container: HTMLElement, direction: 'left' | 'right') {
+    const scrollAmount = 320; // card width + gap approx
+    const currentScroll = container.scrollLeft;
+    
+    container.scrollTo({
+      left: direction === 'left' ? currentScroll - scrollAmount : currentScroll + scrollAmount,
+      behavior: 'smooth'
+    });
   }
 
   ngOnDestroy(): void {

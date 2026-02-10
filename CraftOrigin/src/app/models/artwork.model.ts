@@ -27,7 +27,6 @@ export interface ArtworkFormData {
 
 // Artwork categories
 export const ARTWORK_CATEGORIES = [
-  'Pottery & Ceramics',
   'Handloom & Textiles',
   'Woodwork & Carving',
   'Metalwork & Jewelry',

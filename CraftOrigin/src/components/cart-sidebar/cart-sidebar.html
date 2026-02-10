@@ -55,7 +55,7 @@
                     <!-- Image -->
                     <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                       <img 
-                        [src]="item.image_url || 'assets/placeholder-art.jpg'" 
+                        [src]="getImageUrl(item.image_url)" 
                         [alt]="item.title" 
                         class="h-full w-full object-cover object-center"
                       >
@@ -68,7 +68,7 @@
                           <h3 class="font-serif">
                             <a href="#">{{ item.title }}</a>
                           </h3>
-                          <p class="ml-4">${{ item.unit_price * item.quantity | number:'1.2-2' }}</p>
+                          <p class="ml-4">₹{{ item.unit_price * item.quantity | number:'1.2-2' }}</p>
                         </div>
                         <p class="mt-1 text-sm text-gray-500">{{ item.artist_name }}</p>
                       </div>
@@ -110,7 +110,7 @@
             <div *ngIf="(cartItems$ | async)?.length !== 0" class="border-t border-gray-200 px-4 py-6 sm:px-6 bg-gray-50">
               <div class="flex justify-between text-base font-medium text-gray-900 mb-4">
                 <p>Subtotal</p>
-                <p>${{ subtotal$ | async | number:'1.2-2' }}</p>
+                <p>₹{{ subtotal$ | async | number:'1.2-2' }}</p>
               </div>
               <p class="mt-0.5 text-sm text-gray-500 mb-6">Shipping and taxes calculated at checkout.</p>
               <div class="space-y-3">
