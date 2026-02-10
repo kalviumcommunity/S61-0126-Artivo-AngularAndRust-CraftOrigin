@@ -53,6 +53,12 @@ export class CartSidebarComponent implements OnInit, OnDestroy {
     }
   }
 
+  getImageUrl(url: string | undefined): string {
+    if (!url) return 'assets/placeholder-art.jpg';
+    if (url.startsWith('http') || url.startsWith('assets/')) return url;
+    return `http://localhost:8080${url.startsWith('/') ? '' : '/'}${url}`;
+  }
+
   close() {
     this.cartService.closeCart();
   }

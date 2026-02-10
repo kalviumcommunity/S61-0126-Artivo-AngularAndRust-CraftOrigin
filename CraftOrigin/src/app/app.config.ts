@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { authInterceptor } from './interceptors/auth.interceptor';
+
 import {
   LucideAngularModule,
   Heart,
@@ -32,7 +33,10 @@ import {
   Trash2,
   Eye,
   EyeOff,
-  Loader
+  Loader,
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-angular';
 import { SharedModule } from './shared/shared.module';
 
@@ -76,7 +80,10 @@ export const appConfig: ApplicationConfig = {
         Trash2,
         Eye,
         EyeOff,
-        Loader
+        Loader,
+        ArrowLeft,
+        ChevronLeft,
+        ChevronRight
       })
     ),
     importProvidersFrom(
